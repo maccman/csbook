@@ -155,12 +155,13 @@ public/index.html
       called <literal>index.coffee</literal> and fill it with the
       following script:
     </para>
-    <para>
-      require("coffee-script") stitch =
-      require("stitch") express = require("express")
-      argv = process.argv.slice(2)
-    </para>
     <screen>
+//= CoffeeScript
+require("coffee-script")
+stitch  = require("stitch")
+express = require("express")
+argv    = process.argv.slice(2)
+
 package = stitch.createPackage(
   # Specify the paths you want Stitch to automatically bundle up
   paths: [ __dirname + "/app" ]
@@ -221,9 +222,12 @@ coffee index.coffee
       script in the <literal>app</literal> folder. This will be the file
       that'll bootstrap our application.
     </para>
-    <para>
-      module.exports = App = init: -&gt; # Bootstrap the app
-    </para>
+    <screen>
+//= CoffeeScript
+module.exports = App =
+  init: -&gt;
+    # Bootstrap the app
+</screen>
     <para>
       Now let's create our main page <literal>index.html</literal>
       which, if we're building a single page app, will be the only page
@@ -259,17 +263,16 @@ coffee index.coffee
       Let's create a new class, <literal>User</literal>, and reference
       it from <literal>app.coffee</literal>:
     </para>
-  </sect2>
-</sect1>
-<sect1>
-  <title>app/models/user.coffee</title>
-  <screen>
+    <screen>
+//= CoffeeScript
+# app/models/user.coffee
 module.exports = class User
   constructor: (@name) -&gt;
 
 # app/app.coffee
 User = require("models/user")
 </screen>
+  </sect2>
   <sect2>
     <title>JavaScript templates</title>
     <para>
@@ -373,18 +376,19 @@ User = require("models/user")
       controllers we can require the template, like it was a module, and
       execute it passing any data required.
     </para>
-    <para>
-      require("views/users/show")(new User("Brian"))
-    </para>
+    <screen>
+//= CoffeeScript
+require("views/users/show")(new User("Brian"))
+</screen>
     <para>
       Our <literal>app.coffee</literal> file should now look like this,
       rendering the template and appending it to the page when the
       document loads:
     </para>
-    <para>
-      User = require("models/user")
-    </para>
     <screen>
+//= CoffeeScript
+User = require("models/user")
+
 App =
   init: -&gt;
     template = require("views/users/show")

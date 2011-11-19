@@ -39,9 +39,10 @@ array.forEach(function(item, i){
       <literal>for</literal> loop. Let's see how it looks in
       CoffeeScript.
     </para>
-    <para>
-      myFunction(item) for item in array
-    </para>
+    <screen>
+//= CoffeeScript
+myFunction(item) for item in array
+</screen>
     <para>
       It's a readable and concise syntax, I'm sure you'll agree, and
       what's great is that it compiles to a <literal>for</literal> loop
@@ -77,9 +78,10 @@ var result = array.map(function(item, i){
       <emphasis role="strong">absolutely critical</emphasis> in ensuring
       the comprehension returns what you'd expect, the mapped array.
     </para>
-    <para>
-      result = (item.name for item in array)
-    </para>
+    <screen>
+//= CoffeeScript
+result = (item.name for item in array)
+</screen>
   </sect2>
   <sect2>
     <title>Select</title>
@@ -105,21 +107,22 @@ result = array.filter(function(item, i){
       performed in an anonymous function to ward against scope leakage
       and variable conflict.
     </para>
-    <para>
-      result = (item for item in array when item.name is
-      "test")
-    </para>
+    <screen>
+//= CoffeeScript
+result = (item for item in array when item.name is "test")
+</screen>
     <para>
       Don't forgot to include the parens, as otherwise
       <literal>result</literal> will be the last item in the array.
       CoffeeScript's comprehensions are so flexible that they allow you
       to do powerful selections as in the following example:
     </para>
-    <para>
-      passed = [] failed = [] (if score &gt; 60 then passed else
-      failed).push score for score in [49, 58, 76, 82, 88, 90]
-    </para>
     <screen>
+//= CoffeeScript
+passed = []
+failed = []
+(if score &gt; 60 then passed else failed).push score for score in [49, 58, 76, 82, 88, 90]
+
 # Or
 passed = (score for score in scores when score &gt; 60)
 </screen>
@@ -127,10 +130,13 @@ passed = (score for score in scores when score &gt; 60)
       If comprehensions get too long, you can split them onto multiple
       lines.
     </para>
-    <para>
-      passed = [] failed = [] for score in [49, 58, 76, 82, 88, 90] (if
-      score &gt; 60 then passed else failed).push score
-    </para>
+    <screen>
+//= CoffeeScript
+passed = []
+failed = []
+for score in [49, 58, 76, 82, 88, 90]
+  (if score &gt; 60 then passed else failed).push score
+</screen>
   </sect2>
   <sect2>
     <title>Includes</title>
@@ -146,9 +152,11 @@ var included = (array.indexOf("test") != -1)
       CoffeeScript has a neat alternative to this which Pythonists may
       recognize, namely <literal>in</literal>.
     </para>
-    <para>
-      included = "test" in array
-    </para>
+    <screen>
+//= CoffeeScript
+
+included = "test" in array
+</screen>
     <para>
       Behind the scenes, CoffeeScript is using
       <literal>Array.prototype.indexOf()</literal>, and shimming if
@@ -158,18 +166,19 @@ var included = (array.indexOf("test") != -1)
       <literal>indexOf()</literal> and testing if the result is
       negative:
     </para>
-    <para>
-      included = "a long test
-      string".indexOf("test") isnt -1
-    </para>
+    <screen>
+//= CoffeeScript
+included = "a long test string".indexOf("test") isnt -1
+</screen>
     <para>
       Or even better, hijack the bitwise operator so we don't have to do
       a <literal>-1</literal> comparison.
     </para>
-    <para>
-      string = "a long test string" included = !!~
-      string.indexOf "test"
-    </para>
+    <screen>
+//= CoffeeScript
+string   = "a long test string"
+included = !!~ string.indexOf "test"
+</screen>
   </sect2>
   <sect2>
     <title>Property iteration</title>
@@ -187,10 +196,11 @@ for(var key in object) alert(key + " = " + object[key])
       Instead, the operator has been renamed <literal>of</literal>, and
       can be used like thus:
     </para>
-    <para>
-      object = {one: 1, two: 2} alert("#{key} = #{value}") for
-      key, value of object
-    </para>
+    <screen>
+//= CoffeeScript    
+object = {one: 1, two: 2}
+alert("#{key} = #{value}") for key, value of object
+</screen>
     <para>
       As you can see, you can specify variables for both the property
       name, and its value; rather convenient.
@@ -205,10 +215,11 @@ for(var key in object) alert(key + " = " + object[key])
       easily use <literal>...</literal> to pass an array to them,
       retrieving the maximum and minimum values in the array.
     </para>
-    <para>
-      Math.max [14, 35, -7, 46, 98]... # 98 Math.min [14, 35, -7, 46,
-      98]... # -7
-    </para>
+    <screen>
+//= CoffeeScript
+Math.max [14, 35, -7, 46, 98]... # 98
+Math.min [14, 35, -7, 46, 98]... # -7
+</screen>
     <para>
       It's worth noting that this trick will fail with really large
       arrays as browsers have a limitation on the amount of arguments
@@ -226,16 +237,20 @@ for(var key in object) alert(key + " = " + object[key])
       multiple arguments to <literal>max</literal>. We can use this
       feature in other ways too, such as proxying function calls:
     </para>
-    <para>
-      Log = log: -&gt; console?.log(arguments...)
-    </para>
+    <screen>
+//= CoffeeScript
+Log =
+  log: -&gt;
+    console?.log(arguments...)
+</screen>
     <para>
       Or you can alter the arguments before they're passed onwards:
     </para>
-    <para>
-      Log = logPrefix: "(App)"
-    </para>
     <screen>
+//= CoffeeScript
+Log =
+  logPrefix: "(App)"
+
   log: (args...) -&gt;
     args.unshift(@logPrefix) if @logPrefix
     console?.log(args...)
@@ -263,18 +278,21 @@ for(var key in object) alert(key + " = " + object[key])
       <literal>is</literal> over <literal>==</literal> and
       <literal>isnt</literal> over <literal>!=</literal>.
     </para>
-    <para>
-      string = "migrating coconuts" string == string # true
-      string is string # true
-    </para>
+    <screen>
+//= CoffeeScript
+string = "migrating coconuts"
+string == string # true
+string is string # true
+</screen>
     <para>
       One extremely nice addition to CoffeeScript is the 'or equals',
       which is a pattern Rubyists may recognize as
       <literal>||=</literal>:
     </para>
-    <para>
-      hash or= {}
-    </para>
+    <screen>
+//= CoffeeScript
+hash or= {}
+</screen>
     <para>
       If hash evaluates to <literal>false</literal>, then it's set to an
       empty object. It's important to note here that this expression
@@ -285,9 +303,10 @@ for(var key in object) alert(key + " = " + object[key])
       <literal>hash</literal> is <literal>undefined</literal> or
       <literal>null</literal>:
     </para>
-    <para>
-      hash ?= {}
-    </para>
+    <screen>
+//= CoffeeScript
+hash ?= {}
+</screen>
   </sect2>
   <sect2>
     <title>Destructuring assignments</title>
@@ -295,18 +314,20 @@ for(var key in object) alert(key + " = " + object[key])
       Destructuring assignments can be used with any depth of array and
       object nesting, to help pull out deeply nested properties.
     </para>
-    <para>
-      someObject = { a: 'value for a', b: 'value for b' } { a, b } =
-      someObject console.log "a is '#{a}', b is '#{b}'"
-    </para>
+    <screen>
+//= CoffeeScript
+someObject = { a: 'value for a', b: 'value for b' }
+{ a, b } = someObject
+console.log "a is '#{a}', b is '#{b}'"
+</screen>
     <para>
       This is especially useful in Node applications when requiring
       modules:
     </para>
-    <para>
-      {join, resolve} = require('path')
-    </para>
     <screen>
+//= CoffeeScript
+{join, resolve} = require('path')
+
 join('/Users', 'Alex')
 </screen>
   </sect2>
@@ -319,11 +340,9 @@ join('/Users', 'Alex')
       <ulink url="http://jquery.com">jQuery</ulink> is especially
       elegant, due to the amount of callbacks in jQuery's API.
     </para>
-  </sect2>
-</sect1>
-<sect1>
-  <title>Use local alias</title>
-  <screen>
+    <screen>
+//= CoffeeScript
+# Use local alias
 $ = jQuery
 
 $ -&gt;
@@ -331,13 +350,14 @@ $ -&gt;
   $(".el").click -&gt;
     alert("Clicked!")
 </screen>
-  <para>
-    Since all of CoffeeScript's output is wrapped in an anonymous
-    function, we can set a local <literal>$</literal> alias for
-    <literal>jQuery</literal>. This will make sure that even if jQuery's
-    no conflict mode is enabled and the <literal>$</literal> re-defined,
-    our script will still function as intended.
-  </para>
+    <para>
+      Since all of CoffeeScript's output is wrapped in an anonymous
+      function, we can set a local <literal>$</literal> alias for
+      <literal>jQuery</literal>. This will make sure that even if
+      jQuery's no conflict mode is enabled and the <literal>$</literal>
+      re-defined, our script will still function as intended.
+    </para>
+  </sect2>
   <sect2>
     <title>Private variables</title>
     <para>
@@ -352,11 +372,9 @@ $ -&gt;
       defined in a context that no reference is kept to, it can't be
       accessed outside that scope.
     </para>
-  </sect2>
-</sect1>
-<sect1>
-  <title>Execute function immediately</title>
-  <screen>
+    <screen>
+//= CoffeeScript
+# Execute function immediately
 type = do -&gt;
   classToType = {}
   for name in "Boolean Number String Function Array Date RegExp Undefined Null".split(" ")
@@ -367,12 +385,13 @@ type = do -&gt;
     strType = Object::toString.call(obj)
     classToType[strType] or "object"
 </screen>
-  <para>
-    In other words, <literal>classToType</literal> is completely
-    private, and can never again be referenced outside the executing
-    anonymous function. This pattern is a great way of encapsulating
-    scope and hiding variables.
-  </para>
+    <para>
+      In other words, <literal>classToType</literal> is completely
+      private, and can never again be referenced outside the executing
+      anonymous function. This pattern is a great way of encapsulating
+      scope and hiding variables.
+    </para>
+  </sect2>
 </sect1>
 
 </chapter>

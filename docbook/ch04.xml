@@ -49,10 +49,10 @@ coffee --compile --output lib src
       directories, <literal>lib</literal> and <literal>src</literal>.
       Add the following to the <literal>Cakefile</literal>:
     </para>
-    <para>
-      fs = require 'fs'
-    </para>
     <screen>
+//= CoffeeScript
+fs = require 'fs'
+
 {print} = require 'sys'
 {spawn} = require 'child_process'
 
@@ -77,7 +77,10 @@ task 'build', 'Build lib/ from src/', -&gt;
       You can now reference JavaScript files in the
       <literal>lib</literal> directory as per usual from your HTML:
     </para>
-          
+    <screen>
+//= CoffeeScript
+&lt;script src="lib/app.js" type="text/javascript" charset="utf-8"&gt;&lt;/script&gt;      
+</screen>
     <para>
       We're still having to manually run <literal>cake build</literal>
       whenever our CoffeeScript code changes, which is far from ideal.
@@ -86,12 +89,15 @@ task 'build', 'Build lib/ from src/', -&gt;
       directory for changes and re-compiling as necessary. Let's define
       another task using that:
     </para>
-    <para>
-      task 'watch', 'Watch src/ for changes', -&gt; coffee = spawn
-      'coffee', ['-w', '-c', '-o', 'lib', 'src'] coffee.stderr.on
-      'data', (data) -&gt; process.stderr.write data.toString()
-      coffee.stdout.on 'data', (data) -&gt; print data.toString()
-    </para>
+    <screen>
+//= CoffeeScript
+task 'watch', 'Watch src/ for changes', -&gt;
+  coffee = spawn 'coffee', ['-w', '-c', '-o', 'lib', 'src']
+  coffee.stderr.on 'data', (data) -&gt;
+    process.stderr.write data.toString()
+  coffee.stdout.on 'data', (data) -&gt;
+    print data.toString()
+</screen>
     <para>
       If one task relies on another, you can run other tasks using
       <literal>invoke(name)</literal>. Let's add a utility task to our
@@ -99,19 +105,22 @@ task 'build', 'Build lib/ from src/', -&gt;
       <literal>index.html</literal> and start watching the source for
       changes.
     </para>
-    <para>
-      task 'open', 'Open index.html', -&gt; # First open, then watch
-      spawn 'open', 'index.html' invoke 'watch'
-    </para>
+    <screen>
+//= CoffeeScript
+task 'open', 'Open index.html', -&gt;
+  # First open, then watch
+  spawn 'open', 'index.html'
+  invoke 'watch'
+</screen>
     <para>
       You can also define options for your task using the
       <literal>option()</literal> function, which takes a short name,
       long name and description.
     </para>
-    <para>
-      option '-o', '--output [DIR]', 'output dir'
-    </para>
     <screen>
+//= CoffeeScript
+option '-o', '--output [DIR]', 'output dir'
+
 task 'build', 'Build lib/ from src/', -&gt;
   # Now we have access to a `options` object
   coffee = spawn 'coffee', ['-c', '-o', options.output or 'lib', 'src']

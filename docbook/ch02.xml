@@ -19,9 +19,10 @@
     static property inheritance and context persistence. As a developer
     all that's exposed to you is the <literal>class</literal> keyword.
   </para>
-  <para>
-    class Animal
-  </para>
+  <screen>
+//= CoffeeScript
+class Animal
+</screen>
   <para>
     In the example above, <literal>Animal</literal> is the name of the
     class, and also the name of the resultant variable that you can use
@@ -29,9 +30,10 @@
     constructor functions, which means you can instantiate classes using
     the <literal>new</literal> operator.
   </para>
-  <para>
-    animal = new Animal
-  </para>
+  <screen>
+//= CoffeeScript
+animal = new Animal
+</screen>
   <para>
     Defining constructors (functions that get invoked upon
     instantiation) is simple, just use a function named
@@ -39,9 +41,12 @@
     <literal>initialize</literal> or Python's
     <literal>__init__</literal>.
   </para>
-  <para>
-    class Animal constructor: (name) -&gt; @name = name
-  </para>
+  <screen>
+//= CoffeeScript
+class Animal
+  constructor: (name) -&gt;
+    @name = name
+</screen>
   <para>
     In fact, CoffeeScript provides a shorthand for the common pattern of
     setting instance properties. By prefixing argument's with
@@ -51,17 +56,20 @@
     example below is equivalent to the last example, where we set the
     instance properties manually.
   </para>
-  <para>
-    class Animal constructor: (@name) -&gt;
-  </para>
+  <screen>
+//= CoffeeScript
+class Animal
+  constructor: (@name) -&gt;
+</screen>
   <para>
     As you'd expect, any arguments passed on instantiation are proxied
     to the constructor function.
   </para>
-  <para>
-    animal = new Animal("Parrot") alert "Animal is a
-    #{animal.name}"
-  </para>
+  <screen>
+//= CoffeeScript
+animal = new Animal("Parrot")
+alert "Animal is a #{animal.name}"
+</screen>
   <sect2>
     <title>Instance properties</title>
     <para>
@@ -70,10 +78,11 @@
       an object. Just make sure properties are indented correctly inside
       the class body.
     </para>
-    <para>
-      class Animal price: 5
-    </para>
     <screen>
+//= CoffeeScript
+class Animal
+  price: 5
+
   sell: (customer) -&gt;
 
 animal = new Animal
@@ -91,10 +100,11 @@ animal.sell(new Customer)
       context, and that <literal>this</literal> is always equal to the
       current instance.
     </para>
-    <para>
-      class Animal price: 5
-    </para>
     <screen>
+//= CoffeeScript
+class Animal
+  price: 5
+
   sell: =&gt;
     alert "Give me #{@price} shillings!"
 
@@ -119,10 +129,11 @@ $("#sell").click(animal.sell)
       to the class object. In other words you can set class properties
       by setting them directly on <literal>this</literal>.
     </para>
-    <para>
-      class Animal this.find = (name) -&gt;
-    </para>
     <screen>
+//= CoffeeScript
+class Animal
+  this.find = (name) -&gt;      
+
 Animal.find("Parrot")
 </screen>
     <para>
@@ -130,10 +141,11 @@ Animal.find("Parrot")
       <literal>this</literal> to <literal>@</literal>, which lets you
       write static properties even more succinctly:
     </para>
-    <para>
-      class Animal @find: (name) -&gt;
-    </para>
     <screen>
+//= CoffeeScript
+class Animal
+  @find: (name) -&gt;
+
 Animal.find("Parrot")
 </screen>
   </sect2>
@@ -147,10 +159,11 @@ Animal.find("Parrot")
       from <literal>Animal</literal>, inheriting all of its instance
       properties, such as <literal>alive()</literal>
     </para>
-    <para>
-      class Animal constructor: (@name) -&gt;
-    </para>
     <screen>
+//= CoffeeScript
+class Animal
+  constructor: (@name) -&gt;
+
   alive: -&gt;
     false
 
@@ -183,10 +196,11 @@ class Parrot extends Animal
       child has been created, the property will still be propagated to
       all of its inherited children.
     </para>
-    <para>
-      class Animal constructor: (@name) -&gt;
-    </para>
     <screen>
+//= CoffeeScript
+class Animal
+  constructor: (@name) -&gt;
+
 class Parrot extends Animal
 
 Animal::rip = true
@@ -212,11 +226,12 @@ alert("This parrot is no more") if parrot.rip
       <literal>include()</literal> that'll add class and instance
       properties respectively to a class.
     </para>
-    <para>
-      extend = (obj, mixin) -&gt; obj[name] = method for name, method of
-      mixin<literallayout></literallayout> obj
-    </para>
     <screen>
+//= CoffeeScript
+extend = (obj, mixin) -&gt;
+  obj[name] = method for name, method of mixin        
+  obj
+
 include = (klass, mixin) -&gt;
   extend klass.prototype, mixin
 
@@ -244,10 +259,10 @@ include Parrot,
       <literal>@include()</literal> which we can use for extending the
       class with static and instance properties respectively.
     </para>
-    <para>
-      moduleKeywords = ['extended', 'included']
-    </para>
     <screen>
+//= CoffeeScript
+moduleKeywords = ['extended', 'included']
+
 class Module
   @extend: (obj) -&gt;
     for key, value of obj when key not in moduleKeywords
@@ -270,10 +285,12 @@ class Module
       a class. Let's take a look at our <literal>Module</literal> class
       in action:
     </para>
-    <para>
-      classProperties = find: (id) -&gt; create: (attrs) -&gt;
-    </para>
     <screen>
+//= CoffeeScript
+classProperties = 
+  find: (id) -&gt;
+  create: (attrs) -&gt;
+
 instanceProperties =
   save: -&gt; 
 
@@ -295,11 +312,15 @@ user.save()
       whenever modules are extended, we can shortcut the process of
       applying both static and instance properties:
     </para>
-    <para>
-      ORM = find: (id) -&gt; create: (attrs) -&gt; extended: -&gt;
-      @include save: -&gt;
-    </para>
     <screen>
+//= CoffeeScript
+ORM = 
+  find: (id) -&gt;
+  create: (attrs) -&gt;
+  extended: -&gt;
+    @include
+      save: -&gt; 
+
 class User extends Module
   @extend ORM
 </screen>

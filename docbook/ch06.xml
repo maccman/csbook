@@ -107,9 +107,12 @@ var groupsCount = 2;   // Global
       Let's have a look at an example of CoffeeScript's variable
       assignment:
     </para>
-    <para>
-      outerScope = true do -&gt; innerScope = true
-    </para>
+    <screen>
+//= CoffeeScript
+outerScope = true
+do -&gt;
+  innerScope = true
+</screen>
     <para>
       Compiles down to:
     </para>
@@ -131,10 +134,10 @@ outerScope = true;
       For example, here we're accidentally overwriting the
       <literal>package</literal> variable in a Class function:
     </para>
-    <para>
-      package = require('./package')
-    </para>
     <screen>
+//= CoffeeScript
+package = require('./package')
+
 class Hem
   build: -&gt;
     # Overwrites outer variable!
@@ -147,9 +150,11 @@ class Hem
       Global variables are needed from time to time, and to create those
       you need to set them as properties on <literal>window</literal>:
     </para>
-    <para>
-      class window.Asset constructor: -&gt;
-    </para>
+    <screen>
+//= CoffeeScript
+  class window.Asset
+    constructor: -&gt;
+</screen>
     <para>
       By ensuring global variables are explicit, rather than implicit,
       CoffeeScript removes one of the major sources of bugs in
@@ -209,10 +214,13 @@ function() {}(window.options || {}).property
       <literal>class</literal> as a property on an object, your
       CoffeeScript might look like this:
     </para>
-    <para>
-      myObj = { delete: "I am a keyword!" } myObj.class =
-      -&gt;
-    </para>
+    <screen>
+//= CoffeeScript
+myObj = {
+  delete: "I am a keyword!"
+}
+myObj.class = -&gt;
+</screen>
     <para>
       The CoffeeScript parser notices you're using a reserved keyword,
       and quotes it for you:
@@ -235,12 +243,18 @@ myObj["class"] = function() {};
       Garden's equality section</ulink> which delves into the issue in
       some depth.
     </para>
-    <para>
-      "" == "0" // false 0 == "" // true 0
-      == "0" // true false == "false" // false false
-      == "0" // true false == undefined // false false == null
-      // false null == undefined // true " " == 0 // true
-    </para>
+    <screen>
+//= CoffeeScript
+""           ==   "0"           // false
+0            ==   ""            // true
+0            ==   "0"           // true
+false        ==   "false"       // false
+false        ==   "0"           // true
+false        ==   undefined     // false
+false        ==   null          // false
+null         ==   undefined     // true
+" \t\r\n"    ==   0             // true
+</screen>
     <para>
       The reason behind this behavior is that the weak equality coerces
       types automatically. I'm sure you'll agree this is all pretty
@@ -269,19 +283,21 @@ myObj["class"] = function() {};
       number <literal>0</literal> are all coerced to
       <literal>false</literal>
     </para>
-    <para>
-      alert("Empty Array") unless [].length alert("Empty
-      String") unless "" alert("Number 0")
-      unless 0
-    </para>
+    <screen>
+//= CoffeeScript
+alert("Empty Array")  unless [].length
+alert("Empty String") unless ""
+alert("Number 0")     unless 0
+</screen>
     <para>
       If you want to explicitly check for <literal>null</literal> and
       <literal>undefined</literal>, then you can use CoffeeScript's
       existential operator:
     </para>
-    <para>
-      alert("This is not called") unless ""?
-    </para>
+    <screen>
+//= CoffeeScript
+alert("This is not called") unless ""?
+</screen>
     <para>
       The <literal>alert()</literal> in the previous example won't be
       called, as the empty string isn't equal to
@@ -413,16 +429,15 @@ wem();
       when you're using <literal>eval</literal>, there are better &amp;
       safer alternatives (such as square brackets).
     </para>
-  </sect2>
-</sect1>
-<sect1>
-  <title>Don't do this</title>
-  <screen>
+    <screen>
+//= CoffeeScript
+# Don't do this
 model = eval(modelName)
 
 # Use square brackets instead
 model = window[modelName]
 </screen>
+  </sect2>
   <sect2>
     <title>Using typeof</title>
     <para>
@@ -431,9 +446,10 @@ model = window[modelName]
       completely broken. In fact, it really has only one use, checking
       to see if a value is <literal>undefined</literal>.
     </para>
-    <para>
-      typeof undefinedVar is "undefined"
-    </para>
+    <screen>
+//= CoffeeScript
+typeof undefinedVar is "undefined"
+</screen>
     <para>
       For all other types of type checking, <literal>typeof</literal>
       fails rather miserably, returning inconsistent results depending
@@ -486,13 +502,13 @@ new Object()        Object     object
       example implementation ported from jQuery's
       <literal>$.type</literal>:
     </para>
-    <para>
-      type = do -&gt; classToType = {} for name in "Boolean Number
-      String Function Array Date RegExp Undefined
-      Null".split(" ") classToType["[object " +
-      name + "]"] = name.toLowerCase()
-    </para>
     <screen>
+//= CoffeeScript
+type = do -&gt;
+  classToType = {}
+  for name in "Boolean Number String Function Array Date RegExp Undefined Null".split(" ")
+    classToType["[object " + name + "]"] = name.toLowerCase()
+
   (obj) -&gt;
     strType = Object::toString.call(obj)
     classToType[strType] or "object"
@@ -512,9 +528,11 @@ type({})         # "object"
       still need to use <literal>typeof</literal> otherwise you'll get a
       <literal>ReferenceError</literal>.
     </para>
-    <para>
-      if typeof aVar isnt "undefined" objectType = type(aVar)
-    </para>
+    <screen>
+//= CoffeeScript
+if typeof aVar isnt "undefined"
+  objectType = type(aVar)
+</screen>
     <para>
       Or more succinctly with the existential operator:
     </para>
@@ -529,9 +547,10 @@ objectType = type(aVar?)
       'array like' object implements <literal>push()</literal>, we
       should treat it like an array:
     </para>
-    <para>
-      anArray?.push? aValue
-    </para>
+    <screen>
+//= CoffeeScript
+anArray?.push? aValue
+</screen>
     <para>
       If <literal>anArray</literal> is an object other than an array
       than the existential operator will ensure that
@@ -549,20 +568,22 @@ objectType = type(aVar?)
       comparing custom made objects. When it comes to comparing built-in
       types, it's as useless as <literal>typeof</literal>.
     </para>
-    <para>
-      new String("foo") instanceof String # true
-      "foo" instanceof String # false
-    </para>
+    <screen>
+//= CoffeeScript
+new String("foo") instanceof String # true
+"foo" instanceof String             # false
+</screen>
     <para>
       Additionally, <literal>instanceof</literal> also doesn't work when
       comparing object from different frames in the browser. In fact,
       <literal>instanceof</literal> only returns a correct result for
       custom made objects, such as CoffeeScript classes.
     </para>
-    <para>
-      class Parent class Child extends Parent
-    </para>
     <screen>
+//= CoffeeScript
+class Parent
+class Child extends Parent
+
 child = new Child
 child instanceof Child  # true
 child instanceof Parent # true
@@ -578,25 +599,32 @@ child instanceof Parent # true
       The <literal>delete</literal> keyword can only safely be used for
       removing properties inside objects.
     </para>
-    <para>
-      anObject = {one: 1, two: 2} delete anObject.one
-      anObject.hasOwnProperty("one") # false
-    </para>
+    <screen>
+//= CoffeeScript
+anObject = {one: 1, two: 2}
+delete anObject.one
+anObject.hasOwnProperty("one") # false
+</screen>
     <para>
       Any other use, such as deleting variables or function's won't
       work.
     </para>
-    <para>
-      aVar = 1 delete aVar typeof Var # "integer"
-    </para>
+    <screen>
+//= CoffeeScript
+aVar = 1
+delete aVar
+typeof Var # "integer"
+</screen>
     <para>
       It's rather peculiar behavior, but there you have it. If you want
       to remove a reference to a variable, just assign it to
       <literal>null</literal> instead.
     </para>
-    <para>
-      aVar = 1 aVar = null
-    </para>
+    <screen>
+//= CoffeeScript
+aVar = 1
+aVar = null
+</screen>
   </sect2>
   <sect2>
     <title>Using parseInt</title>
@@ -766,10 +794,11 @@ parseInt('010', 10) is 10
         All you need to do to enable strict checking is start your
         script or function with the following string:
       </para>
-      <para>
-        -&gt; "use strict"
-      </para>
       <screen>
+//= CoffeeScript    
+-&gt;
+  "use strict"
+
   # ... your code ...
 </screen>
       <para>
@@ -779,9 +808,12 @@ parseInt('010', 10) is 10
         function will raise a syntax error in strict mode, but run fine
         in the usual mode:
       </para>
-      <para>
-        do -&gt; "use strict" console.log(arguments.callee)
-      </para>
+      <screen>
+//= CoffeeScript
+do -&gt;
+  "use strict"
+  console.log(arguments.callee)
+</screen>
       <para>
         Strict mode has removed access to
         <literal>arguments.caller</literal> &amp;
@@ -795,9 +827,12 @@ parseInt('010', 10) is 10
         <literal>TypeError</literal> in strict mode, but run fine in a
         normal context, creating a global variable:
       </para>
-      <para>
-        do -&gt; "use strict" class @Spine
-      </para>
+      <screen>
+//= CoffeeScript
+do -&gt;
+  "use strict"
+  class @Spine
+</screen>
       <para>
         The reason behind this disparity is that in strict mode
         <literal>this</literal> is <literal>undefined</literal>, whereas
@@ -805,9 +840,12 @@ parseInt('010', 10) is 10
         solution to this is to explicitly set global variables on the
         <literal>window</literal> object.
       </para>
-      <para>
-        do -&gt; "use strict" class window.Spine
-      </para>
+      <screen>
+//= CoffeeScript
+do -&gt;
+  "use strict"
+  class window.Spine
+</screen>
       <para>
         Whilst I recommend enabling strict mode, but it's worth noting
         that script mode doesn't enable any new features that aren't
