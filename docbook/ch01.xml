@@ -1,0 +1,569 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" 
+"http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+<chapter id="coffeescript-syntax">
+ <title>CoffeeScript Syntax</title>
+ <sect1>
+  
+  <para>
+    Firstly, before we get any further into this section, I want to
+    reiterate that while CoffeeScript's syntax is often identical with
+    JavaScript's, it's not a superset, and therefore some JavaScript
+    keywords, such as <literal>function</literal> and
+    <literal>var</literal> aren't permitted, and will throw syntax
+    errors. If you're writing a CoffeeScript file, it needs to be pure
+    CoffeeScript; you can't intermingle the two languages.
+  </para>
+  <para>
+    Why isn't CoffeeScript a superset? Well, the very fact that
+    whitespace is significant in CoffeeScript programs prevents it being
+    a superset. And, once that decision's been made, the team decided
+    you might as well go the full hog and deprecate some JavaScript
+    keywords and features in the name of simplicity and in an effort to
+    reduce many commonly occurring bugs.
+  </para>
+  <para>
+    What I find mind-blowing, in a meta sort of way, is that the
+    CoffeeScript interpreter itself is actually written in CoffeeScript.
+    It looks like the chicken or egg paradox has finally been solved!
+  </para>
+  <para>
+    Right, so firstly let's tackle the basic stuff. There are no
+    semicolons in CoffeeScript, it'll add them automatically for you
+    upon compilation. Semicolons were the cause of much debate in the
+    JavaScript community, and behind some weird interpreter
+    <ulink url="http://bonsaiden.github.com/JavaScript-Garden/#core.semicolon">behavior</ulink>.
+    Anyway, CoffeeScript resolves this problem for you by simply
+    removing semi-colons from its syntax, adding them as needed behind
+    the scenes.
+  </para>
+  <para>
+    Comments are in the same format as Ruby comments, starting with a
+    hash character.
+  </para>
+  <screen>
+# A comment
+</screen>
+  <para>
+    Multiline comments are also supported, and are brought forward to
+    the generated JavaScript. They're enclosed by three hash characters.
+  </para>
+  <sect2>
+    <title></title>
+    <screen>
+  A multiline comment, perhaps a LICENSE.
+###
+</screen>
+    <para>
+      As I briefly alluded to, whitespace is significant in
+      CoffeeScript. In practice, this means that you can replace curly
+      brackets (<literal>{}</literal>) with a tab. This takes
+      inspiration from Python's syntax, and has the excellent side
+      effect of ensuring that your script is formatted in a sane manner,
+      otherwise it won't even compile!
+    </para>
+  </sect2>
+  <sect2>
+    <title>Variables &amp; Scope</title>
+    <para>
+      CoffeeScript fixes one of the major bugbears with JavaScript,
+      global variables. In JavaScript, it's all too easy to accidentally
+      declare a global variable by forgetting to include
+      <literal>var</literal> before the variable assignment.
+      CoffeeScript solves this by simply removing global variables.
+      Behind the scenes, CoffeeScript wraps up scripts with an anonymous
+      function, keeping the local context, and automatically prefixes
+      all variable assignments with <literal>var</literal>. For example,
+      take this simple variable assignment in CoffeeScript:
+    </para>
+    <para>
+      myVariable = "test"
+    </para>
+    <para>
+      Notice the dark grey box in the top right of the code example
+      above. Give that a click, and the code will toggle between
+      CoffeeScript and the compiled JavaScript. This is rendered right
+      inside the page at runtime, so you're assured the compiled output
+      is accurate.
+    </para>
+    <para>
+      As you can see, the variable assignment is kept completely local,
+      it's impossible to accidentally create a global variable.
+      CoffeeScript actually takes this a step further, and makes it
+      difficult to shadow a higher-level variable. This goes a great
+      deal to prevent some of the most common mistakes developers make
+      in JavaScript.
+    </para>
+    <para>
+      However, sometimes it's useful to create global variables. You can
+      either do this by directly setting them as properties on the
+      global object (<literal>window</literal> in browsers), or with the
+      following pattern:
+    </para>
+    <para>
+      exports = this exports.MyVariable = "foo-bar"
+    </para>
+    <para>
+      In the root context, <literal>this</literal> is equal to the
+      global object, and by creating a local <literal>exports</literal>
+      variable you're making it really obvious to anyone reading your
+      code exactly which global variables a script is creating.
+      Additionally, it paves the way for CommonJS modules, which we're
+      going to cover later in the book.
+    </para>
+  </sect2>
+  <sect2>
+    <title>Functions</title>
+    <para>
+      CoffeeScript removes the rather verbose
+      <literal>function</literal> statement, and replaces it with a thin
+      arrow: <literal>-&gt;</literal>. Functions can be one liners or
+      indented on multiple lines. The last expression in the function is
+      implicitly returned. In other words, you don't need to use the
+      <literal>return</literal> statement unless you want to return
+      earlier inside the function.
+    </para>
+    <para>
+      With that in mind, let's take a look at an example:
+    </para>
+    <para>
+      func = -&gt; "bar"
+    </para>
+    <para>
+      You can see in the resultant compilation, the
+      <literal>-&gt;</literal> is turned into a
+      <literal>function</literal> statement, and the
+      <literal>"bar"</literal> string is automatically
+      returned.
+    </para>
+    <para>
+      As mentioned earlier, there's no reason why we can't use multiple
+      lines, as long as we indent the function body properly.
+    </para>
+    <para>
+      func = -&gt; # An extra line "bar"
+    </para>
+    <section>
+      <title>Function arguments</title>
+      <para>
+        How about specifying arguments? Well, CoffeeScript lets you do
+        that by specifying arguments in parentheses before the arrow.
+      </para>
+      <para>
+        times = (a, b) -&gt; a * b
+      </para>
+      <para>
+        CoffeeScript supports default arguments too, for example:
+      </para>
+      <para>
+        times = (a = 1, b = 2) -&gt; a * b
+      </para>
+      <para>
+        You can also use splats to accept multiple arguments, denoted by
+        <literal>...</literal>
+      </para>
+      <para>
+        sum = (nums...) -&gt; result = 0 nums.forEach (n) -&gt; result
+        += n result
+      </para>
+      <para>
+        In the example above, <literal>nums</literal> is an array of all
+        the arguments passed to the function. It's not an
+        <literal>arguments</literal> object, but rather a real array, so
+        you don't need to concern yourself with
+        <literal>Array.prototype.splice</literal> or
+        <literal>jQuery.makeArray()</literal> if you want to manipulate
+        it.
+      </para>
+      <para>
+        trigger = (events...) -&gt; events.splice(1, 0, this)
+        this.constructor.trigger.apply(events)
+      </para>
+    </section>
+    <section>
+      <title>Function invocation</title>
+      <para>
+        Functions can be invoked exactly as in JavaScript, with parens
+        <literal>()</literal>, <literal>apply()</literal> or
+        <literal>call()</literal>. However, like Ruby, CoffeeScript will
+        automatically call functions if they are invoked with at least
+        one argument.
+      </para>
+      <para>
+        a = "Howdy!"
+      </para>
+      <screen>
+alert a
+# Equivalent to:
+alert(a)
+
+alert inspect a
+# Equivalent to:
+alert(inspect(a))
+</screen>
+      <para>
+        Although parenthesis is optional, I'd recommend using it if it's
+        not immediately obvious what's being invoked, and with which
+        arguments. In the last example, with <literal>inspect</literal>,
+        I'd definitely recommend wrapping at least the
+        <literal>inspect</literal> invocation in parens.
+      </para>
+      <para>
+        alert inspect(a)
+      </para>
+      <para>
+        If you don't pass any arguments with an invocation, CoffeeScript
+        has no way of working out if you intend to invoke the function,
+        or just treat it like a variable. In this respect,
+        CoffeeScript's behavior differs from Ruby which always invokes
+        references to functions, and is more similar to Python's. This
+        has been the source of a few errors in my CoffeeScript programs,
+        so it's worth keeping an eye out for cases where you intend to
+        call a function without any arguments, and include parenthesis.
+      </para>
+    </section>
+    <section>
+      <title>Function context</title>
+      <para>
+        Context changes are rife within JavaScript, especially with
+        event callbacks, so CoffeeScript provides a few helpers to
+        manage this. One such helper is a variation on
+        <literal>-&gt;</literal>, the fat arrow function:
+        <literal>=&gt;</literal>
+      </para>
+      <para>
+        Using the fat arrow instead of the thin arrow ensures that the
+        function context will be bound to the local one. For example:
+      </para>
+      <para>
+        this.clickHandler = -&gt; alert "clicked"
+        element.addEventListener "click", (e) =&gt;
+        this.clickHandler(e)
+      </para>
+      <para>
+        The reason you might want to do this, is that callbacks from
+        <literal>addEventListener()</literal> are executed in the
+        context of the <literal>element</literal>, i.e.
+        <literal>this</literal> equals the element. If you want to keep
+        <literal>this</literal> equal to the local context, without
+        doing a <literal>self = this</literal> dance, fat arrows are the
+        way to go.
+      </para>
+      <para>
+        This binding idea is a similar concept to jQuery's
+        <ulink url="http://api.jquery.com/jQuery.proxy/"><literal>proxy()</literal></ulink>
+        or
+        <ulink url="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Function/bind">ES5's</ulink>
+        <literal>bind()</literal> functions.
+      </para>
+    </section>
+  </sect2>
+  <sect2>
+    <title>Object literals &amp; array definition</title>
+    <para>
+      Object literals can be specified exactly as in JavaScript, with a
+      pair of braces and key/value statements. However, like with
+      function invocation, CoffeeScript makes the braces optional. In
+      fact, you can also use indentation and new lines instead of comma
+      separation.
+    </para>
+    <para>
+      object1 = {one: 1, two: 2}
+    </para>
+    <screen>
+# Without braces
+object2 = one: 1, two: 2
+
+# Using new lines instead of commas
+object3 = 
+  one: 1
+  two: 2
+
+User.create(name: "John Smith")
+</screen>
+    <para>
+      Likewise, arrays can use whitespace instead of comma separators,
+      although the square brackets (<literal>[]</literal>) are still
+      required.
+    </para>
+    <para>
+      array1 = [1, 2, 3]
+    </para>
+    <screen>
+array2 = [
+  1
+  2
+  3
+]
+
+array3 = [1,2,3,]
+</screen>
+    <para>
+      As you can see in the example above, CoffeeScript has also
+      stripped the trailing comma in <literal>array3</literal>, another
+      common source of cross-browser errors.
+    </para>
+  </sect2>
+  <sect2>
+    <title>Flow control</title>
+    <para>
+      The convention of optional parentheses continues with
+      CoffeeScript's <literal>if</literal> and <literal>else</literal>
+      keywords.
+    </para>
+    <para>
+      if true == true "We're ok"
+    </para>
+    <screen>
+if true != true then "Panic"
+
+# Equivalent to:
+#  (1 &gt; 0) ? "Ok" : "Y2K!"
+if 1 &gt; 0 then "Ok" else "Y2K!"
+</screen>
+    <para>
+      As you can see above, if the <literal>if</literal> statement is on
+      one line, you'll need to use the <literal>then</literal> keyword,
+      so CoffeeScript knows when the block begins. Conditional operators
+      (<literal>?:</literal>) are not supported, instead you should use
+      a single line <literal>if/else</literal> statement.
+    </para>
+    <para>
+      CoffeeScript also includes a Ruby idiom of allowing suffixed
+      <literal>if</literal> statements.
+    </para>
+    <para>
+      alert "It's cold!" if heat &lt; 5
+    </para>
+    <para>
+      Instead of using the exclamation mark (<literal>!</literal>) for
+      negation, you can also use the <literal>not</literal> keyword -
+      which can sometimes make your code more readable as exclamation
+      marks can be easy to miss.
+    </para>
+    <para>
+      if not true then "Panic"
+    </para>
+    <para>
+      In the example above, we could also use the CoffeeScript's
+      <literal>unless</literal> statement, the opposite of
+      <literal>if</literal>.
+    </para>
+    <para>
+      unless true "Panic"
+    </para>
+    <para>
+      In a similar fashion to <literal>not</literal>, CoffeeScript also
+      introduces the <literal>is</literal> statement, which translates
+      to <literal>===</literal>.
+    </para>
+    <para>
+      if true is 1 "Type coercion fail!"
+    </para>
+    <para>
+      As an alternative to <literal>is not</literal>, you can use
+      <literal>isnt</literal>.
+    </para>
+    <screen>
+if true isnt true
+  alert "Opposite day!"
+</screen>
+    <para>
+      You may have noticed in the examples above, that CoffeeScript is
+      converting <literal>==</literal> operators into
+      <literal>===</literal> and <literal>!=</literal> into
+      <literal>!==</literal>. This is one of my favorite features to the
+      language, and yet one of the most simple. What's the reasoning
+      behind this? Well frankly JavaScript's type coercion is a bit odd,
+      and its equality operator coerces types in order to compare them,
+      leading to some confusing behaviors and the source of many bugs.
+      There's a longer discussing on this topic in chapter 7.
+    </para>
+  </sect2>
+  <sect2>
+    <title>String interpolation</title>
+    <para>
+      CoffeeScript brings Ruby style string interpolation to JavaScript.
+      Double quotes strings can contain <literal>#{}</literal> tags,
+      which contain expressions to be interpolated into the string.
+    </para>
+    <para>
+      favourite_color = "Blue. No, yel..." question =
+      "Bridgekeeper: What... is your favourite color? Galahad:
+      #{favourite_color} Bridgekeeper: Wrong! "
+    </para>
+    <para>
+      As you can see in the example above, multiline strings are also
+      allowed, without having to prefix each line with a
+      <literal>+</literal>:
+    </para>
+  </sect2>
+  <sect2>
+    <title>Loops and Comprehensions</title>
+    <para>
+      Array iteration in JavaScript has a rather archaic syntax,
+      reminiscent of an older language like C rather than a modern
+      object orientated one. The introduction of ES5 improved that
+      situation somewhat, with the <literal>forEach()</literal>
+      function, but that still requires a function call every iteration
+      and is therefore much slower. Again, CoffeeScript comes to the
+      rescue, with a beautiful syntax:
+    </para>
+    <para>
+      for name in ["Roger", "Roderick",
+      "Brian"] alert "Release #{name}"
+    </para>
+    <para>
+      If you need the current iteration index, just pass an extra
+      argument:
+    </para>
+    <para>
+      for name, i in ["Roger the pickpocket", "Roderick
+      the robber"] alert "#{i} - Release #{name}"
+    </para>
+    <para>
+      You can also iterate on one line, using the postfix form.
+    </para>
+    <para>
+      release prisoner for prisoner in ["Roger",
+      "Roderick", "Brian"]
+    </para>
+    <para>
+      As with Python comprehensions, you can filter them:
+    </para>
+    <para>
+      prisoners = ["Roger", "Roderick",
+      "Brian"] release prisoner for prisoner in prisoners when
+      prisoner[0] is "R"
+    </para>
+    <para>
+      You can also use comprehensions for iterating over properties in
+      objects. Instead of the <literal>in</literal> keyword, use
+      <literal>of</literal>.
+    </para>
+    <para>
+      names = sam: seaborn, donna: moss alert("#{first}
+      #{last}") for first, last of names
+    </para>
+    <para>
+      The only low-level loop that CoffeeScript exposes is the
+      <literal>while</literal> loop. This has similar behavior to the
+      <literal>while</literal> loop in pure JavaScript, but has the
+      added advantage that it returns an array of results, i.e. like the
+      <literal>Array.prototype.map()</literal> function.
+    </para>
+    <para>
+      num = 6 minstrel = while num -= 1 num + " Brave Sir Robin ran
+      away"
+    </para>
+  </sect2>
+  <sect2>
+    <title>Arrays</title>
+    <para>
+      CoffeeScript takes inspiration from Ruby when it comes to array
+      slicing by using ranges. Ranges are created by two numerical
+      values, the first and last positions in the range, separated by
+      <literal>..</literal> or <literal>...</literal>. If a range isn't
+      prefixed by anything, CoffeeScript expands it out into an array.
+    </para>
+    <para>
+      range = [1..5]
+    </para>
+    <para>
+      If, however, the range is specified immediately after a variable,
+      CoffeeScript converts it into a <literal>slice()</literal> method
+      call.
+    </para>
+    <para>
+      firstTwo = ["one", "two",
+      "three"][0..1]
+    </para>
+    <para>
+      In the example above, the range returns a new array, containing
+      only the first two elements of the original array. You can also
+      use the same syntax for replacing an array segment with another
+      array.
+    </para>
+    <para>
+      numbers = [0..9] numbers[3..5] = [-3, -4, -5]
+    </para>
+    <para>
+      What's neat, is that JavaScript allows you to call
+      <literal>slice()</literal> on strings too, so you can use ranges
+      with string to return a new subset of characters.
+    </para>
+    <para>
+      my = "my string"[0..2]
+    </para>
+    <para>
+      Checking to see if a value exists inside an array is always a bore
+      in JavaScript, particular as <literal>indexOf()</literal> doesn't
+      yet have full cross-browser support (IE, I'm talking about you).
+      CoffeeScript solves this with the <literal>in</literal> operator,
+      for example.
+    </para>
+    <para>
+      words = ["rattled", "roudy",
+      "rebbles", "ranks"] alert "Stop wagging
+      me" if "ranks" in words
+    </para>
+  </sect2>
+  <sect2>
+    <title>Aliases &amp; the Existential Operator</title>
+    <para>
+      CoffeeScript includes some useful aliases to save some typing. One
+      of which is <literal>@</literal>, which is an alias for
+      <literal>this</literal>.
+    </para>
+    <para>
+      @saviour = true
+    </para>
+    <para>
+      Another is <literal>::</literal>, which is an alias for
+      <literal>prototype</literal>
+    </para>
+    <para>
+      User::first = -&gt; @records[0]
+    </para>
+    <para>
+      Using <literal>if</literal> for <literal>null</literal> checks in
+      JavaScript is common, but has a few pitfalls in that empty strings
+      and zero are both coerced into <literal>false</literal>, which can
+      catch you out. CoffeeScript existential operator
+      <literal>?</literal> returns true unless a variable is
+      <literal>null</literal> or <literal>undefined</literal>, similar
+      to Ruby's <literal>nil?</literal>.
+    </para>
+    <para>
+      praise if brian?
+    </para>
+    <para>
+      You can also use it in place of the <literal>||</literal>
+      operator:
+    </para>
+    <para>
+      velocity = southern ? 40
+    </para>
+    <para>
+      If you're using a <literal>null</literal> check before accessing a
+      property, you can skip that by placing the existential operator
+      right before it. This is similar to Active Support's
+      <ulink url="http://guides.rubyonrails.org/active_support_core_extensions.html#try"><literal>try</literal></ulink>
+      method.
+    </para>
+    <para>
+      blackKnight.getLegs()?.kick()
+    </para>
+    <para>
+      Similarly you can check that a property is actually a function,
+      and callable, by placing the existential operator right before the
+      parens. If the property doesn't exist, or isn't a function, it
+      simply won't get called.
+    </para>
+    <para>
+      blackKnight.getLegs().kick?()
+    </para>
+  </sect2>
+</sect1>
+
+</chapter>

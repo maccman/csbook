@@ -1,0 +1,378 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" 
+"http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+<chapter id="common-coffeescript-idioms">
+ <title>Common CoffeeScript idioms</title>
+ <sect1>
+  
+  <para>
+    Every language has a set of idioms and practices, and CoffeeScript
+    is no exception. This chapter will explore those conventions, and
+    show you some JavaScript to CoffeeScript comparisons so you can get
+    a practical sense of the language.
+  </para>
+  <sect2>
+    <title>Each</title>
+    <para>
+      In JavaScript to iterate over every item in an array, we could
+      either use the newly added
+      <ulink url="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/array/foreach"><literal>forEach()</literal></ulink>
+      function, or an old C style <literal>for</literal> loop. If you're
+      planning to use some of JavaScript's latest features introduced in
+      ECMAScript 5, I advise you also include a
+      <ulink url="https://github.com/kriskowal/es5-shim">shim</ulink> in
+      the page to emulate support in older browsers.
+    </para>
+    <screen>
+for (var i=0; i &lt; array.length; i++)
+  myFunction(array[i]);
+
+array.forEach(function(item, i){
+  myFunction(item)
+});
+</screen>
+    <para>
+      Although the <literal>forEach()</literal> syntax is much more
+      succinct and readable, it suffers from the drawback that the
+      callback function will be invoked every iteration of the array,
+      and is therefore much slower than the equivalent
+      <literal>for</literal> loop. Let's see how it looks in
+      CoffeeScript.
+    </para>
+    <para>
+      myFunction(item) for item in array
+    </para>
+    <para>
+      It's a readable and concise syntax, I'm sure you'll agree, and
+      what's great is that it compiles to a <literal>for</literal> loop
+      behind the scenes. In other words CoffeeScript's syntax offers the
+      same expressiveness as <literal>forEach()</literal>, but without
+      the speed and shimming caveats.
+    </para>
+  </sect2>
+  <sect2>
+    <title>Map</title>
+    <para>
+      As with <literal>forEach()</literal>, ES5 also includes a native
+      map function that has a much more succinct syntax than the classic
+      <literal>for</literal> loop, namely
+      <ulink url="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/map"><literal>map()</literal></ulink>.
+      Unfortunately it suffers from much the same caveats that
+      <literal>forEach()</literal> does, its speed is greatly reduced
+      due to the function calls.
+    </para>
+    <screen>
+var result = []
+for (var i=0; i &lt; array.length; i++)
+  result.push(array[i].name)
+
+var result = array.map(function(item, i){
+  return item.name;
+});
+</screen>
+    <para>
+      As we covered in the syntax chapter, CoffeeScript's comprehensions
+      can be used to get the same behavior as <literal>map()</literal>.
+      Notice we're surrounding the comprehension with parens, which is
+      <emphasis role="strong">absolutely critical</emphasis> in ensuring
+      the comprehension returns what you'd expect, the mapped array.
+    </para>
+    <para>
+      result = (item.name for item in array)
+    </para>
+  </sect2>
+  <sect2>
+    <title>Select</title>
+    <para>
+      Again, ES5 has a utility function
+      <ulink url="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/array/filter"><literal>filter()</literal></ulink>
+      for reducing arrays:
+    </para>
+    <screen>
+var result = []
+for (var i=0; i &lt; array.length; i++)
+  if (array[i].name == "test")
+    result.push(array[i])
+
+result = array.filter(function(item, i){
+  return item.name == "test"
+});
+</screen>
+    <para>
+      CoffeeScript's basic syntax uses the <literal>when</literal>
+      keyword to filter items with a comparison. Behind the scenes a
+      <literal>for</literal> loop is generated. The whole execution is
+      performed in an anonymous function to ward against scope leakage
+      and variable conflict.
+    </para>
+    <para>
+      result = (item for item in array when item.name is
+      "test")
+    </para>
+    <para>
+      Don't forgot to include the parens, as otherwise
+      <literal>result</literal> will be the last item in the array.
+      CoffeeScript's comprehensions are so flexible that they allow you
+      to do powerful selections as in the following example:
+    </para>
+    <para>
+      passed = [] failed = [] (if score &gt; 60 then passed else
+      failed).push score for score in [49, 58, 76, 82, 88, 90]
+    </para>
+    <screen>
+# Or
+passed = (score for score in scores when score &gt; 60)
+</screen>
+    <para>
+      If comprehensions get too long, you can split them onto multiple
+      lines.
+    </para>
+    <para>
+      passed = [] failed = [] for score in [49, 58, 76, 82, 88, 90] (if
+      score &gt; 60 then passed else failed).push score
+    </para>
+  </sect2>
+  <sect2>
+    <title>Includes</title>
+    <para>
+      Checking to see if a value is inside an array is typically done
+      with <literal>indexOf()</literal>, which rather mind-bogglingly
+      still requires a shim, as Internet Explorer hasn't implemented it.
+    </para>
+    <screen>
+var included = (array.indexOf("test") != -1)
+</screen>
+    <para>
+      CoffeeScript has a neat alternative to this which Pythonists may
+      recognize, namely <literal>in</literal>.
+    </para>
+    <para>
+      included = "test" in array
+    </para>
+    <para>
+      Behind the scenes, CoffeeScript is using
+      <literal>Array.prototype.indexOf()</literal>, and shimming if
+      necessary, to detect if the value is inside the array.
+      Unfortunately this means the same <literal>in</literal> syntax
+      won't work for strings. We need to revert back to using
+      <literal>indexOf()</literal> and testing if the result is
+      negative:
+    </para>
+    <para>
+      included = "a long test
+      string".indexOf("test") isnt -1
+    </para>
+    <para>
+      Or even better, hijack the bitwise operator so we don't have to do
+      a <literal>-1</literal> comparison.
+    </para>
+    <para>
+      string = "a long test string" included = !!~
+      string.indexOf "test"
+    </para>
+  </sect2>
+  <sect2>
+    <title>Property iteration</title>
+    <para>
+      To iterate over a bunch of properties in JavaScript, you'd use the
+      <literal>in</literal> operator, for example:
+    </para>
+    <screen>
+var object = {one: 1, two: 2}
+for(var key in object) alert(key + " = " + object[key])
+</screen>
+    <para>
+      However, as you've seen in the previous section, CoffeeScript has
+      already reserved <literal>in</literal> for use with arrays.
+      Instead, the operator has been renamed <literal>of</literal>, and
+      can be used like thus:
+    </para>
+    <para>
+      object = {one: 1, two: 2} alert("#{key} = #{value}") for
+      key, value of object
+    </para>
+    <para>
+      As you can see, you can specify variables for both the property
+      name, and its value; rather convenient.
+    </para>
+  </sect2>
+  <sect2>
+    <title>Min/Max</title>
+    <para>
+      This technique is not specific to CoffeeScript, but I thought it
+      useful to demonstrate anyway. <literal>Math.max</literal> and
+      <literal>Math.min</literal> take multiple arguments, so you can
+      easily use <literal>...</literal> to pass an array to them,
+      retrieving the maximum and minimum values in the array.
+    </para>
+    <para>
+      Math.max [14, 35, -7, 46, 98]... # 98 Math.min [14, 35, -7, 46,
+      98]... # -7
+    </para>
+    <para>
+      It's worth noting that this trick will fail with really large
+      arrays as browsers have a limitation on the amount of arguments
+      you can pass to functions.
+    </para>
+  </sect2>
+  <sect2>
+    <title>Multiple arguments</title>
+    <para>
+      In the <literal>Math.max</literal> example above, we're using
+      <literal>...</literal> to de-structure the array and passing it as
+      multiple arguments to <literal>max</literal>. Behind the scenes,
+      CoffeeScript is converting the function call to use
+      <literal>apply()</literal>, ensuring the array is passed as
+      multiple arguments to <literal>max</literal>. We can use this
+      feature in other ways too, such as proxying function calls:
+    </para>
+    <para>
+      Log = log: -&gt; console?.log(arguments...)
+    </para>
+    <para>
+      Or you can alter the arguments before they're passed onwards:
+    </para>
+    <para>
+      Log = logPrefix: "(App)"
+    </para>
+    <screen>
+  log: (args...) -&gt;
+    args.unshift(@logPrefix) if @logPrefix
+    console?.log(args...)
+</screen>
+    <para>
+      Bear in mind though, that CoffeeScript will automatically set the
+      function invocation context to the object the function is being
+      invoked on. In the example above, that would be
+      <literal>console</literal>. If you want to set the context
+      specifically, then you'll need to call <literal>apply()</literal>
+      manually.
+    </para>
+  </sect2>
+  <sect2>
+    <title>And/or</title>
+    <para>
+      CoffeeScript style guides indicates that <literal>or</literal> is
+      preferred over <literal>||</literal>, and <literal>and</literal>
+      is preferred over <literal>&amp;&amp;</literal>. I can see why, as
+      the former is somewhat more readable. Nevertheless, the two styles
+      have identical results.
+    </para>
+    <para>
+      This preference over more English style code also applies to using
+      <literal>is</literal> over <literal>==</literal> and
+      <literal>isnt</literal> over <literal>!=</literal>.
+    </para>
+    <para>
+      string = "migrating coconuts" string == string # true
+      string is string # true
+    </para>
+    <para>
+      One extremely nice addition to CoffeeScript is the 'or equals',
+      which is a pattern Rubyists may recognize as
+      <literal>||=</literal>:
+    </para>
+    <para>
+      hash or= {}
+    </para>
+    <para>
+      If hash evaluates to <literal>false</literal>, then it's set to an
+      empty object. It's important to note here that this expression
+      also recognizes <literal>0</literal>,
+      <literal>""</literal> and <literal>null</literal> as
+      false. If that isn't your intention, you'll need to use
+      CoffeeScript's existential operator, which only gets activated if
+      <literal>hash</literal> is <literal>undefined</literal> or
+      <literal>null</literal>:
+    </para>
+    <para>
+      hash ?= {}
+    </para>
+  </sect2>
+  <sect2>
+    <title>Destructuring assignments</title>
+    <para>
+      Destructuring assignments can be used with any depth of array and
+      object nesting, to help pull out deeply nested properties.
+    </para>
+    <para>
+      someObject = { a: 'value for a', b: 'value for b' } { a, b } =
+      someObject console.log "a is '#{a}', b is '#{b}'"
+    </para>
+    <para>
+      This is especially useful in Node applications when requiring
+      modules:
+    </para>
+    <para>
+      {join, resolve} = require('path')
+    </para>
+    <screen>
+join('/Users', 'Alex')
+</screen>
+  </sect2>
+  <sect2>
+    <title>External libraries</title>
+    <para>
+      Using external libraries is exactly the same as calling functions
+      on CoffeeScript libraries; since at the end of the day everything
+      is compiled down to JavaScript. Using CoffeeScript with
+      <ulink url="http://jquery.com">jQuery</ulink> is especially
+      elegant, due to the amount of callbacks in jQuery's API.
+    </para>
+  </sect2>
+</sect1>
+<sect1>
+  <title>Use local alias</title>
+  <screen>
+$ = jQuery
+
+$ -&gt;
+  # DOMContentLoaded
+  $(".el").click -&gt;
+    alert("Clicked!")
+</screen>
+  <para>
+    Since all of CoffeeScript's output is wrapped in an anonymous
+    function, we can set a local <literal>$</literal> alias for
+    <literal>jQuery</literal>. This will make sure that even if jQuery's
+    no conflict mode is enabled and the <literal>$</literal> re-defined,
+    our script will still function as intended.
+  </para>
+  <sect2>
+    <title>Private variables</title>
+    <para>
+      The <literal>do</literal> keyword in CoffeeScript lets us execute
+      functions immediately, a great way of encapsulating scope &amp;
+      protecting variables. In the example below, we're defining a
+      variable <literal>classToType</literal> in the context of an
+      anonymous function which's immediately called by
+      <literal>do</literal>. That anonymous function returns a second
+      anonymous function, which will be ultimate value of
+      <literal>type</literal>. Since <literal>classToType</literal> is
+      defined in a context that no reference is kept to, it can't be
+      accessed outside that scope.
+    </para>
+  </sect2>
+</sect1>
+<sect1>
+  <title>Execute function immediately</title>
+  <screen>
+type = do -&gt;
+  classToType = {}
+  for name in "Boolean Number String Function Array Date RegExp Undefined Null".split(" ")
+    classToType["[object " + name + "]"] = name.toLowerCase()
+
+  # Return a function
+  (obj) -&gt;
+    strType = Object::toString.call(obj)
+    classToType[strType] or "object"
+</screen>
+  <para>
+    In other words, <literal>classToType</literal> is completely
+    private, and can never again be referenced outside the executing
+    anonymous function. This pattern is a great way of encapsulating
+    scope and hiding variables.
+  </para>
+</sect1>
+
+</chapter>

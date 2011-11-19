@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" 
+"http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+<chapter id="classes">
+ <title>Classes</title>
+ <sect1>
+  
+  <para>
+    Classes in JavaScript seem to have the kind of effect that cloves of
+    garlic have to Dracula for some purists; although, let's be honest,
+    if you're that way inclined, you're unlikely to be reading a book on
+    CoffeeScript. However, it turns out that classes are just as damn
+    useful in JavaScript as they are in other languages and CoffeeScript
+    provides a great abstraction.
+  </para>
+  <para>
+    Behind the scenes, CoffeeScript is using JavaScript's native
+    prototype to create classes; adding a bit of syntactic sugar for
+    static property inheritance and context persistence. As a developer
+    all that's exposed to you is the <literal>class</literal> keyword.
+  </para>
+  <para>
+    class Animal
+  </para>
+  <para>
+    In the example above, <literal>Animal</literal> is the name of the
+    class, and also the name of the resultant variable that you can use
+    to create instances. Behind the scenes CoffeeScript is using
+    constructor functions, which means you can instantiate classes using
+    the <literal>new</literal> operator.
+  </para>
+  <para>
+    animal = new Animal
+  </para>
+  <para>
+    Defining constructors (functions that get invoked upon
+    instantiation) is simple, just use a function named
+    <literal>constructor</literal>. This is akin to using Ruby's
+    <literal>initialize</literal> or Python's
+    <literal>__init__</literal>.
+  </para>
+  <para>
+    class Animal constructor: (name) -&gt; @name = name
+  </para>
+  <para>
+    In fact, CoffeeScript provides a shorthand for the common pattern of
+    setting instance properties. By prefixing argument's with
+    <literal>@</literal>, CoffeeScript will automatically set the
+    arguments as instance properties in the constructor. Indeed, this
+    shorthand will also work for normal functions outside classes. The
+    example below is equivalent to the last example, where we set the
+    instance properties manually.
+  </para>
+  <para>
+    class Animal constructor: (@name) -&gt;
+  </para>
+  <para>
+    As you'd expect, any arguments passed on instantiation are proxied
+    to the constructor function.
+  </para>
+  <para>
+    animal = new Animal("Parrot") alert "Animal is a
+    #{animal.name}"
+  </para>
+  <sect2>
+    <title>Instance properties</title>
+    <para>
+      Adding additional instance properties to a class is very
+      straightforward, it's exactly the syntax as adding properties onto
+      an object. Just make sure properties are indented correctly inside
+      the class body.
+    </para>
+    <para>
+      class Animal price: 5
+    </para>
+    <screen>
+  sell: (customer) -&gt;
+
+animal = new Animal
+animal.sell(new Customer)
+</screen>
+    <para>
+      Context changes are rife within JavaScript, and earlier in the
+      Syntax chapter we talked about how CoffeeScript can lock the value
+      of <literal>this</literal> to a particular context using a fat
+      arrow function: <literal>=&gt;</literal>. This ensures that
+      whatever context a function is called under, it'll always execute
+      inside the context it was created in. CoffeeScript has extended
+      support for fat arrows to classes, so by using a fat arrow for an
+      instance method you'll ensure that it's invoked in the correct
+      context, and that <literal>this</literal> is always equal to the
+      current instance.
+    </para>
+    <para>
+      class Animal price: 5
+    </para>
+    <screen>
+  sell: =&gt;
+    alert "Give me #{@price} shillings!"
+
+animal = new Animal
+$("#sell").click(animal.sell)
+</screen>
+    <para>
+      As demonstrated in the example above, this is especially useful in
+      event callbacks. Normally the <literal>sell()</literal> function
+      would be invoked in the context of the <literal>#sell</literal>
+      element. However, by using fat arrows for
+      <literal>sell()</literal>, we're ensuring the correct context is
+      being maintained, and that <literal>this.price</literal> equals
+      <literal>5</literal>.
+    </para>
+  </sect2>
+  <sect2>
+    <title>Static properties</title>
+    <para>
+      How about defining class (i.e. static) properties? Well, it turns
+      out that inside a class definition, <literal>this</literal> refers
+      to the class object. In other words you can set class properties
+      by setting them directly on <literal>this</literal>.
+    </para>
+    <para>
+      class Animal this.find = (name) -&gt;
+    </para>
+    <screen>
+Animal.find("Parrot")
+</screen>
+    <para>
+      In fact, as you may remember, CoffeeScript aliases
+      <literal>this</literal> to <literal>@</literal>, which lets you
+      write static properties even more succinctly:
+    </para>
+    <para>
+      class Animal @find: (name) -&gt;
+    </para>
+    <screen>
+Animal.find("Parrot")
+</screen>
+  </sect2>
+  <sect2>
+    <title>Inheritance &amp; Super</title>
+    <para>
+      It wouldn't be a proper class implementation without some form of
+      inheritance, and CoffeeScript doesn't disappoint. You can inherit
+      from another class by using the <literal>extends</literal>
+      keyword. In the example below, <literal>Parrot</literal> extends
+      from <literal>Animal</literal>, inheriting all of its instance
+      properties, such as <literal>alive()</literal>
+    </para>
+    <para>
+      class Animal constructor: (@name) -&gt;
+    </para>
+    <screen>
+  alive: -&gt;
+    false
+
+class Parrot extends Animal
+  constructor: -&gt;
+    super("Parrot")
+
+  dead: -&gt;
+    not @alive()
+</screen>
+    <para>
+      You'll notice that in the example above, we're using the
+      <literal>super()</literal> keyword. Behind the scenes, this is
+      translated into a function call on the class' parent prototype,
+      invoked in the current context. In this case, it'll be
+      <literal>Parrot.__super__.constructor.call(this, "Parrot");</literal>.
+      In practice, this will have exactly the same effect as invoking
+      <literal>super</literal> in Ruby or Python, invoking the
+      overridden inherited function.
+    </para>
+    <para>
+      Unless you override the <literal>constructor</literal>, by default
+      CoffeeScript will invoke the parent's constructor when instances
+      are created.
+    </para>
+    <para>
+      CoffeeScript uses prototypal inheritance to automatically inherit
+      all of a class's instance properties. This ensures that classes
+      are dynamic; even if you add properties to a parent class after a
+      child has been created, the property will still be propagated to
+      all of its inherited children.
+    </para>
+    <para>
+      class Animal constructor: (@name) -&gt;
+    </para>
+    <screen>
+class Parrot extends Animal
+
+Animal::rip = true
+
+parrot = new Parrot("Macaw")
+alert("This parrot is no more") if parrot.rip
+</screen>
+    <para>
+      It's worth pointing out though that static properties are copied
+      to subclasses, rather than inherited using prototype as instance
+      properties are. This is due to implementation details with
+      JavaScript's prototypal architecture, and is a difficult problem
+      to work around.
+    </para>
+  </sect2>
+  <sect2>
+    <title>Mixins</title>
+    <para>
+      <ulink url="http://en.wikipedia.org/wiki/Mixin">Mixins</ulink> are
+      not something supported natively by CoffeeScript, for the good
+      reason that they can be trivially implemented yourself. For
+      example, here's two functions, <literal>extend()</literal> and
+      <literal>include()</literal> that'll add class and instance
+      properties respectively to a class.
+    </para>
+    <para>
+      extend = (obj, mixin) -&gt; obj[name] = method for name, method of
+      mixin<literallayout></literallayout> obj
+    </para>
+    <screen>
+include = (klass, mixin) -&gt;
+  extend klass.prototype, mixin
+
+# Usage
+include Parrot,
+  isDeceased: true
+
+(new Parrot).isDeceased
+</screen>
+    <para>
+      Mixins are a great pattern for sharing common logic between
+      modules when inheritance is not suited. The advantage of mixins,
+      is that you can include multiple ones, compared to inheritance
+      where only one class can be inherited from.
+    </para>
+  </sect2>
+  <sect2>
+    <title>Extending classes</title>
+    <para>
+      Mixins are pretty neat, but they're not very object orientated.
+      Instead, let's integrate mixins into CoffeeScript's classes. We're
+      going to define a class called <literal>Module</literal> that we
+      can inherit from for mixin support. <literal>Module</literal> will
+      have two static functions, <literal>@extend()</literal> and
+      <literal>@include()</literal> which we can use for extending the
+      class with static and instance properties respectively.
+    </para>
+    <para>
+      moduleKeywords = ['extended', 'included']
+    </para>
+    <screen>
+class Module
+  @extend: (obj) -&gt;
+    for key, value of obj when key not in moduleKeywords
+      @[key] = value
+
+    obj.extended?.apply(@)
+    this
+
+  @include: (obj) -&gt;
+    for key, value of obj when key not in moduleKeywords
+      # Assign properties to the prototype
+      @::[key] = value
+
+    obj.included?.apply(@)
+    this
+</screen>
+    <para>
+      The little dance around the <literal>moduleKeywords</literal>
+      variable is to ensure we have callback support when mixins extend
+      a class. Let's take a look at our <literal>Module</literal> class
+      in action:
+    </para>
+    <para>
+      classProperties = find: (id) -&gt; create: (attrs) -&gt;
+    </para>
+    <screen>
+instanceProperties =
+  save: -&gt; 
+
+class User extends Module
+  @extend classProperties
+  @include instanceProperties
+
+# Usage:
+user = User.find(1)
+
+user = new User
+user.save()
+</screen>
+    <para>
+      As you can see, we've added some static properties,
+      <literal>find()</literal> and <literal>create()</literal> to the
+      <literal>User</literal> class, as well as some instance
+      properties, <literal>save()</literal>. Since we've got callbacks
+      whenever modules are extended, we can shortcut the process of
+      applying both static and instance properties:
+    </para>
+    <para>
+      ORM = find: (id) -&gt; create: (attrs) -&gt; extended: -&gt;
+      @include save: -&gt;
+    </para>
+    <screen>
+class User extends Module
+  @extend ORM
+</screen>
+    <para>
+      Super simple and elegant!
+    </para>
+  </sect2>
+</sect1>
+
+</chapter>
