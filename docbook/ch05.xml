@@ -156,7 +156,6 @@ public/index.html
       following script:
     </para>
     <screen>
-
 require("coffee-script")
 stitch  = require("stitch")
 express = require("express")
@@ -223,7 +222,6 @@ coffee index.coffee
       that'll bootstrap our application.
     </para>
     <screen>
-
 module.exports = App =
   init: -&gt;
     # Bootstrap the app
@@ -264,7 +262,6 @@ module.exports = App =
       it from <literal>app.coffee</literal>:
     </para>
     <screen>
-
 # app/models/user.coffee
 module.exports = class User
   constructor: (@name) -&gt;
@@ -377,7 +374,6 @@ User = require("models/user")
       execute it passing any data required.
     </para>
     <screen>
-
 require("views/users/show")(new User("Brian"))
 </screen>
     <para>
@@ -386,7 +382,6 @@ require("views/users/show")(new User("Brian"))
       document loads:
     </para>
     <screen>
-
 User = require("models/user")
 
 App =

@@ -50,7 +50,6 @@ coffee --compile --output lib src
       Add the following to the <literal>Cakefile</literal>:
     </para>
     <screen>
-
 fs = require 'fs'
 
 {print} = require 'sys'
@@ -78,7 +77,6 @@ task 'build', 'Build lib/ from src/', -&gt;
       <literal>lib</literal> directory as per usual from your HTML:
     </para>
     <screen>
-
 &lt;script src="lib/app.js" type="text/javascript" charset="utf-8"&gt;&lt;/script&gt;      
 </screen>
     <para>
@@ -90,7 +88,6 @@ task 'build', 'Build lib/ from src/', -&gt;
       another task using that:
     </para>
     <screen>
-
 task 'watch', 'Watch src/ for changes', -&gt;
   coffee = spawn 'coffee', ['-w', '-c', '-o', 'lib', 'src']
   coffee.stderr.on 'data', (data) -&gt;
@@ -106,7 +103,6 @@ task 'watch', 'Watch src/ for changes', -&gt;
       changes.
     </para>
     <screen>
-
 task 'open', 'Open index.html', -&gt;
   # First open, then watch
   spawn 'open', 'index.html'
@@ -118,7 +114,6 @@ task 'open', 'Open index.html', -&gt;
       long name and description.
     </para>
     <screen>
-
 option '-o', '--output [DIR]', 'output dir'
 
 task 'build', 'Build lib/ from src/', -&gt;

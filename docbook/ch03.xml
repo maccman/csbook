@@ -40,7 +40,6 @@ array.forEach(function(item, i){
       CoffeeScript.
     </para>
     <screen>
-
 myFunction(item) for item in array
 </screen>
     <para>
@@ -79,7 +78,6 @@ var result = array.map(function(item, i){
       the comprehension returns what you'd expect, the mapped array.
     </para>
     <screen>
-
 result = (item.name for item in array)
 </screen>
   </sect1>
@@ -108,7 +106,6 @@ result = array.filter(function(item, i){
       and variable conflict.
     </para>
     <screen>
-
 result = (item for item in array when item.name is "test")
 </screen>
     <para>
@@ -118,7 +115,6 @@ result = (item for item in array when item.name is "test")
       to do powerful selections as in the following example:
     </para>
     <screen>
-
 passed = []
 failed = []
 (if score &gt; 60 then passed else failed).push score for score in [49, 58, 76, 82, 88, 90]
@@ -131,7 +127,6 @@ passed = (score for score in scores when score &gt; 60)
       lines.
     </para>
     <screen>
-
 passed = []
 failed = []
 for score in [49, 58, 76, 82, 88, 90]
@@ -154,7 +149,6 @@ var included = (array.indexOf("test") != -1)
     </para>
     <screen>
 
-
 included = "test" in array
 </screen>
     <para>
@@ -167,7 +161,6 @@ included = "test" in array
       negative:
     </para>
     <screen>
-
 included = "a long test string".indexOf("test") isnt -1
 </screen>
     <para>
@@ -175,7 +168,6 @@ included = "a long test string".indexOf("test") isnt -1
       a <literal>-1</literal> comparison.
     </para>
     <screen>
-
 string   = "a long test string"
 included = !!~ string.indexOf "test"
 </screen>
@@ -197,7 +189,7 @@ for(var key in object) alert(key + " = " + object[key])
       can be used like thus:
     </para>
     <screen>
-    
+//= CoffeeScript    
 object = {one: 1, two: 2}
 alert("#{key} = #{value}") for key, value of object
 </screen>
@@ -216,7 +208,6 @@ alert("#{key} = #{value}") for key, value of object
       retrieving the maximum and minimum values in the array.
     </para>
     <screen>
-
 Math.max [14, 35, -7, 46, 98]... # 98
 Math.min [14, 35, -7, 46, 98]... # -7
 </screen>
@@ -238,7 +229,6 @@ Math.min [14, 35, -7, 46, 98]... # -7
       feature in other ways too, such as proxying function calls:
     </para>
     <screen>
-
 Log =
   log: -&gt;
     console?.log(arguments...)
@@ -247,7 +237,6 @@ Log =
       Or you can alter the arguments before they're passed onwards:
     </para>
     <screen>
-
 Log =
   logPrefix: "(App)"
 
@@ -279,7 +268,6 @@ Log =
       <literal>isnt</literal> over <literal>!=</literal>.
     </para>
     <screen>
-
 string = "migrating coconuts"
 string == string # true
 string is string # true
@@ -290,7 +278,6 @@ string is string # true
       <literal>||=</literal>:
     </para>
     <screen>
-
 hash or= {}
 </screen>
     <para>
@@ -304,7 +291,6 @@ hash or= {}
       <literal>null</literal>:
     </para>
     <screen>
-
 hash ?= {}
 </screen>
   </sect1>
@@ -315,7 +301,6 @@ hash ?= {}
       object nesting, to help pull out deeply nested properties.
     </para>
     <screen>
-
 someObject = { a: 'value for a', b: 'value for b' }
 { a, b } = someObject
 console.log "a is '#{a}', b is '#{b}'"
@@ -325,7 +310,6 @@ console.log "a is '#{a}', b is '#{b}'"
       modules:
     </para>
     <screen>
-
 {join, resolve} = require('path')
 
 join('/Users', 'Alex')
@@ -341,7 +325,6 @@ join('/Users', 'Alex')
       elegant, due to the amount of callbacks in jQuery's API.
     </para>
     <screen>
-
 # Use local alias
 $ = jQuery
 
@@ -373,7 +356,6 @@ $ -&gt;
       accessed outside that scope.
     </para>
     <screen>
-
 # Execute function immediately
 type = do -&gt;
   classToType = {}
