@@ -49,7 +49,7 @@
     the generated JavaScript. They're enclosed by three hash characters.
   </para>
   <screen>
-//= CoffeeScript
+
 ###
   A multiline comment, perhaps a LICENSE.
 ###
@@ -76,7 +76,7 @@
       take this simple variable assignment in CoffeeScript:
     </para>
     <screen>
-//= CoffeeScript
+
 myVariable = "test"
 </screen>
     <para>
@@ -101,7 +101,7 @@ myVariable = "test"
       following pattern:
     </para>
     <screen>
-//= CoffeeScript
+
 exports = this
 exports.MyVariable = "foo-bar"
 </screen>
@@ -129,7 +129,7 @@ exports.MyVariable = "foo-bar"
       With that in mind, let's take a look at an example:
     </para>
     <screen>
-//= CoffeeScript
+
 func = -&gt; "bar"
 </screen>
     <para>
@@ -144,7 +144,7 @@ func = -&gt; "bar"
       lines, as long as we indent the function body properly.
     </para>
     <screen>
-//= CoffeeScript
+
 func = -&gt;
   # An extra line
   "bar"
@@ -156,14 +156,14 @@ func = -&gt;
         that by specifying arguments in parentheses before the arrow.
       </para>
       <screen>
-//= CoffeeScript
+
 times = (a, b) -&gt; a * b
 </screen>
       <para>
         CoffeeScript supports default arguments too, for example:
       </para>
       <screen>
-//= CoffeeScript
+
 times = (a = 1, b = 2) -&gt; a * b
 </screen>
       <para>
@@ -171,7 +171,7 @@ times = (a = 1, b = 2) -&gt; a * b
         <literal>...</literal>
       </para>
       <screen>
-//= CoffeeScript
+
 sum = (nums...) -&gt; 
   result = 0
   nums.forEach (n) -&gt; result += n
@@ -187,7 +187,7 @@ sum = (nums...) -&gt;
         it.
       </para>
       <screen>
-//= CoffeeScript
+
 trigger = (events...) -&gt;
   events.splice(1, 0, this)
   this.constructor.trigger.apply(events)
@@ -203,7 +203,7 @@ trigger = (events...) -&gt;
         one argument.
       </para>
       <screen>
-//= CoffeeScript
+
 a = "Howdy!"
 
 alert a
@@ -222,7 +222,7 @@ alert(inspect(a))
         <literal>inspect</literal> invocation in parens.
       </para>
       <screen>
-//= CoffeeScript
+
 alert inspect(a)
 </screen>
       <para>
@@ -250,7 +250,7 @@ alert inspect(a)
         function context will be bound to the local one. For example:
       </para>
       <screen>
-//= CoffeeScript
+
 this.clickHandler = -&gt; alert "clicked"
 element.addEventListener "click", (e) =&gt; this.clickHandler(e)
 </screen>
@@ -282,7 +282,7 @@ element.addEventListener "click", (e) =&gt; this.clickHandler(e)
       separation.
     </para>
     <screen>
-//= CoffeeScript
+
 object1 = {one: 1, two: 2}
 
 # Without braces
@@ -301,7 +301,7 @@ User.create(name: "John Smith")
       required.
     </para>
     <screen>
-//= CoffeeScript
+
 array1 = [1, 2, 3]
 
 array2 = [
@@ -326,7 +326,7 @@ array3 = [1,2,3,]
       keywords.
     </para>
     <screen>
-//= CoffeeScript
+
 if true == true
   "We're ok"
 
@@ -348,7 +348,7 @@ if 1 &gt; 0 then "Ok" else "Y2K!"
       <literal>if</literal> statements.
     </para>
     <screen>
-//= CoffeeScript
+
 alert "It's cold!" if heat &lt; 5
 </screen>
     <para>
@@ -358,7 +358,7 @@ alert "It's cold!" if heat &lt; 5
       marks can be easy to miss.
     </para>
     <screen>
-//= CoffeeScript
+
 if not true then "Panic"
 </screen>
     <para>
@@ -367,7 +367,7 @@ if not true then "Panic"
       <literal>if</literal>.
     </para>
     <screen>
-//= CoffeeScript
+
 unless true
   "Panic"
 </screen>
@@ -377,7 +377,7 @@ unless true
       to <literal>===</literal>.
     </para>
     <screen>
-//= CoffeeScript
+
 if true is 1
   "Type coercion fail!"
 </screen>
@@ -409,7 +409,7 @@ if true isnt true
       which contain expressions to be interpolated into the string.
     </para>
     <screen>
-//= CoffeeScript
+
 favourite_color = "Blue. No, yel..."
 question = "Bridgekeeper: What... is your favourite color?
             Galahad: #{favourite_color}
@@ -434,7 +434,7 @@ question = "Bridgekeeper: What... is your favourite color?
       rescue, with a beautiful syntax:
     </para>
     <screen>
-//= CoffeeScript
+
 for name in ["Roger", "Roderick", "Brian"]
   alert "Release #{name}"
 </screen>
@@ -443,7 +443,7 @@ for name in ["Roger", "Roderick", "Brian"]
       argument:
     </para>
     <screen>
-//= CoffeeScript
+
 for name, i in ["Roger the pickpocket", "Roderick the robber"]
   alert "#{i} - Release #{name}"
 </screen>
@@ -451,14 +451,14 @@ for name, i in ["Roger the pickpocket", "Roderick the robber"]
       You can also iterate on one line, using the postfix form.
     </para>
     <screen>
-//= CoffeeScript
+
 release prisoner for prisoner in ["Roger", "Roderick", "Brian"]
 </screen>
     <para>
       As with Python comprehensions, you can filter them:
     </para>
     <screen>
-//= CoffeeScript
+
 prisoners = ["Roger", "Roderick", "Brian"]
 release prisoner for prisoner in prisoners when prisoner[0] is "R" 
 </screen>
@@ -468,7 +468,7 @@ release prisoner for prisoner in prisoners when prisoner[0] is "R"
       <literal>of</literal>.
     </para>
     <screen>
-//= CoffeeScript
+
 names = sam: seaborn, donna: moss
 alert("#{first} #{last}") for first, last of names
 </screen>
@@ -480,7 +480,7 @@ alert("#{first} #{last}") for first, last of names
       <literal>Array.prototype.map()</literal> function.
     </para>
     <screen>
-//= CoffeeScript
+
 num = 6
 minstrel = while num -= 1
   num + " Brave Sir Robin ran away"
@@ -496,7 +496,7 @@ minstrel = while num -= 1
       prefixed by anything, CoffeeScript expands it out into an array.
     </para>
     <screen>
-//= CoffeeScript
+
 range = [1..5]
 </screen>
     <para>
@@ -505,7 +505,7 @@ range = [1..5]
       call.
     </para>
     <screen>
-//= CoffeeScript
+
 firstTwo = ["one", "two", "three"][0..1]
 </screen>
     <para>
@@ -515,7 +515,7 @@ firstTwo = ["one", "two", "three"][0..1]
       array.
     </para>
     <screen>
-//= CoffeeScript
+
 numbers = [0..9]
 numbers[3..5] = [-3, -4, -5]
 </screen>
@@ -525,7 +525,7 @@ numbers[3..5] = [-3, -4, -5]
       with string to return a new subset of characters.
     </para>
     <screen>
-//= CoffeeScript
+
 my = "my string"[0..2]
 </screen>
     <para>
@@ -536,7 +536,7 @@ my = "my string"[0..2]
       for example.
     </para>
     <screen>
-//= CoffeeScript
+
 words = ["rattled", "roudy", "rebbles", "ranks"]
 alert "Stop wagging me" if "ranks" in words 
 </screen>
@@ -549,7 +549,7 @@ alert "Stop wagging me" if "ranks" in words
       <literal>this</literal>.
     </para>
     <screen>
-//= CoffeeScript
+
 @saviour = true
 </screen>
     <para>
@@ -557,7 +557,7 @@ alert "Stop wagging me" if "ranks" in words
       <literal>prototype</literal>
     </para>
     <screen>
-//= CoffeeScript
+
 User::first = -&gt; @records[0]
 </screen>
     <para>
@@ -570,7 +570,7 @@ User::first = -&gt; @records[0]
       to Ruby's <literal>nil?</literal>.
     </para>
     <screen>
-//= CoffeeScript
+
 praise if brian?
 </screen>
     <para>
@@ -578,7 +578,7 @@ praise if brian?
       operator:
     </para>
     <screen>
-//= CoffeeScript
+
 velocity = southern ? 40
 </screen>
     <para>
@@ -589,7 +589,7 @@ velocity = southern ? 40
       method.
     </para>
     <screen>
-//= CoffeeScript
+
 blackKnight.getLegs()?.kick()
 </screen>
     <para>
@@ -599,7 +599,7 @@ blackKnight.getLegs()?.kick()
       simply won't get called.
     </para>
     <screen>
-//= CoffeeScript
+
 blackKnight.getLegs().kick?()
 </screen>
   </sect1>

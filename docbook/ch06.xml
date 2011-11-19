@@ -108,7 +108,7 @@ var groupsCount = 2;   // Global
       assignment:
     </para>
     <screen>
-//= CoffeeScript
+
 outerScope = true
 do -&gt;
   innerScope = true
@@ -135,7 +135,7 @@ outerScope = true;
       <literal>package</literal> variable in a Class function:
     </para>
     <screen>
-//= CoffeeScript
+
 package = require('./package')
 
 class Hem
@@ -151,7 +151,7 @@ class Hem
       you need to set them as properties on <literal>window</literal>:
     </para>
     <screen>
-//= CoffeeScript
+
   class window.Asset
     constructor: -&gt;
 </screen>
@@ -215,7 +215,7 @@ function() {}(window.options || {}).property
       CoffeeScript might look like this:
     </para>
     <screen>
-//= CoffeeScript
+
 myObj = {
   delete: "I am a keyword!"
 }
@@ -244,7 +244,7 @@ myObj["class"] = function() {};
       some depth.
     </para>
     <screen>
-//= CoffeeScript
+
 ""           ==   "0"           // false
 0            ==   ""            // true
 0            ==   "0"           // true
@@ -284,7 +284,7 @@ null         ==   undefined     // true
       <literal>false</literal>
     </para>
     <screen>
-//= CoffeeScript
+
 alert("Empty Array")  unless [].length
 alert("Empty String") unless ""
 alert("Number 0")     unless 0
@@ -295,7 +295,7 @@ alert("Number 0")     unless 0
       existential operator:
     </para>
     <screen>
-//= CoffeeScript
+
 alert("This is not called") unless ""?
 </screen>
     <para>
@@ -430,7 +430,7 @@ wem();
       safer alternatives (such as square brackets).
     </para>
     <screen>
-//= CoffeeScript
+
 # Don't do this
 model = eval(modelName)
 
@@ -447,7 +447,7 @@ model = window[modelName]
       to see if a value is <literal>undefined</literal>.
     </para>
     <screen>
-//= CoffeeScript
+
 typeof undefinedVar is "undefined"
 </screen>
     <para>
@@ -503,7 +503,7 @@ new Object()        Object     object
       <literal>$.type</literal>:
     </para>
     <screen>
-//= CoffeeScript
+
 type = do -&gt;
   classToType = {}
   for name in "Boolean Number String Function Array Date RegExp Undefined Null".split(" ")
@@ -529,7 +529,7 @@ type({})         # "object"
       <literal>ReferenceError</literal>.
     </para>
     <screen>
-//= CoffeeScript
+
 if typeof aVar isnt "undefined"
   objectType = type(aVar)
 </screen>
@@ -548,7 +548,7 @@ objectType = type(aVar?)
       should treat it like an array:
     </para>
     <screen>
-//= CoffeeScript
+
 anArray?.push? aValue
 </screen>
     <para>
@@ -569,7 +569,7 @@ anArray?.push? aValue
       types, it's as useless as <literal>typeof</literal>.
     </para>
     <screen>
-//= CoffeeScript
+
 new String("foo") instanceof String # true
 "foo" instanceof String             # false
 </screen>
@@ -580,7 +580,7 @@ new String("foo") instanceof String # true
       custom made objects, such as CoffeeScript classes.
     </para>
     <screen>
-//= CoffeeScript
+
 class Parent
 class Child extends Parent
 
@@ -600,7 +600,7 @@ child instanceof Parent # true
       removing properties inside objects.
     </para>
     <screen>
-//= CoffeeScript
+
 anObject = {one: 1, two: 2}
 delete anObject.one
 anObject.hasOwnProperty("one") # false
@@ -610,7 +610,7 @@ anObject.hasOwnProperty("one") # false
       work.
     </para>
     <screen>
-//= CoffeeScript
+
 aVar = 1
 delete aVar
 typeof Var # "integer"
@@ -621,7 +621,7 @@ typeof Var # "integer"
       <literal>null</literal> instead.
     </para>
     <screen>
-//= CoffeeScript
+
 aVar = 1
 aVar = null
 </screen>
@@ -795,7 +795,7 @@ parseInt('010', 10) is 10
         script or function with the following string:
       </para>
       <screen>
-//= CoffeeScript    
+    
 -&gt;
   "use strict"
 
@@ -809,7 +809,7 @@ parseInt('010', 10) is 10
         in the usual mode:
       </para>
       <screen>
-//= CoffeeScript
+
 do -&gt;
   "use strict"
   console.log(arguments.callee)
@@ -828,7 +828,7 @@ do -&gt;
         normal context, creating a global variable:
       </para>
       <screen>
-//= CoffeeScript
+
 do -&gt;
   "use strict"
   class @Spine
@@ -841,7 +841,7 @@ do -&gt;
         <literal>window</literal> object.
       </para>
       <screen>
-//= CoffeeScript
+
 do -&gt;
   "use strict"
   class window.Spine

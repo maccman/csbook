@@ -20,7 +20,7 @@
     all that's exposed to you is the <literal>class</literal> keyword.
   </para>
   <screen>
-//= CoffeeScript
+
 class Animal
 </screen>
   <para>
@@ -31,7 +31,7 @@ class Animal
     the <literal>new</literal> operator.
   </para>
   <screen>
-//= CoffeeScript
+
 animal = new Animal
 </screen>
   <para>
@@ -42,7 +42,7 @@ animal = new Animal
     <literal>__init__</literal>.
   </para>
   <screen>
-//= CoffeeScript
+
 class Animal
   constructor: (name) -&gt;
     @name = name
@@ -57,7 +57,7 @@ class Animal
     instance properties manually.
   </para>
   <screen>
-//= CoffeeScript
+
 class Animal
   constructor: (@name) -&gt;
 </screen>
@@ -66,7 +66,7 @@ class Animal
     to the constructor function.
   </para>
   <screen>
-//= CoffeeScript
+
 animal = new Animal("Parrot")
 alert "Animal is a #{animal.name}"
 </screen>
@@ -79,7 +79,7 @@ alert "Animal is a #{animal.name}"
       the class body.
     </para>
     <screen>
-//= CoffeeScript
+
 class Animal
   price: 5
 
@@ -101,7 +101,7 @@ animal.sell(new Customer)
       current instance.
     </para>
     <screen>
-//= CoffeeScript
+
 class Animal
   price: 5
 
@@ -130,7 +130,7 @@ $("#sell").click(animal.sell)
       by setting them directly on <literal>this</literal>.
     </para>
     <screen>
-//= CoffeeScript
+
 class Animal
   this.find = (name) -&gt;      
 
@@ -142,7 +142,7 @@ Animal.find("Parrot")
       write static properties even more succinctly:
     </para>
     <screen>
-//= CoffeeScript
+
 class Animal
   @find: (name) -&gt;
 
@@ -160,7 +160,7 @@ Animal.find("Parrot")
       properties, such as <literal>alive()</literal>
     </para>
     <screen>
-//= CoffeeScript
+
 class Animal
   constructor: (@name) -&gt;
 
@@ -197,7 +197,7 @@ class Parrot extends Animal
       all of its inherited children.
     </para>
     <screen>
-//= CoffeeScript
+
 class Animal
   constructor: (@name) -&gt;
 
@@ -227,7 +227,7 @@ alert("This parrot is no more") if parrot.rip
       properties respectively to a class.
     </para>
     <screen>
-//= CoffeeScript
+
 extend = (obj, mixin) -&gt;
   obj[name] = method for name, method of mixin        
   obj
@@ -260,7 +260,7 @@ include Parrot,
       class with static and instance properties respectively.
     </para>
     <screen>
-//= CoffeeScript
+
 moduleKeywords = ['extended', 'included']
 
 class Module
@@ -286,7 +286,7 @@ class Module
       in action:
     </para>
     <screen>
-//= CoffeeScript
+
 classProperties = 
   find: (id) -&gt;
   create: (attrs) -&gt;
@@ -313,7 +313,7 @@ user.save()
       applying both static and instance properties:
     </para>
     <screen>
-//= CoffeeScript
+
 ORM = 
   find: (id) -&gt;
   create: (attrs) -&gt;
