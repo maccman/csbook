@@ -3,8 +3,8 @@
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 <chapter>
 <title>The Bad Parts</title>
- <sect1>
-  <title>The Bad Parts</title>
+ 
+  
   <para>
     JavaScript is a tricky beast, and knowing the parts that you should
     avoid is just as important as knowing about the parts you should
@@ -25,7 +25,7 @@
   <para>
     First, let's talk about what things the language does solve.
   </para>
-  <sect2>
+  <sect1>
     <title>A JavaScript Subset</title>
     <para>
       CoffeeScript's syntax only covers a subset of JavaScript's, the
@@ -67,8 +67,8 @@ with(dataObj.users.alex) {
       eliminating them from it's syntax. In other words, using
       <literal>with</literal> in CoffeeScript will throw a syntax error.
     </para>
-  </sect2>
-  <sect2>
+  </sect1>
+  <sect1>
     <title>Global variables</title>
     <para>
       By default, your JavaScript programs run in a global scope, and by
@@ -160,8 +160,8 @@ class Hem
       CoffeeScript removes one of the major sources of bugs in
       JavaScript programs.
     </para>
-  </sect2>
-  <sect2>
+  </sect1>
+  <sect1>
     <title>Semicolons</title>
     <para>
       JavaScript does not enforce the use of semicolons in source code,
@@ -197,8 +197,8 @@ function() {}(window.options || {}).property
       semicolons are inserted automatically (at the right places) when
       the CoffeeScript is compiled down to JavaScript.
     </para>
-  </sect2>
-  <sect2>
+  </sect1>
+  <sect1>
     <title>Reserved words</title>
     <para>
       Certain keywords in JavaScript are reserved for future versions of
@@ -232,8 +232,8 @@ myObj = {
 };
 myObj["class"] = function() {};
 </screen>
-  </sect2>
-  <sect2>
+  </sect1>
+  <sect1>
     <title>Equality comparisons</title>
     <para>
       The weak equality comparison in JavaScript has some confusing
@@ -303,8 +303,8 @@ alert("This is not called") unless ""?
       called, as the empty string isn't equal to
       <literal>null</literal>.
     </para>
-  </sect2>
-  <sect2>
+  </sect1>
+  <sect1>
     <title>Function definition</title>
     <para>
       Oddly enough in JavaScript, functions can be defined after they're
@@ -357,8 +357,8 @@ wem();
       CoffeeScript's approach to this is to remove declarative functions
       entirely, using only function expressions.
     </para>
-  </sect2>
-  <sect2>
+  </sect1>
+  <sect1>
     <title>Number property lookups</title>
     <para>
       A flaw in JavaScript's parser means that the <emphasis>dot
@@ -384,8 +384,8 @@ wem();
       this issue by using double dot notations automatically (as in the
       example above) whenever you access properties on Numbers.
     </para>
-  </sect2>
-</sect1>
+  </sect1>
+
 <sect1>
   <title>The un-fixed parts</title>
   <para>

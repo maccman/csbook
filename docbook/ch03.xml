@@ -3,15 +3,15 @@
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 <chapter>
 <title>Common CoffeeScript idioms</title>
- <sect1>
-  <title>Common CoffeeScript idioms</title>
+ 
+  
   <para>
     Every language has a set of idioms and practices, and CoffeeScript
     is no exception. This chapter will explore those conventions, and
     show you some JavaScript to CoffeeScript comparisons so you can get
     a practical sense of the language.
   </para>
-  <sect2>
+  <sect1>
     <title>Each</title>
     <para>
       In JavaScript to iterate over every item in an array, we could
@@ -50,8 +50,8 @@ myFunction(item) for item in array
       same expressiveness as <literal>forEach()</literal>, but without
       the speed and shimming caveats.
     </para>
-  </sect2>
-  <sect2>
+  </sect1>
+  <sect1>
     <title>Map</title>
     <para>
       As with <literal>forEach()</literal>, ES5 also includes a native
@@ -82,8 +82,8 @@ var result = array.map(function(item, i){
 //= CoffeeScript
 result = (item.name for item in array)
 </screen>
-  </sect2>
-  <sect2>
+  </sect1>
+  <sect1>
     <title>Select</title>
     <para>
       Again, ES5 has a utility function
@@ -137,8 +137,8 @@ failed = []
 for score in [49, 58, 76, 82, 88, 90]
   (if score &gt; 60 then passed else failed).push score
 </screen>
-  </sect2>
-  <sect2>
+  </sect1>
+  <sect1>
     <title>Includes</title>
     <para>
       Checking to see if a value is inside an array is typically done
@@ -179,8 +179,8 @@ included = "a long test string".indexOf("test") isnt -1
 string   = "a long test string"
 included = !!~ string.indexOf "test"
 </screen>
-  </sect2>
-  <sect2>
+  </sect1>
+  <sect1>
     <title>Property iteration</title>
     <para>
       To iterate over a bunch of properties in JavaScript, you'd use the
@@ -205,8 +205,8 @@ alert("#{key} = #{value}") for key, value of object
       As you can see, you can specify variables for both the property
       name, and its value; rather convenient.
     </para>
-  </sect2>
-  <sect2>
+  </sect1>
+  <sect1>
     <title>Min/Max</title>
     <para>
       This technique is not specific to CoffeeScript, but I thought it
@@ -225,8 +225,8 @@ Math.min [14, 35, -7, 46, 98]... # -7
       arrays as browsers have a limitation on the amount of arguments
       you can pass to functions.
     </para>
-  </sect2>
-  <sect2>
+  </sect1>
+  <sect1>
     <title>Multiple arguments</title>
     <para>
       In the <literal>Math.max</literal> example above, we're using
@@ -263,8 +263,8 @@ Log =
       specifically, then you'll need to call <literal>apply()</literal>
       manually.
     </para>
-  </sect2>
-  <sect2>
+  </sect1>
+  <sect1>
     <title>And/or</title>
     <para>
       CoffeeScript style guides indicates that <literal>or</literal> is
@@ -307,8 +307,8 @@ hash or= {}
 //= CoffeeScript
 hash ?= {}
 </screen>
-  </sect2>
-  <sect2>
+  </sect1>
+  <sect1>
     <title>Destructuring assignments</title>
     <para>
       Destructuring assignments can be used with any depth of array and
@@ -330,8 +330,8 @@ console.log "a is '#{a}', b is '#{b}'"
 
 join('/Users', 'Alex')
 </screen>
-  </sect2>
-  <sect2>
+  </sect1>
+  <sect1>
     <title>External libraries</title>
     <para>
       Using external libraries is exactly the same as calling functions
@@ -357,8 +357,8 @@ $ -&gt;
       jQuery's no conflict mode is enabled and the <literal>$</literal>
       re-defined, our script will still function as intended.
     </para>
-  </sect2>
-  <sect2>
+  </sect1>
+  <sect1>
     <title>Private variables</title>
     <para>
       The <literal>do</literal> keyword in CoffeeScript lets us execute
@@ -391,7 +391,7 @@ type = do -&gt;
       anonymous function. This pattern is a great way of encapsulating
       scope and hiding variables.
     </para>
-  </sect2>
-</sect1>
+  </sect1>
+
 
 </chapter>

@@ -3,8 +3,8 @@
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 <chapter>
 <title>Classes</title>
- <sect1>
-  <title>Classes</title>
+ 
+  
   <para>
     Classes in JavaScript seem to have the kind of effect that cloves of
     garlic have to Dracula for some purists; although, let's be honest,
@@ -70,7 +70,7 @@ class Animal
 animal = new Animal("Parrot")
 alert "Animal is a #{animal.name}"
 </screen>
-  <sect2>
+  <sect1>
     <title>Instance properties</title>
     <para>
       Adding additional instance properties to a class is very
@@ -120,8 +120,8 @@ $("#sell").click(animal.sell)
       being maintained, and that <literal>this.price</literal> equals
       <literal>5</literal>.
     </para>
-  </sect2>
-  <sect2>
+  </sect1>
+  <sect1>
     <title>Static properties</title>
     <para>
       How about defining class (i.e. static) properties? Well, it turns
@@ -148,8 +148,8 @@ class Animal
 
 Animal.find("Parrot")
 </screen>
-  </sect2>
-  <sect2>
+  </sect1>
+  <sect1>
     <title>Inheritance &amp; Super</title>
     <para>
       It wouldn't be a proper class implementation without some form of
@@ -215,8 +215,8 @@ alert("This parrot is no more") if parrot.rip
       JavaScript's prototypal architecture, and is a difficult problem
       to work around.
     </para>
-  </sect2>
-  <sect2>
+  </sect1>
+  <sect1>
     <title>Mixins</title>
     <para>
       <ulink url="http://en.wikipedia.org/wiki/Mixin">Mixins</ulink> are
@@ -247,8 +247,8 @@ include Parrot,
       is that you can include multiple ones, compared to inheritance
       where only one class can be inherited from.
     </para>
-  </sect2>
-  <sect2>
+  </sect1>
+  <sect1>
     <title>Extending classes</title>
     <para>
       Mixins are pretty neat, but they're not very object orientated.
@@ -327,7 +327,7 @@ class User extends Module
     <para>
       Super simple and elegant!
     </para>
-  </sect2>
-</sect1>
+  </sect1>
+
 
 </chapter>

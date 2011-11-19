@@ -3,8 +3,8 @@
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 <chapter>
 <title>Creating Applications</title>
- <sect1>
-  <title>Creating Applications</title>
+ 
+  
   <para>
     Now you've been given an overview of the syntax, lets explore
     actually structuring and creating CoffeeScript applications. This
@@ -37,7 +37,7 @@
     Rather than that, here we're going to cover structuring applications
     using CommonJS modules.
   </para>
-  <sect2>
+  <sect1>
     <title>Structure &amp; CommonJS</title>
     <para>
       So what exactly are CommonJS modules? Well, If you've used
@@ -62,7 +62,7 @@
       module properties via <literal>module.exports</literal>. Let's
       dive into that in a bit more depth now.
     </para>
-    <section>
+    <sect2>
       <title>Requiring files</title>
       <para>
         You can load in other modules and libraries using
@@ -82,8 +82,8 @@ User = require("models/user")
         take a separate route than the one I'm advocating with Stitch
         below.
       </para>
-    </section>
-    <section>
+    </sect2>
+    <sect2>
       <title>Exporting properties</title>
       <para>
         By default, modules don't expose any properties so their
@@ -104,9 +104,9 @@ module.exports.myFineProperty = -&gt;
       <screen>
 myFineProperty = require("random_module").myFineProperty
 </screen>
-    </section>
-  </sect2>
-  <sect2>
+    </sect2>
+  </sect1>
+  <sect1>
     <title>Stitch it up</title>
     <para>
       Formatting your code as CommonJS modules is all fine and dandy,
@@ -272,8 +272,8 @@ module.exports = class User
 # app/app.coffee
 User = require("models/user")
 </screen>
-  </sect2>
-  <sect2>
+  </sect1>
+  <sect1>
     <title>JavaScript templates</title>
     <para>
       If you're moving logic to the client side, then you'll definitely
@@ -412,8 +412,8 @@ module.exports = App
       a basic MVC structure for you, freeing you up for the interesting
       stuff.
     </para>
-  </sect2>
-  <sect2>
+  </sect1>
+  <sect1>
     <title>Bonus - 30 second deployment with Heroku</title>
     <para>
       <ulink url="http://heroku.com/">Heroku</ulink> is an incredibly
@@ -454,8 +454,8 @@ heroku open
       That's it! Seriously, that's all there is to it. Hosting Node
       applications has never been easier.
     </para>
-  </sect2>
-  <sect2>
+  </sect1>
+  <sect1>
     <title>Additional libraries</title>
     <para>
       <ulink url="https://github.com/sstephenson/stitch">Stitch</ulink>
@@ -488,7 +488,7 @@ heroku open
       <ulink url="https://github.com/jashkenas/coffee-script/wiki/Web-framework-plugins">project's
       wiki</ulink>.
     </para>
-  </sect2>
-</sect1>
+  </sect1>
+
 
 </chapter>

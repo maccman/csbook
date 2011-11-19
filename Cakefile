@@ -16,6 +16,12 @@ $.fn.setTag = (tag) ->
 format = (data) ->
   doc = $('<body />').html(data)
   doc.find('section').removeAttr('id')
+  
+  title = doc.find('title:first').remove().text()
+  
+  rootSection = doc.find('> section:first')
+  rootSection.replaceWith(rootSection.html())
+    
   doc.find('> section').setTag('sect1')
   doc.find('section').setTag('sect2')
   doc.find('script').remove()
@@ -24,8 +30,6 @@ format = (data) ->
     newSrc  = el.attr('fileref').replace(/^\/images\//, 'figs/')
     element.attr('fileref', newSrc)
   
-  title = doc.find('title:first').text()
-  # doc.find('> sect1:first').replaceWith(doc.find('> sect1:first').html())
   data  = doc.html()
   
   """

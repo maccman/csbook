@@ -3,8 +3,8 @@
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 <chapter>
 <title>Automating CoffeeScript compilation</title>
- <sect1>
-  <title>Automating CoffeeScript compilation</title>
+ 
+  
   <para>
     An issue with CoffeeScript is that it puts another layer between you
     and JavaScript, and having to manually compile CoffeeScript files
@@ -25,7 +25,7 @@ coffee --compile --output lib src
     JavaScript outputted to the <literal>lib</literal> directory. Even
     calling that is a bit of a bore, so let's look into automating it.
   </para>
-  <sect2>
+  <sect1>
     <title>Cake</title>
     <para>
       <ulink url="http://jashkenas.github.com/coffee-script/#cake">Cake</ulink>
@@ -143,8 +143,8 @@ task 'build', 'Build lib/ from src/', -&gt;
       source</ulink>, a great example of CoffeeScript's expressiveness
       and beautifully documented alongside the code comments.
     </para>
-  </sect2>
-  <sect2>
+  </sect1>
+  <sect1>
     <title>Server side support</title>
     <para>
       Using Cake for CoffeeScript compilation is fine for static sites,
@@ -191,7 +191,7 @@ task 'build', 'Build lib/ from src/', -&gt;
       <ulink url="https://github.com/sstephenson/stitch">Stitch</ulink>
       to serve all our client-side CoffeeScript.
     </para>
-  </sect2>
-</sect1>
+  </sect1>
+
 
 </chapter>

@@ -3,8 +3,8 @@
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 <chapter>
 <title>CoffeeScript Syntax</title>
- <sect1>
-  <title>CoffeeScript Syntax</title>
+ 
+  
   <para>
     Firstly, before we get any further into this section, I want to
     reiterate that while CoffeeScript's syntax is often identical with
@@ -62,7 +62,7 @@
     your script is formatted in a sane manner, otherwise it won't even
     compile!
   </para>
-  <sect2>
+  <sect1>
     <title>Variables &amp; Scope</title>
     <para>
       CoffeeScript fixes one of the major bugbears with JavaScript,
@@ -113,8 +113,8 @@ exports.MyVariable = "foo-bar"
       Additionally, it paves the way for CommonJS modules, which we're
       going to cover later in the book.
     </para>
-  </sect2>
-  <sect2>
+  </sect1>
+  <sect1>
     <title>Functions</title>
     <para>
       CoffeeScript removes the rather verbose
@@ -149,7 +149,7 @@ func = -&gt;
   # An extra line
   "bar"
 </screen>
-    <section>
+    <sect2>
       <title>Function arguments</title>
       <para>
         How about specifying arguments? Well, CoffeeScript lets you do
@@ -192,8 +192,8 @@ trigger = (events...) -&gt;
   events.splice(1, 0, this)
   this.constructor.trigger.apply(events)
 </screen>
-    </section>
-    <section>
+    </sect2>
+    <sect2>
       <title>Function invocation</title>
       <para>
         Functions can be invoked exactly as in JavaScript, with parens
@@ -235,8 +235,8 @@ alert inspect(a)
         so it's worth keeping an eye out for cases where you intend to
         call a function without any arguments, and include parenthesis.
       </para>
-    </section>
-    <section>
+    </sect2>
+    <sect2>
       <title>Function context</title>
       <para>
         Context changes are rife within JavaScript, especially with
@@ -270,9 +270,9 @@ element.addEventListener "click", (e) =&gt; this.clickHandler(e)
         <ulink url="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Function/bind">ES5's</ulink>
         <literal>bind()</literal> functions.
       </para>
-    </section>
-  </sect2>
-  <sect2>
+    </sect2>
+  </sect1>
+  <sect1>
     <title>Object literals &amp; array definition</title>
     <para>
       Object literals can be specified exactly as in JavaScript, with a
@@ -317,8 +317,8 @@ array3 = [1,2,3,]
       stripped the trailing comma in <literal>array3</literal>, another
       common source of cross-browser errors.
     </para>
-  </sect2>
-  <sect2>
+  </sect1>
+  <sect1>
     <title>Flow control</title>
     <para>
       The convention of optional parentheses continues with
@@ -400,8 +400,8 @@ if true isnt true
       leading to some confusing behaviors and the source of many bugs.
       There's a longer discussing on this topic in chapter 7.
     </para>
-  </sect2>
-  <sect2>
+  </sect1>
+  <sect1>
     <title>String interpolation</title>
     <para>
       CoffeeScript brings Ruby style string interpolation to JavaScript.
@@ -421,8 +421,8 @@ question = "Bridgekeeper: What... is your favourite color?
       allowed, without having to prefix each line with a
       <literal>+</literal>:
     </para>
-  </sect2>
-  <sect2>
+  </sect1>
+  <sect1>
     <title>Loops and Comprehensions</title>
     <para>
       Array iteration in JavaScript has a rather archaic syntax,
@@ -485,8 +485,8 @@ num = 6
 minstrel = while num -= 1
   num + " Brave Sir Robin ran away"
 </screen>
-  </sect2>
-  <sect2>
+  </sect1>
+  <sect1>
     <title>Arrays</title>
     <para>
       CoffeeScript takes inspiration from Ruby when it comes to array
@@ -540,8 +540,8 @@ my = "my string"[0..2]
 words = ["rattled", "roudy", "rebbles", "ranks"]
 alert "Stop wagging me" if "ranks" in words 
 </screen>
-  </sect2>
-  <sect2>
+  </sect1>
+  <sect1>
     <title>Aliases &amp; the Existential Operator</title>
     <para>
       CoffeeScript includes some useful aliases to save some typing. One
@@ -602,7 +602,7 @@ blackKnight.getLegs()?.kick()
 //= CoffeeScript
 blackKnight.getLegs().kick?()
 </screen>
-  </sect2>
-</sect1>
+  </sect1>
+
 
 </chapter>

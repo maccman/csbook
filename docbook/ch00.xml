@@ -3,8 +3,8 @@
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 <chapter>
 <title>What is CoffeeScript?</title>
- <sect1>
-  <title>What is CoffeeScript?</title>
+ 
+  
   <para>
     <ulink url="http://coffeescript.org">CoffeeScript</ulink> is a
     little language that compiles down to JavaScript. The syntax is
@@ -91,7 +91,7 @@
     the CoffeeScript train. The time you invest in learning about the
     language now will be repaid by major time savings later.
   </para>
-  <sect2>
+  <sect1>
     <title>Initial setup</title>
     <para>
       One of the easiest ways to initially play around with the library
@@ -173,7 +173,7 @@ coffee --compile my-script.coffee
       this by automatically compiling CoffeeScript files, but first lets
       take a look at the language's syntax.
     </para>
-  </sect2>
-</sect1>
+  </sect1>
+
 
 </chapter>
