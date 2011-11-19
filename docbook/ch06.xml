@@ -698,7 +698,7 @@ parseInt('010', 10) is 10
       with older browsers. Programs using it should run fine in either a
       strict or normal context.
     </para>
-    <section>
+    <sect3>
       <title>Strict mode changes</title>
       <para>
         Most of the changes strict mode introduces pertain to
@@ -787,8 +787,8 @@ parseInt('010', 10) is 10
         versions</ulink> will check a program's compliance to strict
         mode at compile time.
       </para>
-    </section>
-    <section>
+    </sect3>
+    <sect3>
       <title>Strict mode usage</title>
       <para>
         All you need to do to enable strict checking is start your
@@ -854,7 +854,7 @@ do -&gt;
         want to develop with strict mode, and deploy to production
         without it.
       </para>
-    </section>
+    </sect3>
   </sect2>
   <sect2>
     <title>JavaScript Lint</title>

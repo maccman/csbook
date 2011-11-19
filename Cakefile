@@ -24,11 +24,25 @@ format = (data) ->
     
   doc.find('> section').setTag('sect1')
   doc.find('section').setTag('sect2')
+  doc.find('section').setTag('sect3')
+
   doc.find('script').remove()
+
   doc.find('imagedata').each ->
     element = $(@)
-    newSrc  = el.attr('fileref').replace(/^\/images\//, 'figs/')
-    element.attr('fileref', newSrc)
+    element.attr('fileref', 
+      el.attr('fileref').replace(
+        /^\/images\//, 'figs/'
+      )
+    )
+
+  doc.find('screen').each ->
+    element = $(@)
+    element.text(
+      element.text().replace(
+        /^\/\/= CoffeeScript/, ''
+      )
+    )
   
   data  = doc.html()
   
