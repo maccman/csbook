@@ -1,22 +1,14 @@
 Using fo/series/realtime.xsl stylesheet... 
 Showing comments and <remark>s: false...
 Showing draft timestamps: false...
-Expanding book to /work/tools/svn_hooks/checkouts/internalbooks9781449321055current/book.xml.dcps.259.xml
-Validating...
-Converting file /work/tools/svn_hooks/checkouts/internalbooks9781449321055current/book.xml to FO ...
---omitting half-title
-Making portrait pages on USletter paper (7inx9.1875in)
-
-Making pages with cropmarks        
-        
-FO generated: /work/tools/svn_hooks/checkouts/internalbooks9781449321055current/book.xml.dcps.820.fo
-Converting FO to PDF ...
-Finished ok
-Moving temporary PDF /work/tools/svn_hooks/checkouts/internalbooks9781449321055current/book.xml.dcps.525.pdf to /work/tools/svn_hooks/checkouts/internalbooks9781449321055current/book.xml.pdf
-Converting file /work/tools/svn_hooks/checkouts/internalbooks9781449321055current/book.xml to FO for parallel web PDF ...
-Making portrait pages on USletter paper (7inx9.1875in)
-Web FO generated: /work/tools/svn_hooks/checkouts/internalbooks9781449321055current/book.xml.dcps.820.fo
-Converting web FO to web PDF ...
---omitting half-title
-Finished parallel web version ok
-Moving temporary web PDF /work/tools/svn_hooks/checkouts/internalbooks9781449321055current/book.xml.dcps.363.pdf to /work/tools/svn_hooks/checkouts/internalbooks9781449321055current/book.xml.web.pdf
+Expanding book to /work/tools/svn_hooks/checkouts/internalbooks9781449321055current/book.xml.dcps.349.xml
+ch01.xml:115: element sect2: validity error : Element sect2 content does not follow the DTD, expecting (sect2info? , (title , subtitle? , titleabbrev?) , (toc | lot | index | glossary | bibliography)* , (((calloutlist | glosslist | bibliolist | itemizedlist | orderedlist | segmentedlist | simplelist | variablelist | caution | important | note | tip | warning | literallayout | programlisting | programlistingco | screen | screenco | screenshot | synopsis | cmdsynopsis | funcsynopsis | classsynopsis | fieldsynopsis | constructorsynopsis | destructorsynopsis | methodsynopsis | formalpara | para | simpara | address | blockquote | graphic | graphicco | mediaobject | mediaobjectco | informalequation | informalexample | informalfigure | informaltable | equation | example | figure | table | msgset | procedure | sidebar | qandaset | task | anchor | bridgehead | remark | highlights | abstract | authorblurb | epigraph | indexterm | beginpage)+ , (refentry* | sect3* | simplesect*)) | refentry+ | sect3+ | simplesect+) , (toc | lot | index | glossary | bibliography)*), got (title para para para para para para section section section )
+ch04.xml:28: element sect2: validity error : Element sect2 content does not follow the DTD, expecting (sect2info? , (title , subtitle? , titleabbrev?) , (toc | lot | index | glossary | bibliography)* , (((calloutlist | glosslist | bibliolist | itemizedlist | orderedlist | segmentedlist | simplelist | variablelist | caution | important | note | tip | warning | literallayout | programlisting | programlistingco | screen | screenco | screenshot | synopsis | cmdsynopsis | funcsynopsis | classsynopsis | fieldsynopsis | constructorsynopsis | destructorsynopsis | methodsynopsis | formalpara | para | simpara | address | blockquote | graphic | graphicco | mediaobject | mediaobjectco | informalequation | informalexample | informalfigure | informaltable | equation | example | figure | table | msgset | procedure | sidebar | qandaset | task | anchor | bridgehead | remark | highlights | abstract | authorblurb | epigraph | indexterm | beginpage)+ , (refentry* | sect3* | simplesect*)) | refentry+ | sect3+ | simplesect+) , (toc | lot | index | glossary | bibliography)*), got (title para para para para screen para html para para para para para para screen para para )
+ch04.xml:80: element html: validity error : No declaration for element html
+ch04.xml:81: element head: validity error : No declaration for element head
+ch04.xml:85: element body: validity error : No declaration for element body
+ch05.xml:40: element sect2: validity error : Element sect2 content does not follow the DTD, expecting (sect2info? , (title , subtitle? , titleabbrev?) , (toc | lot | index | glossary | bibliography)* , (((calloutlist | glosslist | bibliolist | itemizedlist | orderedlist | segmentedlist | simplelist | variablelist | caution | important | note | tip | warning | literallayout | programlisting | programlistingco | screen | screenco | screenshot | synopsis | cmdsynopsis | funcsynopsis | classsynopsis | fieldsynopsis | constructorsynopsis | destructorsynopsis | methodsynopsis | formalpara | para | simpara | address | blockquote | graphic | graphicco | mediaobject | mediaobjectco | informalequation | informalexample | informalfigure | informaltable | equation | example | figure | table | msgset | procedure | sidebar | qandaset | task | anchor | bridgehead | remark | highlights | abstract | authorblurb | epigraph | indexterm | beginpage)+ , (refentry* | sect3* | simplesect*)) | refentry+ | sect3+ | simplesect+) , (toc | lot | index | glossary | bibliography)*), got (title para para section section )
+ch06.xml:625: element sect2: validity error : Element sect2 content does not follow the DTD, expecting (sect2info? , (title , subtitle? , titleabbrev?) , (toc | lot | index | glossary | bibliography)* , (((calloutlist | glosslist | bibliolist | itemizedlist | orderedlist | segmentedlist | simplelist | variablelist | caution | important | note | tip | warning | literallayout | programlisting | programlistingco | screen | screenco | screenshot | synopsis | cmdsynopsis | funcsynopsis | classsynopsis | fieldsynopsis | constructorsynopsis | destructorsynopsis | methodsynopsis | formalpara | para | simpara | address | blockquote | graphic | graphicco | mediaobject | mediaobjectco | informalequation | informalexample | informalfigure | informaltable | equation | example | figure | table | msgset | procedure | sidebar | qandaset | task | anchor | bridgehead | remark | highlights | abstract | authorblurb | epigraph | indexterm | beginpage)+ , (refentry* | sect3* | simplesect*)) | refentry+ | sect3+ | simplesect+) , (toc | lot | index | glossary | bibliography)*), got (title para para itemizedlist para section section )
+Document /work/tools/svn_hooks/checkouts/internalbooks9781449321055current/book.xml does not validate
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  ERROR: /work/tools/svn_hooks/checkouts/internalbooks9781449321055current/book.xml did not pass entity resolution with xmllint. Is it well-formed?! Exiting...

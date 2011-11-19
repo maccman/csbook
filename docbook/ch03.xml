@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" 
-"http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
-<chapter id="common-coffeescript-idioms">
- <title>Common CoffeeScript idioms</title>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<chapter>
+<title>Common CoffeeScript idioms</title>
  <sect1>
-  
+  <title>Common CoffeeScript idioms</title>
   <para>
     Every language has a set of idioms and practices, and CoffeeScript
     is no exception. This chapter will explore those conventions, and

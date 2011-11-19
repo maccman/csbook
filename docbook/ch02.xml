@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" 
-"http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
-<chapter id="classes">
- <title>Classes</title>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<chapter>
+<title>Classes</title>
  <sect1>
-  
+  <title>Classes</title>
   <para>
     Classes in JavaScript seem to have the kind of effect that cloves of
     garlic have to Dracula for some purists; although, let's be honest,

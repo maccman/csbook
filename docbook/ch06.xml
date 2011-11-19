@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" 
-"http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
-<chapter id="the-bad-parts">
- <title>The Bad Parts</title>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<chapter>
+<title>The Bad Parts</title>
  <sect1>
-  
+  <title>The Bad Parts</title>
   <para>
     JavaScript is a tricky beast, and knowing the parts that you should
     avoid is just as important as knowing about the parts you should

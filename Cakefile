@@ -5,12 +5,6 @@ $       = require('jQuery')
 input   = './chapters'
 output  = './docbook'
 
-String::slugify = ->
-  @replace(/[^-a-zA-Z0-9,&\s]+/ig, '')
-	  .replace(/-/gi, "_")
-	  .replace(/\s/gi, "-")
-	  .toLowerCase()
-	
 $.fn.setTag = (tag) ->
   $(@).each ->
     element = $("<#{tag}/>")
@@ -30,15 +24,16 @@ format = (data) ->
     newSrc  = el.attr('fileref').replace(/^\/images\//, 'figs/')
     element.attr('fileref', newSrc)
   
-  title = doc.find('title:first').remove().text()
+  title = doc.find('title:first').text()
+  # doc.find('> sect1:first').replaceWith(doc.find('> sect1:first').html())
   data  = doc.html()
   
   """
   <?xml version="1.0" encoding="UTF-8"?>
-  <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" 
-  "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
-  <chapter id="#{title.slugify()}">
-   <title>#{title}</title>
+  <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+  "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+  <chapter>
+  <title>#{title}</title>
    #{data}
   </chapter>
   """

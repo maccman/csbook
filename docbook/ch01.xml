@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" 
-"http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
-<chapter id="coffeescript-syntax">
- <title>CoffeeScript Syntax</title>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<chapter>
+<title>CoffeeScript Syntax</title>
  <sect1>
-  
+  <title>CoffeeScript Syntax</title>
   <para>
     Firstly, before we get any further into this section, I want to
     reiterate that while CoffeeScript's syntax is often identical with
