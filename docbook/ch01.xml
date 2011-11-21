@@ -48,7 +48,8 @@
     Multiline comments are also supported, and are brought forward to
     the generated JavaScript. They're enclosed by three hash characters.
   </para>
-  <screen>###
+  <screen>
+###
   A multiline comment, perhaps a LICENSE.
 ###
 </screen>
@@ -73,7 +74,8 @@
       all variable assignments with <literal>var</literal>. For example,
       take this simple variable assignment in CoffeeScript:
     </para>
-    <screen>myVariable = "test"
+    <screen>
+myVariable = "test"
 </screen>
     <para>
       Notice the dark grey box in the top right of the code example
@@ -96,7 +98,8 @@
       global object (<literal>window</literal> in browsers), or with the
       following pattern:
     </para>
-    <screen>exports = this
+    <screen>
+exports = this
 exports.MyVariable = "foo-bar"
 </screen>
     <para>
@@ -122,7 +125,8 @@ exports.MyVariable = "foo-bar"
     <para>
       With that in mind, let's take a look at an example:
     </para>
-    <screen>func = -&gt; "bar"
+    <screen>
+func = -&gt; "bar"
 </screen>
     <para>
       You can see in the resultant compilation, the
@@ -135,7 +139,8 @@ exports.MyVariable = "foo-bar"
       As mentioned earlier, there's no reason why we can't use multiple
       lines, as long as we indent the function body properly.
     </para>
-    <screen>func = -&gt;
+    <screen>
+func = -&gt;
   # An extra line
   "bar"
 </screen>
@@ -145,18 +150,21 @@ exports.MyVariable = "foo-bar"
         How about specifying arguments? Well, CoffeeScript lets you do
         that by specifying arguments in parentheses before the arrow.
       </para>
-      <screen>times = (a, b) -&gt; a * b
+      <screen>
+times = (a, b) -&gt; a * b
 </screen>
       <para>
         CoffeeScript supports default arguments too, for example:
       </para>
-      <screen>times = (a = 1, b = 2) -&gt; a * b
+      <screen>
+times = (a = 1, b = 2) -&gt; a * b
 </screen>
       <para>
         You can also use splats to accept multiple arguments, denoted by
         <literal>...</literal>
       </para>
-      <screen>sum = (nums...) -&gt; 
+      <screen>
+sum = (nums...) -&gt; 
   result = 0
   nums.forEach (n) -&gt; result += n
   result
@@ -170,7 +178,8 @@ exports.MyVariable = "foo-bar"
         <literal>jQuery.makeArray()</literal> if you want to manipulate
         it.
       </para>
-      <screen>trigger = (events...) -&gt;
+      <screen>
+trigger = (events...) -&gt;
   events.splice(1, 0, this)
   this.constructor.trigger.apply(events)
 </screen>
@@ -184,7 +193,8 @@ exports.MyVariable = "foo-bar"
         automatically call functions if they are invoked with at least
         one argument.
       </para>
-      <screen>a = "Howdy!"
+      <screen>
+a = "Howdy!"
 
 alert a
 # Equivalent to:
@@ -201,7 +211,8 @@ alert(inspect(a))
         I'd definitely recommend wrapping at least the
         <literal>inspect</literal> invocation in parens.
       </para>
-      <screen>alert inspect(a)
+      <screen>
+alert inspect(a)
 </screen>
       <para>
         If you don't pass any arguments with an invocation, CoffeeScript
@@ -227,7 +238,8 @@ alert(inspect(a))
         Using the fat arrow instead of the thin arrow ensures that the
         function context will be bound to the local one. For example:
       </para>
-      <screen>this.clickHandler = -&gt; alert "clicked"
+      <screen>
+this.clickHandler = -&gt; alert "clicked"
 element.addEventListener "click", (e) =&gt; this.clickHandler(e)
 </screen>
       <para>
@@ -257,7 +269,8 @@ element.addEventListener "click", (e) =&gt; this.clickHandler(e)
       fact, you can also use indentation and new lines instead of comma
       separation.
     </para>
-    <screen>object1 = {one: 1, two: 2}
+    <screen>
+object1 = {one: 1, two: 2}
 
 # Without braces
 object2 = one: 1, two: 2
@@ -274,7 +287,8 @@ User.create(name: "John Smith")
       although the square brackets (<literal>[]</literal>) are still
       required.
     </para>
-    <screen>array1 = [1, 2, 3]
+    <screen>
+array1 = [1, 2, 3]
 
 array2 = [
   1
@@ -297,7 +311,8 @@ array3 = [1,2,3,]
       CoffeeScript's <literal>if</literal> and <literal>else</literal>
       keywords.
     </para>
-    <screen>if true == true
+    <screen>
+if true == true
   "We're ok"
 
 if true != true then "Panic"
@@ -317,7 +332,8 @@ if 1 &gt; 0 then "Ok" else "Y2K!"
       CoffeeScript also includes a Ruby idiom of allowing suffixed
       <literal>if</literal> statements.
     </para>
-    <screen>alert "It's cold!" if heat &lt; 5
+    <screen>
+alert "It's cold!" if heat &lt; 5
 </screen>
     <para>
       Instead of using the exclamation mark (<literal>!</literal>) for
@@ -325,14 +341,16 @@ if 1 &gt; 0 then "Ok" else "Y2K!"
       which can sometimes make your code more readable as exclamation
       marks can be easy to miss.
     </para>
-    <screen>if not true then "Panic"
+    <screen>
+if not true then "Panic"
 </screen>
     <para>
       In the example above, we could also use the CoffeeScript's
       <literal>unless</literal> statement, the opposite of
       <literal>if</literal>.
     </para>
-    <screen>unless true
+    <screen>
+unless true
   "Panic"
 </screen>
     <para>
@@ -340,7 +358,8 @@ if 1 &gt; 0 then "Ok" else "Y2K!"
       introduces the <literal>is</literal> statement, which translates
       to <literal>===</literal>.
     </para>
-    <screen>if true is 1
+    <screen>
+if true is 1
   "Type coercion fail!"
 </screen>
     <para>
@@ -370,7 +389,8 @@ if true isnt true
       Double quotes strings can contain <literal>#{}</literal> tags,
       which contain expressions to be interpolated into the string.
     </para>
-    <screen>favourite_color = "Blue. No, yel..."
+    <screen>
+favourite_color = "Blue. No, yel..."
 question = "Bridgekeeper: What... is your favourite color?
             Galahad: #{favourite_color}
             Bridgekeeper: Wrong!
@@ -393,25 +413,29 @@ question = "Bridgekeeper: What... is your favourite color?
       and is therefore much slower. Again, CoffeeScript comes to the
       rescue, with a beautiful syntax:
     </para>
-    <screen>for name in ["Roger", "Roderick", "Brian"]
+    <screen>
+for name in ["Roger", "Roderick", "Brian"]
   alert "Release #{name}"
 </screen>
     <para>
       If you need the current iteration index, just pass an extra
       argument:
     </para>
-    <screen>for name, i in ["Roger the pickpocket", "Roderick the robber"]
+    <screen>
+for name, i in ["Roger the pickpocket", "Roderick the robber"]
   alert "#{i} - Release #{name}"
 </screen>
     <para>
       You can also iterate on one line, using the postfix form.
     </para>
-    <screen>release prisoner for prisoner in ["Roger", "Roderick", "Brian"]
+    <screen>
+release prisoner for prisoner in ["Roger", "Roderick", "Brian"]
 </screen>
     <para>
       As with Python comprehensions, you can filter them:
     </para>
-    <screen>prisoners = ["Roger", "Roderick", "Brian"]
+    <screen>
+prisoners = ["Roger", "Roderick", "Brian"]
 release prisoner for prisoner in prisoners when prisoner[0] is "R" 
 </screen>
     <para>
@@ -419,7 +443,8 @@ release prisoner for prisoner in prisoners when prisoner[0] is "R"
       objects. Instead of the <literal>in</literal> keyword, use
       <literal>of</literal>.
     </para>
-    <screen>names = sam: seaborn, donna: moss
+    <screen>
+names = sam: seaborn, donna: moss
 alert("#{first} #{last}") for first, last of names
 </screen>
     <para>
@@ -429,7 +454,8 @@ alert("#{first} #{last}") for first, last of names
       added advantage that it returns an array of results, i.e. like the
       <literal>Array.prototype.map()</literal> function.
     </para>
-    <screen>num = 6
+    <screen>
+num = 6
 minstrel = while num -= 1
   num + " Brave Sir Robin ran away"
 </screen>
@@ -443,14 +469,16 @@ minstrel = while num -= 1
       <literal>..</literal> or <literal>...</literal>. If a range isn't
       prefixed by anything, CoffeeScript expands it out into an array.
     </para>
-    <screen>range = [1..5]
+    <screen>
+range = [1..5]
 </screen>
     <para>
       If, however, the range is specified immediately after a variable,
       CoffeeScript converts it into a <literal>slice()</literal> method
       call.
     </para>
-    <screen>firstTwo = ["one", "two", "three"][0..1]
+    <screen>
+firstTwo = ["one", "two", "three"][0..1]
 </screen>
     <para>
       In the example above, the range returns a new array, containing
@@ -458,7 +486,8 @@ minstrel = while num -= 1
       use the same syntax for replacing an array segment with another
       array.
     </para>
-    <screen>numbers = [0..9]
+    <screen>
+numbers = [0..9]
 numbers[3..5] = [-3, -4, -5]
 </screen>
     <para>
@@ -466,7 +495,8 @@ numbers[3..5] = [-3, -4, -5]
       <literal>slice()</literal> on strings too, so you can use ranges
       with string to return a new subset of characters.
     </para>
-    <screen>my = "my string"[0..2]
+    <screen>
+my = "my string"[0..2]
 </screen>
     <para>
       Checking to see if a value exists inside an array is always a bore
@@ -475,7 +505,8 @@ numbers[3..5] = [-3, -4, -5]
       CoffeeScript solves this with the <literal>in</literal> operator,
       for example.
     </para>
-    <screen>words = ["rattled", "roudy", "rebbles", "ranks"]
+    <screen>
+words = ["rattled", "roudy", "rebbles", "ranks"]
 alert "Stop wagging me" if "ranks" in words 
 </screen>
   </sect1>
@@ -486,13 +517,15 @@ alert "Stop wagging me" if "ranks" in words
       of which is <literal>@</literal>, which is an alias for
       <literal>this</literal>.
     </para>
-    <screen>@saviour = true
+    <screen>
+@saviour = true
 </screen>
     <para>
       Another is <literal>::</literal>, which is an alias for
       <literal>prototype</literal>
     </para>
-    <screen>User::first = -&gt; @records[0]
+    <screen>
+User::first = -&gt; @records[0]
 </screen>
     <para>
       Using <literal>if</literal> for <literal>null</literal> checks in
@@ -503,13 +536,15 @@ alert "Stop wagging me" if "ranks" in words
       <literal>null</literal> or <literal>undefined</literal>, similar
       to Ruby's <literal>nil?</literal>.
     </para>
-    <screen>praise if brian?
+    <screen>
+praise if brian?
 </screen>
     <para>
       You can also use it in place of the <literal>||</literal>
       operator:
     </para>
-    <screen>velocity = southern ? 40
+    <screen>
+velocity = southern ? 40
 </screen>
     <para>
       If you're using a <literal>null</literal> check before accessing a
@@ -518,7 +553,8 @@ alert "Stop wagging me" if "ranks" in words
       <ulink url="http://guides.rubyonrails.org/active_support_core_extensions.html#try"><literal>try</literal></ulink>
       method.
     </para>
-    <screen>blackKnight.getLegs()?.kick()
+    <screen>
+blackKnight.getLegs()?.kick()
 </screen>
     <para>
       Similarly you can check that a property is actually a function,
@@ -526,7 +562,8 @@ alert "Stop wagging me" if "ranks" in words
       parens. If the property doesn't exist, or isn't a function, it
       simply won't get called.
     </para>
-    <screen>blackKnight.getLegs().kick?()
+    <screen>
+blackKnight.getLegs().kick?()
 </screen>
   </sect1>
 

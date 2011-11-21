@@ -39,7 +39,8 @@ array.forEach(function(item, i){
       <literal>for</literal> loop. Let's see how it looks in
       CoffeeScript.
     </para>
-    <screen>myFunction(item) for item in array
+    <screen>
+myFunction(item) for item in array
 </screen>
     <para>
       It's a readable and concise syntax, I'm sure you'll agree, and
@@ -76,7 +77,8 @@ var result = array.map(function(item, i){
       <emphasis role="strong">absolutely critical</emphasis> in ensuring
       the comprehension returns what you'd expect, the mapped array.
     </para>
-    <screen>result = (item.name for item in array)
+    <screen>
+result = (item.name for item in array)
 </screen>
   </sect1>
   <sect1>
@@ -103,7 +105,8 @@ result = array.filter(function(item, i){
       performed in an anonymous function to ward against scope leakage
       and variable conflict.
     </para>
-    <screen>result = (item for item in array when item.name is "test")
+    <screen>
+result = (item for item in array when item.name is "test")
 </screen>
     <para>
       Don't forgot to include the parens, as otherwise
@@ -111,7 +114,8 @@ result = array.filter(function(item, i){
       CoffeeScript's comprehensions are so flexible that they allow you
       to do powerful selections as in the following example:
     </para>
-    <screen>passed = []
+    <screen>
+passed = []
 failed = []
 (if score &gt; 60 then passed else failed).push score for score in [49, 58, 76, 82, 88, 90]
 
@@ -122,7 +126,8 @@ passed = (score for score in scores when score &gt; 60)
       If comprehensions get too long, you can split them onto multiple
       lines.
     </para>
-    <screen>passed = []
+    <screen>
+passed = []
 failed = []
 for score in [49, 58, 76, 82, 88, 90]
   (if score &gt; 60 then passed else failed).push score
@@ -143,6 +148,7 @@ var included = (array.indexOf("test") != -1)
       recognize, namely <literal>in</literal>.
     </para>
     <screen>
+
 included = "test" in array
 </screen>
     <para>
@@ -154,13 +160,15 @@ included = "test" in array
       <literal>indexOf()</literal> and testing if the result is
       negative:
     </para>
-    <screen>included = "a long test string".indexOf("test") isnt -1
+    <screen>
+included = "a long test string".indexOf("test") isnt -1
 </screen>
     <para>
       Or even better, hijack the bitwise operator so we don't have to do
       a <literal>-1</literal> comparison.
     </para>
-    <screen>string   = "a long test string"
+    <screen>
+string   = "a long test string"
 included = !!~ string.indexOf "test"
 </screen>
   </sect1>
@@ -181,7 +189,7 @@ for(var key in object) alert(key + " = " + object[key])
       can be used like thus:
     </para>
     <screen>
-//= CoffeeScript    
+   
 object = {one: 1, two: 2}
 alert("#{key} = #{value}") for key, value of object
 </screen>
@@ -199,7 +207,8 @@ alert("#{key} = #{value}") for key, value of object
       easily use <literal>...</literal> to pass an array to them,
       retrieving the maximum and minimum values in the array.
     </para>
-    <screen>Math.max [14, 35, -7, 46, 98]... # 98
+    <screen>
+Math.max [14, 35, -7, 46, 98]... # 98
 Math.min [14, 35, -7, 46, 98]... # -7
 </screen>
     <para>
@@ -219,14 +228,16 @@ Math.min [14, 35, -7, 46, 98]... # -7
       multiple arguments to <literal>max</literal>. We can use this
       feature in other ways too, such as proxying function calls:
     </para>
-    <screen>Log =
+    <screen>
+Log =
   log: -&gt;
     console?.log(arguments...)
 </screen>
     <para>
       Or you can alter the arguments before they're passed onwards:
     </para>
-    <screen>Log =
+    <screen>
+Log =
   logPrefix: "(App)"
 
   log: (args...) -&gt;
@@ -256,7 +267,8 @@ Math.min [14, 35, -7, 46, 98]... # -7
       <literal>is</literal> over <literal>==</literal> and
       <literal>isnt</literal> over <literal>!=</literal>.
     </para>
-    <screen>string = "migrating coconuts"
+    <screen>
+string = "migrating coconuts"
 string == string # true
 string is string # true
 </screen>
@@ -265,7 +277,8 @@ string is string # true
       which is a pattern Rubyists may recognize as
       <literal>||=</literal>:
     </para>
-    <screen>hash or= {}
+    <screen>
+hash or= {}
 </screen>
     <para>
       If hash evaluates to <literal>false</literal>, then it's set to an
@@ -277,7 +290,8 @@ string is string # true
       <literal>hash</literal> is <literal>undefined</literal> or
       <literal>null</literal>:
     </para>
-    <screen>hash ?= {}
+    <screen>
+hash ?= {}
 </screen>
   </sect1>
   <sect1>
@@ -286,7 +300,8 @@ string is string # true
       Destructuring assignments can be used with any depth of array and
       object nesting, to help pull out deeply nested properties.
     </para>
-    <screen>someObject = { a: 'value for a', b: 'value for b' }
+    <screen>
+someObject = { a: 'value for a', b: 'value for b' }
 { a, b } = someObject
 console.log "a is '#{a}', b is '#{b}'"
 </screen>
@@ -294,7 +309,8 @@ console.log "a is '#{a}', b is '#{b}'"
       This is especially useful in Node applications when requiring
       modules:
     </para>
-    <screen>{join, resolve} = require('path')
+    <screen>
+{join, resolve} = require('path')
 
 join('/Users', 'Alex')
 </screen>
@@ -308,7 +324,8 @@ join('/Users', 'Alex')
       <ulink url="http://jquery.com">jQuery</ulink> is especially
       elegant, due to the amount of callbacks in jQuery's API.
     </para>
-    <screen># Use local alias
+    <screen>
+# Use local alias
 $ = jQuery
 
 $ -&gt;
@@ -338,7 +355,8 @@ $ -&gt;
       defined in a context that no reference is kept to, it can't be
       accessed outside that scope.
     </para>
-    <screen># Execute function immediately
+    <screen>
+# Execute function immediately
 type = do -&gt;
   classToType = {}
   for name in "Boolean Number String Function Array Date RegExp Undefined Null".split(" ")

@@ -105,7 +105,7 @@
     <para>
       You can also convert JavaScript back to CoffeeScript using the
       <ulink url="http://js2coffee.org/">js2coffee</ulink> project,
-      especially useful when migration JavaScript projects to
+      especially useful when migrating JavaScript projects to
       CoffeeScript.
     </para>
     <para>

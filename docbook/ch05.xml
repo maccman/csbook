@@ -155,7 +155,8 @@ public/index.html
       called <literal>index.coffee</literal> and fill it with the
       following script:
     </para>
-    <screen>require("coffee-script")
+    <screen>
+require("coffee-script")
 stitch  = require("stitch")
 express = require("express")
 argv    = process.argv.slice(2)
@@ -220,7 +221,8 @@ coffee index.coffee
       script in the <literal>app</literal> folder. This will be the file
       that'll bootstrap our application.
     </para>
-    <screen>module.exports = App =
+    <screen>
+module.exports = App =
   init: -&gt;
     # Bootstrap the app
 </screen>
@@ -259,7 +261,8 @@ coffee index.coffee
       Let's create a new class, <literal>User</literal>, and reference
       it from <literal>app.coffee</literal>:
     </para>
-    <screen># app/models/user.coffee
+    <screen>
+# app/models/user.coffee
 module.exports = class User
   constructor: (@name) -&gt;
 
@@ -370,14 +373,16 @@ User = require("models/user")
       controllers we can require the template, like it was a module, and
       execute it passing any data required.
     </para>
-    <screen>require("views/users/show")(new User("Brian"))
+    <screen>
+require("views/users/show")(new User("Brian"))
 </screen>
     <para>
       Our <literal>app.coffee</literal> file should now look like this,
       rendering the template and appending it to the page when the
       document loads:
     </para>
-    <screen>User = require("models/user")
+    <screen>
+User = require("models/user")
 
 App =
   init: -&gt;
