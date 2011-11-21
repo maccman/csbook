@@ -107,8 +107,7 @@ var groupsCount = 2;   // Global
       Let's have a look at an example of CoffeeScript's variable
       assignment:
     </para>
-    <screen>
-outerScope = true
+    <screen>outerScope = true
 do -&gt;
   innerScope = true
 </screen>
@@ -133,8 +132,7 @@ outerScope = true;
       For example, here we're accidentally overwriting the
       <literal>package</literal> variable in a Class function:
     </para>
-    <screen>
-package = require('./package')
+    <screen>package = require('./package')
 
 class Hem
   build: -&gt;
@@ -148,8 +146,7 @@ class Hem
       Global variables are needed from time to time, and to create those
       you need to set them as properties on <literal>window</literal>:
     </para>
-    <screen>
-  class window.Asset
+    <screen>  class window.Asset
     constructor: -&gt;
 </screen>
     <para>
@@ -211,8 +208,7 @@ function() {}(window.options || {}).property
       <literal>class</literal> as a property on an object, your
       CoffeeScript might look like this:
     </para>
-    <screen>
-myObj = {
+    <screen>myObj = {
   delete: "I am a keyword!"
 }
 myObj.class = -&gt;
@@ -239,8 +235,7 @@ myObj["class"] = function() {};
       Garden's equality section</ulink> which delves into the issue in
       some depth.
     </para>
-    <screen>
-""           ==   "0"           // false
+    <screen>""           ==   "0"           // false
 0            ==   ""            // true
 0            ==   "0"           // true
 false        ==   "false"       // false
@@ -278,8 +273,7 @@ null         ==   undefined     // true
       number <literal>0</literal> are all coerced to
       <literal>false</literal>
     </para>
-    <screen>
-alert("Empty Array")  unless [].length
+    <screen>alert("Empty Array")  unless [].length
 alert("Empty String") unless ""
 alert("Number 0")     unless 0
 </screen>
@@ -288,8 +282,7 @@ alert("Number 0")     unless 0
       <literal>undefined</literal>, then you can use CoffeeScript's
       existential operator:
     </para>
-    <screen>
-alert("This is not called") unless ""?
+    <screen>alert("This is not called") unless ""?
 </screen>
     <para>
       The <literal>alert()</literal> in the previous example won't be
@@ -422,8 +415,7 @@ wem();
       when you're using <literal>eval</literal>, there are better &amp;
       safer alternatives (such as square brackets).
     </para>
-    <screen>
-# Don't do this
+    <screen># Don't do this
 model = eval(modelName)
 
 # Use square brackets instead
@@ -438,8 +430,7 @@ model = window[modelName]
       completely broken. In fact, it really has only one use, checking
       to see if a value is <literal>undefined</literal>.
     </para>
-    <screen>
-typeof undefinedVar is "undefined"
+    <screen>typeof undefinedVar is "undefined"
 </screen>
     <para>
       For all other types of type checking, <literal>typeof</literal>
@@ -493,8 +484,7 @@ new Object()        Object     object
       example implementation ported from jQuery's
       <literal>$.type</literal>:
     </para>
-    <screen>
-type = do -&gt;
+    <screen>type = do -&gt;
   classToType = {}
   for name in "Boolean Number String Function Array Date RegExp Undefined Null".split(" ")
     classToType["[object " + name + "]"] = name.toLowerCase()
@@ -518,8 +508,7 @@ type({})         # "object"
       still need to use <literal>typeof</literal> otherwise you'll get a
       <literal>ReferenceError</literal>.
     </para>
-    <screen>
-if typeof aVar isnt "undefined"
+    <screen>if typeof aVar isnt "undefined"
   objectType = type(aVar)
 </screen>
     <para>
@@ -536,8 +525,7 @@ objectType = type(aVar?)
       'array like' object implements <literal>push()</literal>, we
       should treat it like an array:
     </para>
-    <screen>
-anArray?.push? aValue
+    <screen>anArray?.push? aValue
 </screen>
     <para>
       If <literal>anArray</literal> is an object other than an array
@@ -556,8 +544,7 @@ anArray?.push? aValue
       comparing custom made objects. When it comes to comparing built-in
       types, it's as useless as <literal>typeof</literal>.
     </para>
-    <screen>
-new String("foo") instanceof String # true
+    <screen>new String("foo") instanceof String # true
 "foo" instanceof String             # false
 </screen>
     <para>
@@ -566,8 +553,7 @@ new String("foo") instanceof String # true
       <literal>instanceof</literal> only returns a correct result for
       custom made objects, such as CoffeeScript classes.
     </para>
-    <screen>
-class Parent
+    <screen>class Parent
 class Child extends Parent
 
 child = new Child
@@ -585,8 +571,7 @@ child instanceof Parent # true
       The <literal>delete</literal> keyword can only safely be used for
       removing properties inside objects.
     </para>
-    <screen>
-anObject = {one: 1, two: 2}
+    <screen>anObject = {one: 1, two: 2}
 delete anObject.one
 anObject.hasOwnProperty("one") # false
 </screen>
@@ -594,8 +579,7 @@ anObject.hasOwnProperty("one") # false
       Any other use, such as deleting variables or function's won't
       work.
     </para>
-    <screen>
-aVar = 1
+    <screen>aVar = 1
 delete aVar
 typeof Var # "integer"
 </screen>
@@ -604,8 +588,7 @@ typeof Var # "integer"
       to remove a reference to a variable, just assign it to
       <literal>null</literal> instead.
     </para>
-    <screen>
-aVar = 1
+    <screen>aVar = 1
 aVar = null
 </screen>
   </sect2>
@@ -791,8 +774,7 @@ parseInt('010', 10) is 10
         function will raise a syntax error in strict mode, but run fine
         in the usual mode:
       </para>
-      <screen>
-do -&gt;
+      <screen>do -&gt;
   "use strict"
   console.log(arguments.callee)
 </screen>
@@ -809,8 +791,7 @@ do -&gt;
         <literal>TypeError</literal> in strict mode, but run fine in a
         normal context, creating a global variable:
       </para>
-      <screen>
-do -&gt;
+      <screen>do -&gt;
   "use strict"
   class @Spine
 </screen>
@@ -821,8 +802,7 @@ do -&gt;
         solution to this is to explicitly set global variables on the
         <literal>window</literal> object.
       </para>
-      <screen>
-do -&gt;
+      <screen>do -&gt;
   "use strict"
   class window.Spine
 </screen>

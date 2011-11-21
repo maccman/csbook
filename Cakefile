@@ -40,7 +40,7 @@ format = (data) ->
     element = $(@)
     element.text(
       element.text().replace(
-        /\/\/= CoffeeScript.?\n/, ''
+        /\/\/= CoffeeScript.?\n?/, ''
       )
     )
   
