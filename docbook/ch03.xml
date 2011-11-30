@@ -41,6 +41,15 @@ array.forEach(function(item, i){
     </para>
     <screen>
 myFunction(item) for item in array
+</screen><para>Compiles down to:</para><screen>(function() {
+  var item, _i, _len;
+
+  for (_i = 0, _len = array.length; _i &lt; _len; _i++) {
+    item = array[_i];
+    myFunction(item);
+  }
+
+}).call(this);
 </screen>
     <para>
       It's a readable and concise syntax, I'm sure you'll agree, and
@@ -79,6 +88,20 @@ var result = array.map(function(item, i){
     </para>
     <screen>
 result = (item.name for item in array)
+</screen><para>Compiles down to:</para><screen>(function() {
+  var item, result;
+
+  result = (function() {
+    var _i, _len, _results;
+    _results = [];
+    for (_i = 0, _len = array.length; _i &lt; _len; _i++) {
+      item = array[_i];
+      _results.push(item.name);
+    }
+    return _results;
+  })();
+
+}).call(this);
 </screen>
   </sect1>
   <sect1>
@@ -107,6 +130,20 @@ result = array.filter(function(item, i){
     </para>
     <screen>
 result = (item for item in array when item.name is "test")
+</screen><para>Compiles down to:</para><screen>(function() {
+  var item, result;
+
+  result = (function() {
+    var _i, _len, _results;
+    _results = [];
+    for (_i = 0, _len = array.length; _i &lt; _len; _i++) {
+      item = array[_i];
+      if (item.name === "test") _results.push(item);
+    }
+    return _results;
+  })();
+
+}).call(this);
 </screen>
     <para>
       Don't forgot to include the parens, as otherwise
@@ -121,6 +158,30 @@ failed = []
 
 # Or
 passed = (score for score in scores when score &gt; 60)
+</screen><para>Compiles down to:</para><screen>(function() {
+  var failed, passed, score, _i, _len, _ref;
+
+  passed = [];
+
+  failed = [];
+
+  _ref = [49, 58, 76, 82, 88, 90];
+  for (_i = 0, _len = _ref.length; _i &lt; _len; _i++) {
+    score = _ref[_i];
+    (score &gt; 60 ? passed : failed).push(score);
+  }
+
+  passed = (function() {
+    var _j, _len2, _results;
+    _results = [];
+    for (_j = 0, _len2 = scores.length; _j &lt; _len2; _j++) {
+      score = scores[_j];
+      if (score &gt; 60) _results.push(score);
+    }
+    return _results;
+  })();
+
+}).call(this);
 </screen>
     <para>
       If comprehensions get too long, you can split them onto multiple
@@ -131,6 +192,20 @@ passed = []
 failed = []
 for score in [49, 58, 76, 82, 88, 90]
   (if score &gt; 60 then passed else failed).push score
+</screen><para>Compiles down to:</para><screen>(function() {
+  var failed, passed, score, _i, _len, _ref;
+
+  passed = [];
+
+  failed = [];
+
+  _ref = [49, 58, 76, 82, 88, 90];
+  for (_i = 0, _len = _ref.length; _i &lt; _len; _i++) {
+    score = _ref[_i];
+    (score &gt; 60 ? passed : failed).push(score);
+  }
+
+}).call(this);
 </screen>
   </sect1>
   <sect1>
@@ -150,6 +225,13 @@ var included = (array.indexOf("test") != -1)
     <screen>
 
 included = "test" in array
+</screen><para>Compiles down to:</para><screen>(function() {
+  var included;
+  var __hasProp = Object.prototype.hasOwnProperty, __indexOf = Array.prototype.indexOf || function(item) { for (var i = 0, l = this.length; i &lt; l; i++) { if (__hasProp.call(this, i) &amp;&amp; this[i] === item) return i; } return -1; };
+
+  included = __indexOf.call(array, "test") &gt;= 0;
+
+}).call(this);
 </screen>
     <para>
       Behind the scenes, CoffeeScript is using
@@ -162,6 +244,12 @@ included = "test" in array
     </para>
     <screen>
 included = "a long test string".indexOf("test") isnt -1
+</screen><para>Compiles down to:</para><screen>(function() {
+  var included;
+
+  included = "a long test string".indexOf("test") !== -1;
+
+}).call(this);
 </screen>
     <para>
       Or even better, hijack the bitwise operator so we don't have to do
@@ -170,6 +258,14 @@ included = "a long test string".indexOf("test") isnt -1
     <screen>
 string   = "a long test string"
 included = !!~ string.indexOf "test"
+</screen><para>Compiles down to:</para><screen>(function() {
+  var included, string;
+
+  string = "a long test string";
+
+  included = !!~string.indexOf("test");
+
+}).call(this);
 </screen>
   </sect1>
   <sect1>
@@ -192,6 +288,20 @@ for(var key in object) alert(key + " = " + object[key])
    
 object = {one: 1, two: 2}
 alert("#{key} = #{value}") for key, value of object
+</screen><para>Compiles down to:</para><screen>(function() {
+  var key, object, value;
+
+  object = {
+    one: 1,
+    two: 2
+  };
+
+  for (key in object) {
+    value = object[key];
+    alert("" + key + " = " + value);
+  }
+
+}).call(this);
 </screen>
     <para>
       As you can see, you can specify variables for both the property
@@ -210,6 +320,10 @@ alert("#{key} = #{value}") for key, value of object
     <screen>
 Math.max [14, 35, -7, 46, 98]... # 98
 Math.min [14, 35, -7, 46, 98]... # -7
+</screen><para>Compiles down to:</para><screen>
+  Math.max.apply(Math, [14, 35, -7, 46, 98]);
+
+  Math.min.apply(Math, [14, 35, -7, 46, 98]);
 </screen>
     <para>
       It's worth noting that this trick will fail with really large
@@ -232,6 +346,16 @@ Math.min [14, 35, -7, 46, 98]... # -7
 Log =
   log: -&gt;
     console?.log(arguments...)
+</screen><para>Compiles down to:</para><screen>(function() {
+  var Log;
+
+  Log = {
+    log: function() {
+      return typeof console !== "undefined" &amp;&amp; console !== null ? console.log.apply(console, arguments) : void 0;
+    }
+  };
+
+}).call(this);
 </screen>
     <para>
       Or you can alter the arguments before they're passed onwards:
@@ -243,6 +367,21 @@ Log =
   log: (args...) -&gt;
     args.unshift(@logPrefix) if @logPrefix
     console?.log(args...)
+</screen><para>Compiles down to:</para><screen>(function() {
+  var Log;
+  var __slice = Array.prototype.slice;
+
+  Log = {
+    logPrefix: "(App)",
+    log: function() {
+      var args;
+      args = 1 &lt;= arguments.length ? __slice.call(arguments, 0) : [];
+      if (this.logPrefix) args.unshift(this.logPrefix);
+      return typeof console !== "undefined" &amp;&amp; console !== null ? console.log.apply(console, args) : void 0;
+    }
+  };
+
+}).call(this);
 </screen>
     <para>
       Bear in mind though, that CoffeeScript will automatically set the
@@ -271,6 +410,16 @@ Log =
 string = "migrating coconuts"
 string == string # true
 string is string # true
+</screen><para>Compiles down to:</para><screen>(function() {
+  var string;
+
+  string = "migrating coconuts";
+
+  string === string;
+
+  string === string;
+
+}).call(this);
 </screen>
     <para>
       One extremely nice addition to CoffeeScript is the 'or equals',
@@ -279,6 +428,8 @@ string is string # true
     </para>
     <screen>
 hash or= {}
+</screen><para>Compiles down to:</para><screen>
+  hash || (hash = {});
 </screen>
     <para>
       If hash evaluates to <literal>false</literal>, then it's set to an
@@ -292,6 +443,8 @@ hash or= {}
     </para>
     <screen>
 hash ?= {}
+</screen><para>Compiles down to:</para><screen>
+  if (typeof hash === "undefined" || hash === null) hash = {};
 </screen>
   </sect1>
   <sect1>
@@ -304,6 +457,19 @@ hash ?= {}
 someObject = { a: 'value for a', b: 'value for b' }
 { a, b } = someObject
 console.log "a is '#{a}', b is '#{b}'"
+</screen><para>Compiles down to:</para><screen>(function() {
+  var a, b, someObject;
+
+  someObject = {
+    a: 'value for a',
+    b: 'value for b'
+  };
+
+  a = someObject.a, b = someObject.b;
+
+  console.log("a is '" + a + "', b is '" + b + "'");
+
+}).call(this);
 </screen>
     <para>
       This is especially useful in Node applications when requiring
@@ -313,6 +479,14 @@ console.log "a is '#{a}', b is '#{b}'"
 {join, resolve} = require('path')
 
 join('/Users', 'Alex')
+</screen><para>Compiles down to:</para><screen>(function() {
+  var join, resolve, _ref;
+
+  _ref = require('path'), join = _ref.join, resolve = _ref.resolve;
+
+  join('/Users', 'Alex');
+
+}).call(this);
 </screen>
   </sect1>
   <sect1>
@@ -332,6 +506,18 @@ $ -&gt;
   # DOMContentLoaded
   $(".el").click -&gt;
     alert("Clicked!")
+</screen><para>Compiles down to:</para><screen>(function() {
+  var $;
+
+  $ = jQuery;
+
+  $(function() {
+    return $(".el").click(function() {
+      return alert("Clicked!");
+    });
+  });
+
+}).call(this);
 </screen>
     <para>
       Since all of CoffeeScript's output is wrapped in an anonymous
@@ -345,27 +531,59 @@ $ -&gt;
     <title>Private variables</title>
     <para>
       The <literal>do</literal> keyword in CoffeeScript lets us execute
-      functions immediately, a great way of encapsulating scope &amp;
+      functions immediately, a great way of encapsulating scope and
       protecting variables. In the example below, we're defining a
       variable <literal>classToType</literal> in the context of an
-      anonymous function which's immediately called by
+      anonymous function which is immediately called by
       <literal>do</literal>. That anonymous function returns a second
       anonymous function, which will be ultimate value of
       <literal>type</literal>. Since <literal>classToType</literal> is
-      defined in a context that no reference is kept to, it can't be
+      defined in a context to which no reference is kept to, it can't be
       accessed outside that scope.
     </para>
     <screen>
 # Execute function immediately
 type = do -&gt;
+
+  types = [
+    "Boolean"
+    "Number" 
+    "String" 
+    "Function" 
+    "Array" 
+    "Date" 
+    "RegExp"
+    "Undefined" 
+    "Null"
+  ]
+
   classToType = {}
-  for name in "Boolean Number String Function Array Date RegExp Undefined Null".split(" ")
+  for name in types
     classToType["[object " + name + "]"] = name.toLowerCase()
 
   # Return a function
   (obj) -&gt;
     strType = Object::toString.call(obj)
     classToType[strType] or "object"
+</screen><para>Compiles down to:</para><screen>(function() {
+  var type;
+
+  type = (function() {
+    var classToType, name, types, _i, _len;
+    types = ["Boolean", "Number", "String", "Function", "Array", "Date", "RegExp", "Undefined", "Null"];
+    classToType = {};
+    for (_i = 0, _len = types.length; _i &lt; _len; _i++) {
+      name = types[_i];
+      classToType["[object " + name + "]"] = name.toLowerCase();
+    }
+    return function(obj) {
+      var strType;
+      strType = Object.prototype.toString.call(obj);
+      return classToType[strType] || "object";
+    };
+  })();
+
+}).call(this);
 </screen>
     <para>
       In other words, <literal>classToType</literal> is completely

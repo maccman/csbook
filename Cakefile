@@ -1,5 +1,6 @@
 fs      = require('fs')
 fp      = require('path')
+coffee  = require('coffee-script')
 $       = require('jQuery')
 {spawn} = require('child_process')
 input   = './chapters'
@@ -38,11 +39,20 @@ format = (data) ->
 
   doc.find('screen').each ->
     element = $(@)
-    element.text(
-      element.text().replace(
-        /\/\/= CoffeeScript.?\n?/, ''
+    
+    if (element.text().indexOf('//= CoffeeScript') isnt -1)
+      element.text(
+        element.text().replace(
+          /\/\/= CoffeeScript.?\n?/, ''
+        )
       )
-    )
+      
+      try
+        element.after($('<screen />').text(coffee.compile(element.text())))
+        element.after($('<para />').text('Compiles down to:'))
+      catch e
+        console.error(e)
+        console.log(element.text())
   
   data  = doc.html()
   

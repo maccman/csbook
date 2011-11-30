@@ -20,8 +20,9 @@
     <ulink url="http://twitter.com/maccman">@maccman</ulink>) with great
     contributions from <ulink url="https://github.com/dxgriffiths">David
     Griffiths</ulink>, <ulink url="http://github.com/satyr">Satoshi
-    Murakami</ulink>, and
-    <ulink url="https://github.com/jashkenas">Jeremy Ashkenas</ulink>.
+    Murakami</ulink>, <ulink url="http://www.coffeescriptlove.com">Chris
+    Smith</ulink>, and <ulink url="https://github.com/jashkenas">Jeremy
+    Ashkenas</ulink>.
   </para>
   <para>
     If you have any errata or suggestions, please don't hesitate to open
@@ -139,11 +140,16 @@
 npm install -g coffee-script
 </screen>
     <para>
-      This will give you a <literal>coffee</literal> executable. If you
-      execute it without any command line options, it'll give you the
-      CoffeeScript console, which you can use to quickly execute
-      CoffeeScript statements. To pre-process files, pass the
-      <literal>--compile</literal> option.
+      The <literal>-g</literal> flag is important, as it tells npm to
+      install the <literal>coffee-script</literal> package globally,
+      rather than locally. Without it, you won't get the
+      <literal>coffee</literal> executable.
+    </para>
+    <para>
+      If you execute the <literal>coffee</literal> executable without
+      any command line options, it'll give you the CoffeeScript console,
+      which you can use to quickly execute CoffeeScript statements. To
+      pre-process files, pass the <literal>--compile</literal> option.
     </para>
     <screen>
 coffee --compile my-script.coffee

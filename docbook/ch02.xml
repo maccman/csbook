@@ -21,6 +21,18 @@
   </para>
   <screen>
 class Animal
+</screen><para>Compiles down to:</para><screen>(function() {
+  var Animal;
+
+  Animal = (function() {
+
+    function Animal() {}
+
+    return Animal;
+
+  })();
+
+}).call(this);
 </screen>
   <para>
     In the example above, <literal>Animal</literal> is the name of the
@@ -31,6 +43,12 @@ class Animal
   </para>
   <screen>
 animal = new Animal
+</screen><para>Compiles down to:</para><screen>(function() {
+  var animal;
+
+  animal = new Animal;
+
+}).call(this);
 </screen>
   <para>
     Defining constructors (functions that get invoked upon
@@ -43,6 +61,20 @@ animal = new Animal
 class Animal
   constructor: (name) -&gt;
     @name = name
+</screen><para>Compiles down to:</para><screen>(function() {
+  var Animal;
+
+  Animal = (function() {
+
+    function Animal(name) {
+      this.name = name;
+    }
+
+    return Animal;
+
+  })();
+
+}).call(this);
 </screen>
   <para>
     In fact, CoffeeScript provides a shorthand for the common pattern of
@@ -56,6 +88,20 @@ class Animal
   <screen>
 class Animal
   constructor: (@name) -&gt;
+</screen><para>Compiles down to:</para><screen>(function() {
+  var Animal;
+
+  Animal = (function() {
+
+    function Animal(name) {
+      this.name = name;
+    }
+
+    return Animal;
+
+  })();
+
+}).call(this);
 </screen>
   <para>
     As you'd expect, any arguments passed on instantiation are proxied
@@ -64,6 +110,14 @@ class Animal
   <screen>
 animal = new Animal("Parrot")
 alert "Animal is a #{animal.name}"
+</screen><para>Compiles down to:</para><screen>(function() {
+  var animal;
+
+  animal = new Animal("Parrot");
+
+  alert("Animal is a " + animal.name);
+
+}).call(this);
 </screen>
   <sect1>
     <title>Instance properties</title>
@@ -81,6 +135,26 @@ class Animal
 
 animal = new Animal
 animal.sell(new Customer)
+</screen><para>Compiles down to:</para><screen>(function() {
+  var Animal, animal;
+
+  Animal = (function() {
+
+    function Animal() {}
+
+    Animal.prototype.price = 5;
+
+    Animal.prototype.sell = function(customer) {};
+
+    return Animal;
+
+  })();
+
+  animal = new Animal;
+
+  animal.sell(new Customer);
+
+}).call(this);
 </screen>
     <para>
       Context changes are rife within JavaScript, and earlier in the
@@ -103,6 +177,31 @@ class Animal
 
 animal = new Animal
 $("#sell").click(animal.sell)
+</screen><para>Compiles down to:</para><screen>(function() {
+  var Animal, animal;
+  var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+
+  Animal = (function() {
+
+    function Animal() {
+      this.sell = __bind(this.sell, this);
+    }
+
+    Animal.prototype.price = 5;
+
+    Animal.prototype.sell = function() {
+      return alert("Give me " + this.price + " shillings!");
+    };
+
+    return Animal;
+
+  })();
+
+  animal = new Animal;
+
+  $("#sell").click(animal.sell);
+
+}).call(this);
 </screen>
     <para>
       As demonstrated in the example above, this is especially useful in
@@ -127,6 +226,22 @@ class Animal
   this.find = (name) -&gt;      
 
 Animal.find("Parrot")
+</screen><para>Compiles down to:</para><screen>(function() {
+  var Animal;
+
+  Animal = (function() {
+
+    function Animal() {}
+
+    Animal.find = function(name) {};
+
+    return Animal;
+
+  })();
+
+  Animal.find("Parrot");
+
+}).call(this);
 </screen>
     <para>
       In fact, as you may remember, CoffeeScript aliases
@@ -138,6 +253,22 @@ class Animal
   @find: (name) -&gt;
 
 Animal.find("Parrot")
+</screen><para>Compiles down to:</para><screen>(function() {
+  var Animal;
+
+  Animal = (function() {
+
+    function Animal() {}
+
+    Animal.find = function(name) {};
+
+    return Animal;
+
+  })();
+
+  Animal.find("Parrot");
+
+}).call(this);
 </screen>
   </sect1>
   <sect1>
@@ -163,6 +294,41 @@ class Parrot extends Animal
 
   dead: -&gt;
     not @alive()
+</screen><para>Compiles down to:</para><screen>(function() {
+  var Animal, Parrot;
+  var __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+
+  Animal = (function() {
+
+    function Animal(name) {
+      this.name = name;
+    }
+
+    Animal.prototype.alive = function() {
+      return false;
+    };
+
+    return Animal;
+
+  })();
+
+  Parrot = (function() {
+
+    __extends(Parrot, Animal);
+
+    function Parrot() {
+      Parrot.__super__.constructor.call(this, "Parrot");
+    }
+
+    Parrot.prototype.dead = function() {
+      return !this.alive();
+    };
+
+    return Parrot;
+
+  })();
+
+}).call(this);
 </screen>
     <para>
       You'll notice that in the example above, we're using the
@@ -196,6 +362,39 @@ Animal::rip = true
 
 parrot = new Parrot("Macaw")
 alert("This parrot is no more") if parrot.rip
+</screen><para>Compiles down to:</para><screen>(function() {
+  var Animal, Parrot, parrot;
+  var __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+
+  Animal = (function() {
+
+    function Animal(name) {
+      this.name = name;
+    }
+
+    return Animal;
+
+  })();
+
+  Parrot = (function() {
+
+    __extends(Parrot, Animal);
+
+    function Parrot() {
+      Parrot.__super__.constructor.apply(this, arguments);
+    }
+
+    return Parrot;
+
+  })();
+
+  Animal.prototype.rip = true;
+
+  parrot = new Parrot("Macaw");
+
+  if (parrot.rip) alert("This parrot is no more");
+
+}).call(this);
 </screen>
     <para>
       It's worth pointing out though that static properties are copied
@@ -228,6 +427,29 @@ include Parrot,
   isDeceased: true
 
 (new Parrot).isDeceased
+</screen><para>Compiles down to:</para><screen>(function() {
+  var extend, include;
+
+  extend = function(obj, mixin) {
+    var method, name;
+    for (name in mixin) {
+      method = mixin[name];
+      obj[name] = method;
+    }
+    return obj;
+  };
+
+  include = function(klass, mixin) {
+    return extend(klass.prototype, mixin);
+  };
+
+  include(Parrot, {
+    isDeceased: true
+  });
+
+  (new Parrot).isDeceased;
+
+}).call(this);
 </screen>
     <para>
       Mixins are a great pattern for sharing common logic between
@@ -265,6 +487,41 @@ class Module
 
     obj.included?.apply(@)
     this
+</screen><para>Compiles down to:</para><screen>(function() {
+  var Module, moduleKeywords;
+  var __hasProp = Object.prototype.hasOwnProperty, __indexOf = Array.prototype.indexOf || function(item) { for (var i = 0, l = this.length; i &lt; l; i++) { if (__hasProp.call(this, i) &amp;&amp; this[i] === item) return i; } return -1; };
+
+  moduleKeywords = ['extended', 'included'];
+
+  Module = (function() {
+
+    function Module() {}
+
+    Module.extend = function(obj) {
+      var key, value, _ref;
+      for (key in obj) {
+        value = obj[key];
+        if (__indexOf.call(moduleKeywords, key) &lt; 0) this[key] = value;
+      }
+      if ((_ref = obj.extended) != null) _ref.apply(this);
+      return this;
+    };
+
+    Module.include = function(obj) {
+      var key, value, _ref;
+      for (key in obj) {
+        value = obj[key];
+        if (__indexOf.call(moduleKeywords, key) &lt; 0) this.prototype[key] = value;
+      }
+      if ((_ref = obj.included) != null) _ref.apply(this);
+      return this;
+    };
+
+    return Module;
+
+  })();
+
+}).call(this);
 </screen>
     <para>
       The little dance around the <literal>moduleKeywords</literal>
@@ -289,6 +546,42 @@ user = User.find(1)
 
 user = new User
 user.save()
+</screen><para>Compiles down to:</para><screen>(function() {
+  var User, classProperties, instanceProperties, user;
+  var __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+
+  classProperties = {
+    find: function(id) {},
+    create: function(attrs) {}
+  };
+
+  instanceProperties = {
+    save: function() {}
+  };
+
+  User = (function() {
+
+    __extends(User, Module);
+
+    function User() {
+      User.__super__.constructor.apply(this, arguments);
+    }
+
+    User.extend(classProperties);
+
+    User.include(instanceProperties);
+
+    return User;
+
+  })();
+
+  user = User.find(1);
+
+  user = new User;
+
+  user.save();
+
+}).call(this);
 </screen>
     <para>
       As you can see, we've added some static properties,
@@ -308,6 +601,35 @@ ORM =
 
 class User extends Module
   @extend ORM
+</screen><para>Compiles down to:</para><screen>(function() {
+  var ORM, User;
+  var __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+
+  ORM = {
+    find: function(id) {},
+    create: function(attrs) {},
+    extended: function() {
+      return this.include({
+        save: function() {}
+      });
+    }
+  };
+
+  User = (function() {
+
+    __extends(User, Module);
+
+    function User() {
+      User.__super__.constructor.apply(this, arguments);
+    }
+
+    User.extend(ORM);
+
+    return User;
+
+  })();
+
+}).call(this);
 </screen>
     <para>
       Super simple and elegant!

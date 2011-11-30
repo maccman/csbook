@@ -43,7 +43,7 @@
       So what exactly are CommonJS modules? Well, If you've used
       <ulink url="http://nodejs.org/">NodeJS</ulink> before you've used
       CommonJS modules, probably without realizing it. CommonJS modules
-      were initially developed for writing server side JavaScript
+      were initially developed for writing server-side JavaScript
       libraries, in an attempt to deal with loading, namespacing and
       scoping issues. They were a common format that would be compatible
       across all JavaScript implementations. The aim was that a library
@@ -53,7 +53,7 @@
       browsers, and now we have great libraries like
       <ulink url="http://requirejs.org">RequireJS</ulink> and
       <ulink url="https://github.com/jbrantly/yabble">Yabble</ulink> to
-      use modules client-side.
+      help us use modules client-side.
     </para>
     <para>
       Practically speaking, modules ensure that your code is run in a
@@ -116,7 +116,7 @@ myFineProperty = require("random_module").myFineProperty
       library. Stitch is by Sam Stephenson, the mind behind
       <ulink url="http://www.prototypejs.org">Prototype.js</ulink>
       amongst other things, and solves the module problem so elegantly
-      it makes me want to dance for joy! Rather than try and dynamically
+      it makes me want to dance for joy! Rather than try to dynamically
       resolve dependencies, Stitch simply bundles up all your JavaScript
       files into one, wrapping them in some CommonJS magic. Oh, and did
       I mention it'll compile your CoffeeScript, JS templates,
@@ -181,6 +181,38 @@ app.configure -&gt;
 port = argv[0] or process.env.PORT or 9294
 console.log "Starting server on port: #{port}"
 app.listen port
+</screen><para>Compiles down to:</para><screen>(function() {
+  var app, argv, express, package, port, stitch;
+
+  require("coffee-script");
+
+  stitch = require("stitch");
+
+  express = require("express");
+
+  argv = process.argv.slice(2);
+
+  package = stitch.createPackage({
+    paths: [__dirname + "/app"],
+    dependencies: []
+  });
+
+  app = express.createServer();
+
+  app.configure(function() {
+    app.set("views", __dirname + "/views");
+    app.use(app.router);
+    app.use(express.static(__dirname + "/public"));
+    return app.get("/application.js", package.createServer());
+  });
+
+  port = argv[0] || process.env.PORT || 9294;
+
+  console.log("Starting server on port: " + port);
+
+  app.listen(port);
+
+}).call(this);
 </screen>
     <para>
       You can see some dependencies listed:
@@ -225,6 +257,14 @@ coffee index.coffee
 module.exports = App =
   init: -&gt;
     # Bootstrap the app
+</screen><para>Compiles down to:</para><screen>(function() {
+  var App;
+
+  module.exports = App = {
+    init: function() {}
+  };
+
+}).call(this);
 </screen>
     <para>
       Now let's create our main page <literal>index.html</literal>
@@ -268,6 +308,22 @@ module.exports = class User
 
 # app/app.coffee
 User = require("models/user")
+</screen><para>Compiles down to:</para><screen>(function() {
+  var User;
+
+  module.exports = User = (function() {
+
+    function User(name) {
+      this.name = name;
+    }
+
+    return User;
+
+  })();
+
+  User = require("models/user");
+
+}).call(this);
 </screen>
   </sect1>
   <sect1>
@@ -276,7 +332,7 @@ User = require("models/user")
       If you're moving logic to the client side, then you'll definitely
       need some sort of templating library. JavaScript templating is
       very similar to templates on the server, such as Ruby's ERB or
-      Python's text interpolation, expect of course it runs client side.
+      Python's text interpolation, except of course it runs client side.
       There are a whole host of templating libraries out there, so I
       encourage you to do some research and check them out. By default,
       Stitch comes with support for
@@ -375,6 +431,8 @@ User = require("models/user")
     </para>
     <screen>
 require("views/users/show")(new User("Brian"))
+</screen><para>Compiles down to:</para><screen>
+  require("views/users/show")(new User("Brian"));
 </screen>
     <para>
       Our <literal>app.coffee</literal> file should now look like this,
@@ -395,6 +453,25 @@ App =
     document.body.appendChild(element)
 
 module.exports = App
+</screen><para>Compiles down to:</para><screen>(function() {
+  var App, User;
+
+  User = require("models/user");
+
+  App = {
+    init: function() {
+      var element, template, view;
+      template = require("views/users/show");
+      view = template(new User("Brian"));
+      element = document.createElement("div");
+      element.innerHTML = view;
+      return document.body.appendChild(element);
+    }
+  };
+
+  module.exports = App;
+
+}).call(this);
 </screen>
     <para>
       Open up <ulink url="http://localhost:9294/">the
@@ -466,7 +543,7 @@ heroku open
       <ulink url="http://coffeekup.org">CoffeeKup</ulink>.
     </para>
     <para>
-      As for serving up application,
+      As for serving your application,
       <ulink url="http://github.com/maccman/hem">Hem</ulink> is a great
       choice, supporting both CommonJS and NPM modules and integrating
       seamlessly with the CoffeeScript MVC framework

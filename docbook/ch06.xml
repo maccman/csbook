@@ -10,12 +10,12 @@
     avoid is just as important as knowing about the parts you should
     use. As Sun Tzu says, "know your enemy", and that's
     exactly what we're going to do in the chapter, exploring the dark
-    side of JavaScript and revealing all the lurking monsters ready to
-    pounce on the unsuspecting developer.
+    side of JavaScript and revealing some of the lurking monsters ready
+    to pounce on the unsuspecting developer.
   </para>
   <para>
     As I mentioned in the introduction, CoffeeScript's awesomeness lies
-    not only in it's syntax, but in it's ability to fix some of
+    not only in its syntax, but in its ability to fix some of
     JavaScript's warts. However, due to the fact that CoffeeScript
     statements have a direct translation into JavaScript, and don't run
     in a virtual machine or interpreter, the language is not a silver
@@ -50,7 +50,7 @@ with(dataObj.users.alex) {
     <para>
       Setting aside the fact that we shouldn't have such a deep object
       in the first place, the syntax is quite clean. Except for one
-      thing. It's damn confusing to the JavaScript interpreter - it
+      thing. It's damn confusing to the JavaScript interpreter, which
       doesn't know exactly what you're going to do in the
       <literal>with</literal> context, and forces the specified object
       to be searched first for all name lookups.
@@ -111,6 +111,17 @@ var groupsCount = 2;   // Global
 outerScope = true
 do -&gt;
   innerScope = true
+</screen><para>Compiles down to:</para><screen>(function() {
+  var outerScope;
+
+  outerScope = true;
+
+  (function() {
+    var innerScope;
+    return innerScope = true;
+  })();
+
+}).call(this);
 </screen>
     <para>
       Compiles down to:
@@ -125,12 +136,12 @@ outerScope = true;
 </screen>
     <para>
       Notice how CoffeeScript initializes variables (using
-      <literal>var</literal>) automatically in the context their first
-      used. Whilst it's impossible to shadow outer variables, you can
-      still refer to and access them. You need to watch out for this, be
-      careful that you're not reusing the name of an external variable
-      accidentally if you're writing a deeply nested function or class.
-      For example, here we're accidentally overwriting the
+      <literal>var</literal>) automatically in the context they are
+      first used. Whilst it's impossible to shadow outer variables, you
+      can still refer to and access them. You need to watch out for
+      this, be careful that you're not reusing the name of an external
+      variable accidentally if you're writing a deeply nested function
+      or class. For example, here we're accidentally overwriting the
       <literal>package</literal> variable in a Class function:
     </para>
     <screen>
@@ -143,6 +154,28 @@ class Hem
 
   hemPackage: -&gt;
     package.create()
+</screen><para>Compiles down to:</para><screen>(function() {
+  var Hem, package;
+
+  package = require('./package');
+
+  Hem = (function() {
+
+    function Hem() {}
+
+    Hem.prototype.build = function() {
+      return package = this.hemPackage.compile();
+    };
+
+    Hem.prototype.hemPackage = function() {
+      return package.create();
+    };
+
+    return Hem;
+
+  })();
+
+}).call(this);
 </screen>
     <para>
       Global variables are needed from time to time, and to create those
@@ -151,6 +184,14 @@ class Hem
     <screen>
   class window.Asset
     constructor: -&gt;
+</screen><para>Compiles down to:</para><screen>
+  window.Asset = (function() {
+
+    function Asset() {}
+
+    return Asset;
+
+  })();
 </screen>
     <para>
       By ensuring global variables are explicit, rather than implicit,
@@ -216,6 +257,16 @@ myObj = {
   delete: "I am a keyword!"
 }
 myObj.class = -&gt;
+</screen><para>Compiles down to:</para><screen>(function() {
+  var myObj;
+
+  myObj = {
+    "delete": "I am a keyword!"
+  };
+
+  myObj["class"] = function() {};
+
+}).call(this);
 </screen>
     <para>
       The CoffeeScript parser notices you're using a reserved keyword,
@@ -282,6 +333,12 @@ null         ==   undefined     // true
 alert("Empty Array")  unless [].length
 alert("Empty String") unless ""
 alert("Number 0")     unless 0
+</screen><para>Compiles down to:</para><screen>
+  if (![].length) alert("Empty Array");
+
+  if (!"") alert("Empty String");
+
+  if (!0) alert("Number 0");
 </screen>
     <para>
       If you want to explicitly check for <literal>null</literal> and
@@ -290,6 +347,8 @@ alert("Number 0")     unless 0
     </para>
     <screen>
 alert("This is not called") unless ""?
+</screen><para>Compiles down to:</para><screen>
+  if ("" == null) alert("This is not called");
 </screen>
     <para>
       The <literal>alert()</literal> in the previous example won't be
@@ -348,7 +407,7 @@ wem();
 </screen>
     <para>
       CoffeeScript's approach to this is to remove declarative functions
-      entirely, using only function expressions.
+      entirely, using function expressions instead.
     </para>
   </sect1>
   <sect1>
@@ -403,7 +462,7 @@ wem();
     <para>
       Whilst CoffeeScript removes some of JavaScript's foibles, other
       features are a necessary evil, you just need to be aware of their
-      shortcomings. A case in point, is the <literal>eval()</literal>
+      shortcomings. A case in point is the <literal>eval()</literal>
       function. Whilst undoubtedly it has its uses, you should know
       about its drawbacks, and avoid it if possible. The
       <literal>eval()</literal> function will execute a string of
@@ -419,7 +478,7 @@ wem();
       perform any optimizations like inlining. Another concern is with
       security. If you give it dirty input, <literal>eval</literal> can
       easily open up your code for injection attacks. 99% of the time
-      when you're using <literal>eval</literal>, there are better &amp;
+      when you're using <literal>eval</literal>, there are better and
       safer alternatives (such as square brackets).
     </para>
     <screen>
@@ -428,6 +487,14 @@ model = eval(modelName)
 
 # Use square brackets instead
 model = window[modelName]
+</screen><para>Compiles down to:</para><screen>(function() {
+  var model;
+
+  model = eval(modelName);
+
+  model = window[modelName];
+
+}).call(this);
 </screen>
   </sect2>
   <sect2>
@@ -440,6 +507,8 @@ model = window[modelName]
     </para>
     <screen>
 typeof undefinedVar is "undefined"
+</screen><para>Compiles down to:</para><screen>
+  typeof undefinedVar === "undefined";
 </screen>
     <para>
       For all other types of type checking, <literal>typeof</literal>
@@ -512,6 +581,41 @@ type(new Date)   # "date"
 type(true)       # "boolean"
 type(null)       # "null"
 type({})         # "object"
+</screen><para>Compiles down to:</para><screen>(function() {
+  var type;
+
+  type = (function() {
+    var classToType, name, _i, _len, _ref;
+    classToType = {};
+    _ref = "Boolean Number String Function Array Date RegExp Undefined Null".split(" ");
+    for (_i = 0, _len = _ref.length; _i &lt; _len; _i++) {
+      name = _ref[_i];
+      classToType["[object " + name + "]"] = name.toLowerCase();
+    }
+    return function(obj) {
+      var strType;
+      strType = Object.prototype.toString.call(obj);
+      return classToType[strType] || "object";
+    };
+  })();
+
+  type("");
+
+  type(new String);
+
+  type([]);
+
+  type(/\d/);
+
+  type(new Date);
+
+  type(true);
+
+  type(null);
+
+  type({});
+
+}).call(this);
 </screen>
     <para>
       If you're checking to see if an variable has been defined, you'll
@@ -521,6 +625,12 @@ type({})         # "object"
     <screen>
 if typeof aVar isnt "undefined"
   objectType = type(aVar)
+</screen><para>Compiles down to:</para><screen>(function() {
+  var objectType;
+
+  if (typeof aVar !== "undefined") objectType = type(aVar);
+
+}).call(this);
 </screen>
     <para>
       Or more succinctly with the existential operator:
@@ -538,6 +648,10 @@ objectType = type(aVar?)
     </para>
     <screen>
 anArray?.push? aValue
+</screen><para>Compiles down to:</para><screen>
+  if (typeof anArray !== "undefined" &amp;&amp; anArray !== null) {
+    if (typeof anArray.push === "function") anArray.push(aValue);
+  }
 </screen>
     <para>
       If <literal>anArray</literal> is an object other than an array
@@ -551,7 +665,7 @@ anArray?.push? aValue
       JavaScript's <literal>instanceof</literal> keyword is nearly as
       broken as <literal>typeof</literal>. Ideally
       <literal>instanceof</literal> would compare the constructor of two
-      object, returning a boolean if one was an instance of the other.
+      objects, returning a boolean if one was an instance of the other.
       However, in reality <literal>instanceof</literal> only works when
       comparing custom made objects. When it comes to comparing built-in
       types, it's as useless as <literal>typeof</literal>.
@@ -559,10 +673,14 @@ anArray?.push? aValue
     <screen>
 new String("foo") instanceof String # true
 "foo" instanceof String             # false
+</screen><para>Compiles down to:</para><screen>
+  new String("foo") instanceof String;
+
+  "foo" instanceof String;
 </screen>
     <para>
       Additionally, <literal>instanceof</literal> also doesn't work when
-      comparing object from different frames in the browser. In fact,
+      comparing objects from different frames in the browser. In fact,
       <literal>instanceof</literal> only returns a correct result for
       custom made objects, such as CoffeeScript classes.
     </para>
@@ -573,10 +691,41 @@ class Child extends Parent
 child = new Child
 child instanceof Child  # true
 child instanceof Parent # true
+</screen><para>Compiles down to:</para><screen>(function() {
+  var Child, Parent, child;
+  var __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+
+  Parent = (function() {
+
+    function Parent() {}
+
+    return Parent;
+
+  })();
+
+  Child = (function() {
+
+    __extends(Child, Parent);
+
+    function Child() {
+      Child.__super__.constructor.apply(this, arguments);
+    }
+
+    return Child;
+
+  })();
+
+  child = new Child;
+
+  child instanceof Child;
+
+  child instanceof Parent;
+
+}).call(this);
 </screen>
     <para>
       Make sure you only use it for your own objects or, even better,
-      stick clear of it.
+      stay clear of it.
     </para>
   </sect2>
   <sect2>
@@ -589,6 +738,19 @@ child instanceof Parent # true
 anObject = {one: 1, two: 2}
 delete anObject.one
 anObject.hasOwnProperty("one") # false
+</screen><para>Compiles down to:</para><screen>(function() {
+  var anObject;
+
+  anObject = {
+    one: 1,
+    two: 2
+  };
+
+  delete anObject.one;
+
+  anObject.hasOwnProperty("one");
+
+}).call(this);
 </screen>
     <para>
       Any other use, such as deleting variables or function's won't
@@ -598,6 +760,16 @@ anObject.hasOwnProperty("one") # false
 aVar = 1
 delete aVar
 typeof Var # "integer"
+</screen><para>Compiles down to:</para><screen>(function() {
+  var aVar;
+
+  aVar = 1;
+
+  delete aVar;
+
+  typeof Var;
+
+}).call(this);
 </screen>
     <para>
       It's rather peculiar behavior, but there you have it. If you want
@@ -607,6 +779,14 @@ typeof Var # "integer"
     <screen>
 aVar = 1
 aVar = null
+</screen><para>Compiles down to:</para><screen>(function() {
+  var aVar;
+
+  aVar = 1;
+
+  aVar = null;
+
+}).call(this);
 </screen>
   </sect2>
   <sect2>
@@ -783,6 +963,10 @@ parseInt('010', 10) is 10
   "use strict"
 
   # ... your code ...
+</screen><para>Compiles down to:</para><screen>
+  (function() {
+    return "use strict";
+  });
 </screen>
       <para>
         That's it, just the <literal>'use strict'</literal> string.
@@ -795,6 +979,10 @@ parseInt('010', 10) is 10
 do -&gt;
   "use strict"
   console.log(arguments.callee)
+</screen><para>Compiles down to:</para><screen>
+  (function() {
+    "use strict";    return console.log(arguments.callee);
+  })();
 </screen>
       <para>
         Strict mode has removed access to
@@ -813,6 +1001,16 @@ do -&gt;
 do -&gt;
   "use strict"
   class @Spine
+</screen><para>Compiles down to:</para><screen>
+  (function() {
+    "use strict";    return this.Spine = (function() {
+
+      function Spine() {}
+
+      return Spine;
+
+    })();
+  })();
 </screen>
       <para>
         The reason behind this disparity is that in strict mode
@@ -825,14 +1023,23 @@ do -&gt;
 do -&gt;
   "use strict"
   class window.Spine
+</screen><para>Compiles down to:</para><screen>
+  (function() {
+    "use strict";    return window.Spine = (function() {
+
+      function Spine() {}
+
+      return Spine;
+
+    })();
+  })();
 </screen>
       <para>
-        Whilst I recommend enabling strict mode, but it's worth noting
-        that script mode doesn't enable any new features that aren't
-        ready possible in JavaScript, and will actually slow down your
-        code a bit by having the VM do more checks at runtime. You may
-        want to develop with strict mode, and deploy to production
-        without it.
+        Whilst I recommend enabling strict mode, it's worth noting that
+        script mode doesn't enable any new features that aren't ready
+        possible in JavaScript, and will actually slow down your code a
+        bit by having the VM do more checks at runtime. You may want to
+        develop with strict mode, and deploy to production without it.
       </para>
     </sect3>
   </sect2>
