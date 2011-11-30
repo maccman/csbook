@@ -11,6 +11,7 @@
 <bookinfo><edition>1</edition><isbn>9781449321055</isbn></bookinfo>
 <xi:include href='ch00.xml' xmlns:xi='http://www.w3.org/2001/XInclude'/>
 <xi:include href='ch01.xml' xmlns:xi='http://www.w3.org/2001/XInclude'/>
+<xi:include href='ch02.xml' xmlns:xi='http://www.w3.org/2001/XInclude'/>
 <xi:include href='ch03.xml' xmlns:xi='http://www.w3.org/2001/XInclude'/>
 <xi:include href='ch04.xml' xmlns:xi='http://www.w3.org/2001/XInclude'/>
 <xi:include href='ch05.xml' xmlns:xi='http://www.w3.org/2001/XInclude'/>
