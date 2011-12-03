@@ -66,34 +66,6 @@ build = (callback) -&gt;
 
 task 'build', 'Build lib/ from src/', -&gt;
   build()
-</screen><para>Compiles down to:</para><screen>(function() {
-  var build, fs, print, spawn;
-
-  fs = require('fs');
-
-  print = require('sys').print;
-
-  spawn = require('child_process').spawn;
-
-  build = function(callback) {
-    var coffee;
-    coffee = spawn('coffee', ['-c', '-o', 'lib', 'src']);
-    coffee.stderr.on('data', function(data) {
-      return process.stderr.write(data.toString());
-    });
-    coffee.stdout.on('data', function(data) {
-      return print(data.toString());
-    });
-    return coffee.on('exit', function(code) {
-      if (code === 0) return typeof callback === "function" ? callback() : void 0;
-    });
-  };
-
-  task('build', 'Build lib/ from src/', function() {
-    return build();
-  });
-
-}).call(this);
 </screen>
     <para>
       In the example above, we're defining a task called
@@ -122,17 +94,6 @@ task 'watch', 'Watch src/ for changes', -&gt;
     process.stderr.write data.toString()
   coffee.stdout.on 'data', (data) -&gt;
     print data.toString()
-</screen><para>Compiles down to:</para><screen>
-  task('watch', 'Watch src/ for changes', function() {
-    var coffee;
-    coffee = spawn('coffee', ['-w', '-c', '-o', 'lib', 'src']);
-    coffee.stderr.on('data', function(data) {
-      return process.stderr.write(data.toString());
-    });
-    return coffee.stdout.on('data', function(data) {
-      return print(data.toString());
-    });
-  });
 </screen>
     <para>
       If one task relies on another, you can run other tasks using
@@ -146,11 +107,6 @@ task 'open', 'Open index.html', -&gt;
   # First open, then watch
   spawn 'open', 'index.html'
   invoke 'watch'
-</screen><para>Compiles down to:</para><screen>
-  task('open', 'Open index.html', function() {
-    spawn('open', 'index.html');
-    return invoke('watch');
-  });
 </screen>
     <para>
       You can also define options for your task using the
@@ -167,19 +123,6 @@ task 'build', 'Build lib/ from src/', -&gt;
     process.stderr.write data.toString()
   coffee.stdout.on 'data', (data) -&gt;
     print data.toString()
-</screen><para>Compiles down to:</para><screen>
-  option('-o', '--output [DIR]', 'output dir');
-
-  task('build', 'Build lib/ from src/', function() {
-    var coffee;
-    coffee = spawn('coffee', ['-c', '-o', options.output || 'lib', 'src']);
-    coffee.stderr.on('data', function(data) {
-      return process.stderr.write(data.toString());
-    });
-    return coffee.stdout.on('data', function(data) {
-      return print(data.toString());
-    });
-  });
 </screen>
     <para>
       As you can see, the task context now has access to an

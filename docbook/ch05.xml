@@ -181,38 +181,6 @@ app.configure -&gt;
 port = argv[0] or process.env.PORT or 9294
 console.log "Starting server on port: #{port}"
 app.listen port
-</screen><para>Compiles down to:</para><screen>(function() {
-  var app, argv, express, package, port, stitch;
-
-  require("coffee-script");
-
-  stitch = require("stitch");
-
-  express = require("express");
-
-  argv = process.argv.slice(2);
-
-  package = stitch.createPackage({
-    paths: [__dirname + "/app"],
-    dependencies: []
-  });
-
-  app = express.createServer();
-
-  app.configure(function() {
-    app.set("views", __dirname + "/views");
-    app.use(app.router);
-    app.use(express.static(__dirname + "/public"));
-    return app.get("/application.js", package.createServer());
-  });
-
-  port = argv[0] || process.env.PORT || 9294;
-
-  console.log("Starting server on port: " + port);
-
-  app.listen(port);
-
-}).call(this);
 </screen>
     <para>
       You can see some dependencies listed:
@@ -257,14 +225,6 @@ coffee index.coffee
 module.exports = App =
   init: -&gt;
     # Bootstrap the app
-</screen><para>Compiles down to:</para><screen>(function() {
-  var App;
-
-  module.exports = App = {
-    init: function() {}
-  };
-
-}).call(this);
 </screen>
     <para>
       Now let's create our main page <literal>index.html</literal>
@@ -308,22 +268,6 @@ module.exports = class User
 
 # app/app.coffee
 User = require("models/user")
-</screen><para>Compiles down to:</para><screen>(function() {
-  var User;
-
-  module.exports = User = (function() {
-
-    function User(name) {
-      this.name = name;
-    }
-
-    return User;
-
-  })();
-
-  User = require("models/user");
-
-}).call(this);
 </screen>
   </sect1>
   <sect1>
@@ -431,8 +375,6 @@ User = require("models/user")
     </para>
     <screen>
 require("views/users/show")(new User("Brian"))
-</screen><para>Compiles down to:</para><screen>
-  require("views/users/show")(new User("Brian"));
 </screen>
     <para>
       Our <literal>app.coffee</literal> file should now look like this,
@@ -453,25 +395,6 @@ App =
     document.body.appendChild(element)
 
 module.exports = App
-</screen><para>Compiles down to:</para><screen>(function() {
-  var App, User;
-
-  User = require("models/user");
-
-  App = {
-    init: function() {
-      var element, template, view;
-      template = require("views/users/show");
-      view = template(new User("Brian"));
-      element = document.createElement("div");
-      element.innerHTML = view;
-      return document.body.appendChild(element);
-    }
-  };
-
-  module.exports = App;
-
-}).call(this);
 </screen>
     <para>
       Open up <ulink url="http://localhost:9294/">the

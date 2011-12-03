@@ -111,17 +111,6 @@ var groupsCount = 2;   // Global
 outerScope = true
 do -&gt;
   innerScope = true
-</screen><para>Compiles down to:</para><screen>(function() {
-  var outerScope;
-
-  outerScope = true;
-
-  (function() {
-    var innerScope;
-    return innerScope = true;
-  })();
-
-}).call(this);
 </screen>
     <para>
       Compiles down to:
@@ -154,28 +143,6 @@ class Hem
 
   hemPackage: -&gt;
     package.create()
-</screen><para>Compiles down to:</para><screen>(function() {
-  var Hem, package;
-
-  package = require('./package');
-
-  Hem = (function() {
-
-    function Hem() {}
-
-    Hem.prototype.build = function() {
-      return package = this.hemPackage.compile();
-    };
-
-    Hem.prototype.hemPackage = function() {
-      return package.create();
-    };
-
-    return Hem;
-
-  })();
-
-}).call(this);
 </screen>
     <para>
       Global variables are needed from time to time, and to create those
@@ -184,14 +151,6 @@ class Hem
     <screen>
   class window.Asset
     constructor: -&gt;
-</screen><para>Compiles down to:</para><screen>
-  window.Asset = (function() {
-
-    function Asset() {}
-
-    return Asset;
-
-  })();
 </screen>
     <para>
       By ensuring global variables are explicit, rather than implicit,
@@ -257,16 +216,6 @@ myObj = {
   delete: "I am a keyword!"
 }
 myObj.class = -&gt;
-</screen><para>Compiles down to:</para><screen>(function() {
-  var myObj;
-
-  myObj = {
-    "delete": "I am a keyword!"
-  };
-
-  myObj["class"] = function() {};
-
-}).call(this);
 </screen>
     <para>
       The CoffeeScript parser notices you're using a reserved keyword,
@@ -333,12 +282,6 @@ null         ==   undefined     // true
 alert("Empty Array")  unless [].length
 alert("Empty String") unless ""
 alert("Number 0")     unless 0
-</screen><para>Compiles down to:</para><screen>
-  if (![].length) alert("Empty Array");
-
-  if (!"") alert("Empty String");
-
-  if (!0) alert("Number 0");
 </screen>
     <para>
       If you want to explicitly check for <literal>null</literal> and
@@ -347,8 +290,6 @@ alert("Number 0")     unless 0
     </para>
     <screen>
 alert("This is not called") unless ""?
-</screen><para>Compiles down to:</para><screen>
-  if ("" == null) alert("This is not called");
 </screen>
     <para>
       The <literal>alert()</literal> in the previous example won't be
@@ -487,14 +428,6 @@ model = eval(modelName)
 
 # Use square brackets instead
 model = window[modelName]
-</screen><para>Compiles down to:</para><screen>(function() {
-  var model;
-
-  model = eval(modelName);
-
-  model = window[modelName];
-
-}).call(this);
 </screen>
   </sect2>
   <sect2>
@@ -507,8 +440,6 @@ model = window[modelName]
     </para>
     <screen>
 typeof undefinedVar is "undefined"
-</screen><para>Compiles down to:</para><screen>
-  typeof undefinedVar === "undefined";
 </screen>
     <para>
       For all other types of type checking, <literal>typeof</literal>
@@ -581,41 +512,6 @@ type(new Date)   # "date"
 type(true)       # "boolean"
 type(null)       # "null"
 type({})         # "object"
-</screen><para>Compiles down to:</para><screen>(function() {
-  var type;
-
-  type = (function() {
-    var classToType, name, _i, _len, _ref;
-    classToType = {};
-    _ref = "Boolean Number String Function Array Date RegExp Undefined Null".split(" ");
-    for (_i = 0, _len = _ref.length; _i &lt; _len; _i++) {
-      name = _ref[_i];
-      classToType["[object " + name + "]"] = name.toLowerCase();
-    }
-    return function(obj) {
-      var strType;
-      strType = Object.prototype.toString.call(obj);
-      return classToType[strType] || "object";
-    };
-  })();
-
-  type("");
-
-  type(new String);
-
-  type([]);
-
-  type(/\d/);
-
-  type(new Date);
-
-  type(true);
-
-  type(null);
-
-  type({});
-
-}).call(this);
 </screen>
     <para>
       If you're checking to see if an variable has been defined, you'll
@@ -625,12 +521,6 @@ type({})         # "object"
     <screen>
 if typeof aVar isnt "undefined"
   objectType = type(aVar)
-</screen><para>Compiles down to:</para><screen>(function() {
-  var objectType;
-
-  if (typeof aVar !== "undefined") objectType = type(aVar);
-
-}).call(this);
 </screen>
     <para>
       Or more succinctly with the existential operator:
@@ -648,10 +538,6 @@ objectType = type(aVar?)
     </para>
     <screen>
 anArray?.push? aValue
-</screen><para>Compiles down to:</para><screen>
-  if (typeof anArray !== "undefined" &amp;&amp; anArray !== null) {
-    if (typeof anArray.push === "function") anArray.push(aValue);
-  }
 </screen>
     <para>
       If <literal>anArray</literal> is an object other than an array
@@ -673,10 +559,6 @@ anArray?.push? aValue
     <screen>
 new String("foo") instanceof String # true
 "foo" instanceof String             # false
-</screen><para>Compiles down to:</para><screen>
-  new String("foo") instanceof String;
-
-  "foo" instanceof String;
 </screen>
     <para>
       Additionally, <literal>instanceof</literal> also doesn't work when
@@ -691,37 +573,6 @@ class Child extends Parent
 child = new Child
 child instanceof Child  # true
 child instanceof Parent # true
-</screen><para>Compiles down to:</para><screen>(function() {
-  var Child, Parent, child;
-  var __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
-
-  Parent = (function() {
-
-    function Parent() {}
-
-    return Parent;
-
-  })();
-
-  Child = (function() {
-
-    __extends(Child, Parent);
-
-    function Child() {
-      Child.__super__.constructor.apply(this, arguments);
-    }
-
-    return Child;
-
-  })();
-
-  child = new Child;
-
-  child instanceof Child;
-
-  child instanceof Parent;
-
-}).call(this);
 </screen>
     <para>
       Make sure you only use it for your own objects or, even better,
@@ -738,19 +589,6 @@ child instanceof Parent # true
 anObject = {one: 1, two: 2}
 delete anObject.one
 anObject.hasOwnProperty("one") # false
-</screen><para>Compiles down to:</para><screen>(function() {
-  var anObject;
-
-  anObject = {
-    one: 1,
-    two: 2
-  };
-
-  delete anObject.one;
-
-  anObject.hasOwnProperty("one");
-
-}).call(this);
 </screen>
     <para>
       Any other use, such as deleting variables or function's won't
@@ -760,16 +598,6 @@ anObject.hasOwnProperty("one") # false
 aVar = 1
 delete aVar
 typeof Var # "integer"
-</screen><para>Compiles down to:</para><screen>(function() {
-  var aVar;
-
-  aVar = 1;
-
-  delete aVar;
-
-  typeof Var;
-
-}).call(this);
 </screen>
     <para>
       It's rather peculiar behavior, but there you have it. If you want
@@ -779,14 +607,6 @@ typeof Var # "integer"
     <screen>
 aVar = 1
 aVar = null
-</screen><para>Compiles down to:</para><screen>(function() {
-  var aVar;
-
-  aVar = 1;
-
-  aVar = null;
-
-}).call(this);
 </screen>
   </sect2>
   <sect2>
@@ -963,10 +783,6 @@ parseInt('010', 10) is 10
   "use strict"
 
   # ... your code ...
-</screen><para>Compiles down to:</para><screen>
-  (function() {
-    return "use strict";
-  });
 </screen>
       <para>
         That's it, just the <literal>'use strict'</literal> string.
@@ -979,10 +795,6 @@ parseInt('010', 10) is 10
 do -&gt;
   "use strict"
   console.log(arguments.callee)
-</screen><para>Compiles down to:</para><screen>
-  (function() {
-    "use strict";    return console.log(arguments.callee);
-  })();
 </screen>
       <para>
         Strict mode has removed access to
@@ -1001,16 +813,6 @@ do -&gt;
 do -&gt;
   "use strict"
   class @Spine
-</screen><para>Compiles down to:</para><screen>
-  (function() {
-    "use strict";    return this.Spine = (function() {
-
-      function Spine() {}
-
-      return Spine;
-
-    })();
-  })();
 </screen>
       <para>
         The reason behind this disparity is that in strict mode
@@ -1023,16 +825,6 @@ do -&gt;
 do -&gt;
   "use strict"
   class window.Spine
-</screen><para>Compiles down to:</para><screen>
-  (function() {
-    "use strict";    return window.Spine = (function() {
-
-      function Spine() {}
-
-      return Spine;
-
-    })();
-  })();
 </screen>
       <para>
         Whilst I recommend enabling strict mode, it's worth noting that

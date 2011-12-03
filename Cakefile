@@ -47,12 +47,12 @@ format = (data) ->
         )
       )
       
-      try
-        element.after($('<screen />').text(coffee.compile(element.text())))
-        element.after($('<para />').text('Compiles down to:'))
-      catch e
-        console.error(e)
-        console.log(element.text())
+      # try
+      #   element.after($('<screen />').text(coffee.compile(element.text())))
+      #   element.after($('<para />').text('Compiles down to:'))
+      # catch e
+      #   console.error(e)
+      #   console.log(element.text())
   
   data  = doc.html()
   

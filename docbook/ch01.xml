@@ -52,12 +52,6 @@
 ###
   A multiline comment, perhaps a LICENSE.
 ###
-</screen><para>Compiles down to:</para><screen>
-  /*
-    A multiline comment, perhaps a LICENSE.
-  */
-
-
 </screen>
   <para>
     As I briefly alluded to, whitespace is significant in CoffeeScript.
@@ -82,12 +76,6 @@
     </para>
     <screen>
 myVariable = "test"
-</screen><para>Compiles down to:</para><screen>(function() {
-  var myVariable;
-
-  myVariable = "test";
-
-}).call(this);
 </screen>
     <para>
       As you can see, the variable assignment is kept completely local,
@@ -106,14 +94,6 @@ myVariable = "test"
     <screen>
 exports = this
 exports.MyVariable = "foo-bar"
-</screen><para>Compiles down to:</para><screen>(function() {
-  var exports;
-
-  exports = this;
-
-  exports.MyVariable = "foo-bar";
-
-}).call(this);
 </screen>
     <para>
       In the root context, <literal>this</literal> is equal to the
@@ -140,14 +120,6 @@ exports.MyVariable = "foo-bar"
     </para>
     <screen>
 func = -&gt; "bar"
-</screen><para>Compiles down to:</para><screen>(function() {
-  var func;
-
-  func = function() {
-    return "bar";
-  };
-
-}).call(this);
 </screen>
     <para>
       You can see in the resultant compilation, the
@@ -164,14 +136,6 @@ func = -&gt; "bar"
 func = -&gt;
   # An extra line
   "bar"
-</screen><para>Compiles down to:</para><screen>(function() {
-  var func;
-
-  func = function() {
-    return "bar";
-  };
-
-}).call(this);
 </screen>
     <sect2>
       <title>Function arguments</title>
@@ -181,30 +145,12 @@ func = -&gt;
       </para>
       <screen>
 times = (a, b) -&gt; a * b
-</screen><para>Compiles down to:</para><screen>(function() {
-  var times;
-
-  times = function(a, b) {
-    return a * b;
-  };
-
-}).call(this);
 </screen>
       <para>
         CoffeeScript supports default arguments too, for example:
       </para>
       <screen>
 times = (a = 1, b = 2) -&gt; a * b
-</screen><para>Compiles down to:</para><screen>(function() {
-  var times;
-
-  times = function(a, b) {
-    if (a == null) a = 1;
-    if (b == null) b = 2;
-    return a * b;
-  };
-
-}).call(this);
 </screen>
       <para>
         You can also use splats to accept multiple arguments, denoted by
@@ -215,21 +161,6 @@ sum = (nums...) -&gt;
   result = 0
   nums.forEach (n) -&gt; result += n
   result
-</screen><para>Compiles down to:</para><screen>(function() {
-  var sum;
-  var __slice = Array.prototype.slice;
-
-  sum = function() {
-    var nums, result;
-    nums = 1 &lt;= arguments.length ? __slice.call(arguments, 0) : [];
-    result = 0;
-    nums.forEach(function(n) {
-      return result += n;
-    });
-    return result;
-  };
-
-}).call(this);
 </screen>
       <para>
         In the example above, <literal>nums</literal> is an array of all
@@ -244,18 +175,6 @@ sum = (nums...) -&gt;
 trigger = (events...) -&gt;
   events.splice(1, 0, this)
   this.constructor.trigger.apply(events)
-</screen><para>Compiles down to:</para><screen>(function() {
-  var trigger;
-  var __slice = Array.prototype.slice;
-
-  trigger = function() {
-    var events;
-    events = 1 &lt;= arguments.length ? __slice.call(arguments, 0) : [];
-    events.splice(1, 0, this);
-    return this.constructor.trigger.apply(events);
-  };
-
-}).call(this);
 </screen>
     </sect2>
     <sect2>
@@ -277,20 +196,6 @@ alert(a)
 alert inspect a
 # Equivalent to:
 alert(inspect(a))
-</screen><para>Compiles down to:</para><screen>(function() {
-  var a;
-
-  a = "Howdy!";
-
-  alert(a);
-
-  alert(a);
-
-  alert(inspect(a));
-
-  alert(inspect(a));
-
-}).call(this);
 </screen>
       <para>
         Although parenthesis is optional, I'd recommend using it if it's
@@ -301,8 +206,6 @@ alert(inspect(a))
       </para>
       <screen>
 alert inspect(a)
-</screen><para>Compiles down to:</para><screen>
-  alert(inspect(a));
 </screen>
       <para>
         If you don't pass any arguments with an invocation, CoffeeScript
@@ -331,18 +234,6 @@ alert inspect(a)
       <screen>
 this.clickHandler = -&gt; alert "clicked"
 element.addEventListener "click", (e) =&gt; this.clickHandler(e)
-</screen><para>Compiles down to:</para><screen>(function() {
-  var _this = this;
-
-  this.clickHandler = function() {
-    return alert("clicked");
-  };
-
-  element.addEventListener("click", function(e) {
-    return _this.clickHandler(e);
-  });
-
-}).call(this);
 </screen>
       <para>
         The reason you might want to do this is that callbacks from
@@ -383,29 +274,6 @@ object3 =
   two: 2
 
 User.create(name: "John Smith")
-</screen><para>Compiles down to:</para><screen>(function() {
-  var object1, object2, object3;
-
-  object1 = {
-    one: 1,
-    two: 2
-  };
-
-  object2 = {
-    one: 1,
-    two: 2
-  };
-
-  object3 = {
-    one: 1,
-    two: 2
-  };
-
-  User.create({
-    name: "John Smith"
-  });
-
-}).call(this);
 </screen>
     <para>
       Likewise, arrays can use whitespace instead of comma separators,
@@ -422,16 +290,6 @@ array2 = [
 ]
 
 array3 = [1,2,3,]
-</screen><para>Compiles down to:</para><screen>(function() {
-  var array1, array2, array3;
-
-  array1 = [1, 2, 3];
-
-  array2 = [1, 2, 3];
-
-  array3 = [1, 2, 3];
-
-}).call(this);
 </screen>
     <para>
       As you can see in the example above, CoffeeScript has also
@@ -455,16 +313,6 @@ if true != true then "Panic"
 # Equivalent to:
 #  (1 &gt; 0) ? "Ok" : "Y2K!"
 if 1 &gt; 0 then "Ok" else "Y2K!"
-</screen><para>Compiles down to:</para><screen>
-  if (true === true) "We're ok";
-
-  if (true !== true) "Panic";
-
-  if (1 &gt; 0) {
-    "Ok";
-  } else {
-    "Y2K!";
-  }
 </screen>
     <para>
       As you can see above, if the <literal>if</literal> statement is on
@@ -479,8 +327,6 @@ if 1 &gt; 0 then "Ok" else "Y2K!"
     </para>
     <screen>
 alert "It's cold!" if heat &lt; 5
-</screen><para>Compiles down to:</para><screen>
-  if (heat &lt; 5) alert("It's cold!");
 </screen>
     <para>
       Instead of using the exclamation mark (<literal>!</literal>) for
@@ -490,8 +336,6 @@ alert "It's cold!" if heat &lt; 5
     </para>
     <screen>
 if not true then "Panic"
-</screen><para>Compiles down to:</para><screen>
-  if (!true) "Panic";
 </screen>
     <para>
       In the example above, we could also use the CoffeeScript's
@@ -501,8 +345,6 @@ if not true then "Panic"
     <screen>
 unless true
   "Panic"
-</screen><para>Compiles down to:</para><screen>
-  if (!true) "Panic";
 </screen>
     <para>
       In a similar fashion to <literal>not</literal>, CoffeeScript also
@@ -512,8 +354,6 @@ unless true
     <screen>
 if true is 1
   "Type coercion fail!"
-</screen><para>Compiles down to:</para><screen>
-  if (true === 1) "Type coercion fail!";
 </screen>
     <para>
       As an alternative to <literal>is not</literal>, you can use
@@ -548,14 +388,6 @@ question = "Bridgekeeper: What... is your favourite color?
             Galahad: #{favourite_color}
             Bridgekeeper: Wrong!
             "
-</screen><para>Compiles down to:</para><screen>(function() {
-  var favourite_color, question;
-
-  favourite_color = "Blue. No, yel...";
-
-  question = "Bridgekeeper: What... is your favourite color?            Galahad: " + favourite_color + "            Bridgekeeper: Wrong!            ";
-
-}).call(this);
 </screen>
     <para>
       As you can see in the example above, multiline strings are also
@@ -577,16 +409,6 @@ question = "Bridgekeeper: What... is your favourite color?
     <screen>
 for name in ["Roger", "Roderick", "Brian"]
   alert "Release #{name}"
-</screen><para>Compiles down to:</para><screen>(function() {
-  var name, _i, _len, _ref;
-
-  _ref = ["Roger", "Roderick", "Brian"];
-  for (_i = 0, _len = _ref.length; _i &lt; _len; _i++) {
-    name = _ref[_i];
-    alert("Release " + name);
-  }
-
-}).call(this);
 </screen>
     <para>
       If you need the current iteration index, just pass an extra
@@ -595,32 +417,12 @@ for name in ["Roger", "Roderick", "Brian"]
     <screen>
 for name, i in ["Roger the pickpocket", "Roderick the robber"]
   alert "#{i} - Release #{name}"
-</screen><para>Compiles down to:</para><screen>(function() {
-  var i, name, _len, _ref;
-
-  _ref = ["Roger the pickpocket", "Roderick the robber"];
-  for (i = 0, _len = _ref.length; i &lt; _len; i++) {
-    name = _ref[i];
-    alert("" + i + " - Release " + name);
-  }
-
-}).call(this);
 </screen>
     <para>
       You can also iterate on one line, using the postfix form.
     </para>
     <screen>
 release prisoner for prisoner in ["Roger", "Roderick", "Brian"]
-</screen><para>Compiles down to:</para><screen>(function() {
-  var prisoner, _i, _len, _ref;
-
-  _ref = ["Roger", "Roderick", "Brian"];
-  for (_i = 0, _len = _ref.length; _i &lt; _len; _i++) {
-    prisoner = _ref[_i];
-    release(prisoner);
-  }
-
-}).call(this);
 </screen>
     <para>
       As with Python comprehensions, you can filter them:
@@ -628,17 +430,6 @@ release prisoner for prisoner in ["Roger", "Roderick", "Brian"]
     <screen>
 prisoners = ["Roger", "Roderick", "Brian"]
 release prisoner for prisoner in prisoners when prisoner[0] is "R" 
-</screen><para>Compiles down to:</para><screen>(function() {
-  var prisoner, prisoners, _i, _len;
-
-  prisoners = ["Roger", "Roderick", "Brian"];
-
-  for (_i = 0, _len = prisoners.length; _i &lt; _len; _i++) {
-    prisoner = prisoners[_i];
-    if (prisoner[0] === "R") release(prisoner);
-  }
-
-}).call(this);
 </screen>
     <para>
       You can also use comprehensions for iterating over properties in
@@ -648,20 +439,6 @@ release prisoner for prisoner in prisoners when prisoner[0] is "R"
     <screen>
 names = sam: seaborn, donna: moss
 alert("#{first} #{last}") for first, last of names
-</screen><para>Compiles down to:</para><screen>(function() {
-  var first, last, names;
-
-  names = {
-    sam: seaborn,
-    donna: moss
-  };
-
-  for (first in names) {
-    last = names[first];
-    alert("" + first + " " + last);
-  }
-
-}).call(this);
 </screen>
     <para>
       The only low-level loop that CoffeeScript exposes is the
@@ -674,21 +451,6 @@ alert("#{first} #{last}") for first, last of names
 num = 6
 minstrel = while num -= 1
   num + " Brave Sir Robin ran away"
-</screen><para>Compiles down to:</para><screen>(function() {
-  var minstrel, num;
-
-  num = 6;
-
-  minstrel = (function() {
-    var _results;
-    _results = [];
-    while (num -= 1) {
-      _results.push(num + " Brave Sir Robin ran away");
-    }
-    return _results;
-  })();
-
-}).call(this);
 </screen>
   </sect1>
   <sect1>
@@ -702,12 +464,6 @@ minstrel = while num -= 1
     </para>
     <screen>
 range = [1..5]
-</screen><para>Compiles down to:</para><screen>(function() {
-  var range;
-
-  range = [1, 2, 3, 4, 5];
-
-}).call(this);
 </screen>
     <para>
       If, however, the range is specified immediately after a variable,
@@ -716,12 +472,6 @@ range = [1..5]
     </para>
     <screen>
 firstTwo = ["one", "two", "three"][0..1]
-</screen><para>Compiles down to:</para><screen>(function() {
-  var firstTwo;
-
-  firstTwo = ["one", "two", "three"].slice(0, 2);
-
-}).call(this);
 </screen>
     <para>
       In the example above, the range returns a new array, containing
@@ -732,14 +482,6 @@ firstTwo = ["one", "two", "three"][0..1]
     <screen>
 numbers = [0..9]
 numbers[3..5] = [-3, -4, -5]
-</screen><para>Compiles down to:</para><screen>(function() {
-  var numbers, _ref;
-
-  numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
-
-  [].splice.apply(numbers, [3, 3].concat(_ref = [-3, -4, -5])), _ref;
-
-}).call(this);
 </screen>
     <para>
       What's neat, is that JavaScript allows you to call
@@ -748,12 +490,6 @@ numbers[3..5] = [-3, -4, -5]
     </para>
     <screen>
 my = "my string"[0..2]
-</screen><para>Compiles down to:</para><screen>(function() {
-  var my;
-
-  my = "my string".slice(0, 3);
-
-}).call(this);
 </screen>
     <para>
       Checking to see if a value exists inside an array is always a bore
@@ -765,15 +501,6 @@ my = "my string"[0..2]
     <screen>
 words = ["rattled", "roudy", "rebbles", "ranks"]
 alert "Stop wagging me" if "ranks" in words 
-</screen><para>Compiles down to:</para><screen>(function() {
-  var words;
-  var __hasProp = Object.prototype.hasOwnProperty, __indexOf = Array.prototype.indexOf || function(item) { for (var i = 0, l = this.length; i &lt; l; i++) { if (__hasProp.call(this, i) &amp;&amp; this[i] === item) return i; } return -1; };
-
-  words = ["rattled", "roudy", "rebbles", "ranks"];
-
-  if (__indexOf.call(words, "ranks") &gt;= 0) alert("Stop wagging me");
-
-}).call(this);
 </screen>
   </sect1>
   <sect1>
@@ -785,8 +512,6 @@ alert "Stop wagging me" if "ranks" in words
     </para>
     <screen>
 @saviour = true
-</screen><para>Compiles down to:</para><screen>
-  this.saviour = true;
 </screen>
     <para>
       Another is <literal>::</literal>, which is an alias for
@@ -794,10 +519,6 @@ alert "Stop wagging me" if "ranks" in words
     </para>
     <screen>
 User::first = -&gt; @records[0]
-</screen><para>Compiles down to:</para><screen>
-  User.prototype.first = function() {
-    return this.records[0];
-  };
 </screen>
     <para>
       Using <literal>if</literal> for <literal>null</literal> checks in
@@ -810,8 +531,6 @@ User::first = -&gt; @records[0]
     </para>
     <screen>
 praise if brian?
-</screen><para>Compiles down to:</para><screen>
-  if (typeof brian !== "undefined" &amp;&amp; brian !== null) praise;
 </screen>
     <para>
       You can also use it in place of the <literal>||</literal>
@@ -819,12 +538,6 @@ praise if brian?
     </para>
     <screen>
 velocity = southern ? 40
-</screen><para>Compiles down to:</para><screen>(function() {
-  var velocity;
-
-  velocity = typeof southern !== "undefined" &amp;&amp; southern !== null ? southern : 40;
-
-}).call(this);
 </screen>
     <para>
       If you're using a <literal>null</literal> check before accessing a
@@ -835,12 +548,6 @@ velocity = southern ? 40
     </para>
     <screen>
 blackKnight.getLegs()?.kick()
-</screen><para>Compiles down to:</para><screen>(function() {
-  var _ref;
-
-  if ((_ref = blackKnight.getLegs()) != null) _ref.kick();
-
-}).call(this);
 </screen>
     <para>
       Similarly you can check that a property is actually a function,
@@ -850,12 +557,6 @@ blackKnight.getLegs()?.kick()
     </para>
     <screen>
 blackKnight.getLegs().kick?()
-</screen><para>Compiles down to:</para><screen>(function() {
-  var _base;
-
-  if (typeof (_base = blackKnight.getLegs()).kick === "function") _base.kick();
-
-}).call(this);
 </screen>
   </sect1>
 
