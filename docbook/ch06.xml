@@ -26,7 +26,7 @@
     First, let's talk about what things the language does solve.
   </para>
   <sect1>
-    <title>A JavaScript Subset</title>
+    <title>The fixed parts</title>
     <para>
       CoffeeScript's syntax only covers a subset of JavaScript's, the
       famous <emphasis>Good Parts</emphasis>, so already there's less to
@@ -67,17 +67,16 @@ with(dataObj.users.alex) {
       eliminating them from it's syntax. In other words, using
       <literal>with</literal> in CoffeeScript will throw a syntax error.
     </para>
-  </sect1>
-  <sect1>
-    <title>Global variables</title>
-    <para>
-      By default, your JavaScript programs run in a global scope, and by
-      default any variables created are in that global scope. If you
-      want to create a variable in the local scope, JavaScript requires
-      explicitly indicating that fact using the <literal>var</literal>
-      keyword.
-    </para>
-    <screen>
+    <sect2>
+      <title>Global variables</title>
+      <para>
+        By default, your JavaScript programs run in a global scope, and
+        by default any variables created are in that global scope. If
+        you want to create a variable in the local scope, JavaScript
+        requires explicitly indicating that fact using the
+        <literal>var</literal> keyword.
+      </para>
+      <screen>
 usersCount = 1;        // Global
 var groupsCount = 2;   // Global
 
@@ -86,36 +85,36 @@ var groupsCount = 2;   // Global
   var postsCount = 4;  // Local
 })()
 </screen>
-    <para>
-      This is a bit of an odd decision since the vast majority of the
-      time you'll be creating local variables not global, so why not
-      make that the default? As it stands, developers have to remember
-      to put <literal>var</literal> statements before any variables
-      they're initializing, or face weird bugs when variables
-      accidentally conflict and overwrite each other.
-    </para>
-    <para>
-      Luckily CoffeeScript comes to your rescue here by eliminating
-      implicit global variable assignment entirely. In other words, the
-      <literal>var</literal> keyword is reserved in CoffeeScript, and
-      will trigger a syntax error if used. Local variables are created
-      implicitly by default, and it's very difficult to create global
-      variables without explicitly assigning them as properties on
-      <literal>window</literal>.
-    </para>
-    <para>
-      Let's have a look at an example of CoffeeScript's variable
-      assignment:
-    </para>
-    <screen>
+      <para>
+        This is a bit of an odd decision since the vast majority of the
+        time you'll be creating local variables not global, so why not
+        make that the default? As it stands, developers have to remember
+        to put <literal>var</literal> statements before any variables
+        they're initializing, or face weird bugs when variables
+        accidentally conflict and overwrite each other.
+      </para>
+      <para>
+        Luckily CoffeeScript comes to your rescue here by eliminating
+        implicit global variable assignment entirely. In other words,
+        the <literal>var</literal> keyword is reserved in CoffeeScript,
+        and will trigger a syntax error if used. Local variables are
+        created implicitly by default, and it's very difficult to create
+        global variables without explicitly assigning them as properties
+        on <literal>window</literal>.
+      </para>
+      <para>
+        Let's have a look at an example of CoffeeScript's variable
+        assignment:
+      </para>
+      <screen>
 outerScope = true
 do -&gt;
   innerScope = true
 </screen>
-    <para>
-      Compiles down to:
-    </para>
-    <screen>
+      <para>
+        Compiles down to:
+      </para>
+      <screen>
 var outerScope;
 outerScope = true;
 (function() {
@@ -123,17 +122,18 @@ outerScope = true;
   return innerScope = true;
 })();
 </screen>
-    <para>
-      Notice how CoffeeScript initializes variables (using
-      <literal>var</literal>) automatically in the context they are
-      first used. Whilst it's impossible to shadow outer variables, you
-      can still refer to and access them. You need to watch out for
-      this, be careful that you're not reusing the name of an external
-      variable accidentally if you're writing a deeply nested function
-      or class. For example, here we're accidentally overwriting the
-      <literal>package</literal> variable in a Class function:
-    </para>
-    <screen>
+      <para>
+        Notice how CoffeeScript initializes variables (using
+        <literal>var</literal>) automatically in the context they are
+        first used. Whilst it's impossible to shadow outer variables,
+        you can still refer to and access them. You need to watch out
+        for this, be careful that you're not reusing the name of an
+        external variable accidentally if you're writing a deeply nested
+        function or class. For example, here we're accidentally
+        overwriting the <literal>package</literal> variable in a Class
+        function:
+      </para>
+      <screen>
 package = require('./package')
 
 class Hem
@@ -144,102 +144,104 @@ class Hem
   hemPackage: -&gt;
     package.create()
 </screen>
-    <para>
-      Global variables are needed from time to time, and to create those
-      you need to set them as properties on <literal>window</literal>:
-    </para>
-    <screen>
+      <para>
+        Global variables are needed from time to time, and to create
+        those you need to set them as properties on
+        <literal>window</literal>:
+      </para>
+      <screen>
   class window.Asset
     constructor: -&gt;
 </screen>
-    <para>
-      By ensuring global variables are explicit, rather than implicit,
-      CoffeeScript removes one of the major sources of bugs in
-      JavaScript programs.
-    </para>
-  </sect1>
-  <sect1>
-    <title>Semicolons</title>
-    <para>
-      JavaScript does not enforce the use of semicolons in source code,
-      so it's possible to omit them. However, behind the scenes the
-      JavaScript compiler still needs them, so the parser automatically
-      inserts them whenever it encounters a parse error due to a missing
-      semicolon. In other words, it'll try to evaluate a statement
-      without semicolons and, if that fails, tries again using
-      semicolons.
-    </para>
-    <para>
-      Unfortunately this is a tremendously bad idea, and can actually
-      change the behavior of your code. Take the following example,
-      seems valid JavaScript, right?
-    </para>
-    <screen>
+      <para>
+        By ensuring global variables are explicit, rather than implicit,
+        CoffeeScript removes one of the major sources of bugs in
+        JavaScript programs.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Semicolons</title>
+      <para>
+        JavaScript does not enforce the use of semicolons in source
+        code, so it's possible to omit them. However, behind the scenes
+        the JavaScript compiler still needs them, so the parser
+        automatically inserts them whenever it encounters a parse error
+        due to a missing semicolon. In other words, it'll try to
+        evaluate a statement without semicolons and, if that fails,
+        tries again using semicolons.
+      </para>
+      <para>
+        Unfortunately this is a tremendously bad idea, and can actually
+        change the behavior of your code. Take the following example,
+        seems valid JavaScript, right?
+      </para>
+      <screen>
 function() {}
 (window.options || {}).property
 </screen>
-    <para>
-      Wrong, well at least according to the parser; it raises a syntax
-      error. In case of a leading parenthesis, the parser will not
-      insert a semicolon. The code gets transformed onto one line:
-    </para>
-    <screen>
+      <para>
+        Wrong, well at least according to the parser; it raises a syntax
+        error. In case of a leading parenthesis, the parser will not
+        insert a semicolon. The code gets transformed onto one line:
+      </para>
+      <screen>
 function() {}(window.options || {}).property
 </screen>
-    <para>
-      Now you can see the issue, and why the parser is complaining. When
-      you're writing JavaScript, you should always include semicolons
-      after statements. Fortunately CoffeeScript gets round all this
-      hassle by not having semicolons in its syntax. Rather the
-      semicolons are inserted automatically (at the right places) when
-      the CoffeeScript is compiled down to JavaScript.
-    </para>
-  </sect1>
-  <sect1>
-    <title>Reserved words</title>
-    <para>
-      Certain keywords in JavaScript are reserved for future versions of
-      JavaScript, such as <literal>const</literal>,
-      <literal>enum</literal> and <literal>class</literal>. Using these
-      as variable names in your JavaScript programs can unpredictable
-      results; some browsers will cope with them just fine, and others
-      will choke. CoffeeScript neatly sidesteps this issue, by detecting
-      if you're using a reserved keyword, and escaping it if necessary.
-    </para>
-    <para>
-      For example, let's say you were to use the reserved keyword
-      <literal>class</literal> as a property on an object, your
-      CoffeeScript might look like this:
-    </para>
-    <screen>
+      <para>
+        Now you can see the issue, and why the parser is complaining.
+        When you're writing JavaScript, you should always include
+        semicolons after statements. Fortunately CoffeeScript gets round
+        all this hassle by not having semicolons in its syntax. Rather
+        the semicolons are inserted automatically (at the right places)
+        when the CoffeeScript is compiled down to JavaScript.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Reserved words</title>
+      <para>
+        Certain keywords in JavaScript are reserved for future versions
+        of JavaScript, such as <literal>const</literal>,
+        <literal>enum</literal> and <literal>class</literal>. Using
+        these as variable names in your JavaScript programs can
+        unpredictable results; some browsers will cope with them just
+        fine, and others will choke. CoffeeScript neatly sidesteps this
+        issue, by detecting if you're using a reserved keyword, and
+        escaping it if necessary.
+      </para>
+      <para>
+        For example, let's say you were to use the reserved keyword
+        <literal>class</literal> as a property on an object, your
+        CoffeeScript might look like this:
+      </para>
+      <screen>
 myObj = {
   delete: "I am a keyword!"
 }
 myObj.class = -&gt;
 </screen>
-    <para>
-      The CoffeeScript parser notices you're using a reserved keyword,
-      and quotes it for you:
-    </para>
-    <screen>
+      <para>
+        The CoffeeScript parser notices you're using a reserved keyword,
+        and quotes it for you:
+      </para>
+      <screen>
 var myObj;
 myObj = {
   "delete": "I am a keyword!"
 };
 myObj["class"] = function() {};
 </screen>
-  </sect1>
-  <sect1>
-    <title>Equality comparisons</title>
-    <para>
-      The weak equality comparison in JavaScript has some confusing
-      behavior and is often the source of confusing bugs. The example
-      below is taken from
-      <ulink url="http://bonsaiden.github.com/JavaScript-Garden/#types.equality">JavaScript
-      Garden's equality section</ulink> which delves into the issue in
-      some depth.
-    </para>
-    <screen>
+    </sect2>
+    <sect2>
+      <title>Equality comparisons</title>
+      <para>
+        The weak equality comparison in JavaScript has some confusing
+        behavior and is often the source of confusing bugs. The example
+        below is taken from
+        <ulink url="http://bonsaiden.github.com/JavaScript-Garden/#types.equality">JavaScript
+        Garden's equality section</ulink> which delves into the issue in
+        some depth.
+      </para>
+      <screen>
 ""           ==   "0"           // false
 0            ==   ""            // true
 0            ==   "0"           // true
@@ -250,72 +252,72 @@ false        ==   null          // false
 null         ==   undefined     // true
 " \t\r\n"    ==   0             // true
 </screen>
-    <para>
-      The reason behind this behavior is that the weak equality coerces
-      types automatically. I'm sure you'll agree this is all pretty
-      ambiguous, and can lead to unexpected results and bugs.
-    </para>
-    <para>
-      The solution is to instead use the strict equality operator, which
-      consists of three equal signs: <literal>===</literal>. It works
-      exactly like the normal equality operator, but without any type
-      coercion. It's recommended to always use the strict equality
-      operator, and explicitly convert types if needs be.
-    </para>
-    <para>
-      CoffeeScript solves this by simply replacing all weak comparisons
-      with strict ones, in other words converting all
-      <literal>==</literal> comparators into <literal>===</literal>. You
-      can't do a a weak equality comparison in CoffeeScript, and you
-      should explicitly convert types before comparing them if
-      necessary.
-    </para>
-    <para>
-      This doesn't mean you can ignore type coercion in CoffeeScript
-      completely though, especially when it comes to checking the
-      'truthfulness' of variables during flow control. Blank strings,
-      <literal>null</literal>, <literal>undefined</literal> and the
-      number <literal>0</literal> are all coerced to
-      <literal>false</literal>
-    </para>
-    <screen>
+      <para>
+        The reason behind this behavior is that the weak equality
+        coerces types automatically. I'm sure you'll agree this is all
+        pretty ambiguous, and can lead to unexpected results and bugs.
+      </para>
+      <para>
+        The solution is to instead use the strict equality operator,
+        which consists of three equal signs: <literal>===</literal>. It
+        works exactly like the normal equality operator, but without any
+        type coercion. It's recommended to always use the strict
+        equality operator, and explicitly convert types if needs be.
+      </para>
+      <para>
+        CoffeeScript solves this by simply replacing all weak
+        comparisons with strict ones, in other words converting all
+        <literal>==</literal> comparators into <literal>===</literal>.
+        You can't do a a weak equality comparison in CoffeeScript, and
+        you should explicitly convert types before comparing them if
+        necessary.
+      </para>
+      <para>
+        This doesn't mean you can ignore type coercion in CoffeeScript
+        completely though, especially when it comes to checking the
+        'truthfulness' of variables during flow control. Blank strings,
+        <literal>null</literal>, <literal>undefined</literal> and the
+        number <literal>0</literal> are all coerced to
+        <literal>false</literal>
+      </para>
+      <screen>
 alert("Empty Array")  unless [].length
 alert("Empty String") unless ""
 alert("Number 0")     unless 0
 </screen>
-    <para>
-      If you want to explicitly check for <literal>null</literal> and
-      <literal>undefined</literal>, then you can use CoffeeScript's
-      existential operator:
-    </para>
-    <screen>
+      <para>
+        If you want to explicitly check for <literal>null</literal> and
+        <literal>undefined</literal>, then you can use CoffeeScript's
+        existential operator:
+      </para>
+      <screen>
 alert("This is not called") unless ""?
 </screen>
-    <para>
-      The <literal>alert()</literal> in the previous example won't be
-      called, as the empty string isn't equal to
-      <literal>null</literal>.
-    </para>
-  </sect1>
-  <sect1>
-    <title>Function definition</title>
-    <para>
-      Oddly enough in JavaScript, functions can be defined after they're
-      used. For example, the following runs absolutely fine, even though
-      <literal>wem</literal> is defined after it's called:
-    </para>
-    <screen>
+      <para>
+        The <literal>alert()</literal> in the previous example won't be
+        called, as the empty string isn't equal to
+        <literal>null</literal>.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Function definition</title>
+      <para>
+        Oddly enough in JavaScript, functions can be defined after
+        they're used. For example, the following runs absolutely fine,
+        even though <literal>wem</literal> is defined after it's called:
+      </para>
+      <screen>
 wem();
 function wem() {}
 </screen>
-    <para>
-      The is because of function scope. Functions get hoisted before the
-      programs execution and as such are available everywhere in the
-      scope they were defined in, even if called before the actual
-      definition in the source. The trouble is, hoisting behavior
-      differs between browser; for example:
-    </para>
-    <screen>
+      <para>
+        The is because of function scope. Functions get hoisted before
+        the programs execution and as such are available everywhere in
+        the scope they were defined in, even if called before the actual
+        definition in the source. The trouble is, hoisting behavior
+        differs between browser; for example:
+      </para>
+      <screen>
 if (true) {
   function declaration() {
     return "first";
@@ -327,135 +329,138 @@ if (true) {
 }
 declaration();
 </screen>
-    <para>
-      In some browsers such as Firefox, <literal>declaration()</literal>
-      will return <literal>"first"</literal>, and in other
-      browsers like Chrome it'll return
-      <literal>"second"</literal>, even though it looks like
-      the <literal>else</literal> statement is never run.
-    </para>
-    <para>
-      If you want to know more about declarative functions, then you
-      should read <ulink url="http://kangax.github.com/nfe/">Juriy
-      Zaytsev's guide</ulink>, where he delves into the specifics.
-      Suffice to say, they have fairly ambiguous behavior, and can lead
-      to problems later down the road. All things considered, It's best
-      to steer clear of them by using function expressions instead:
-    </para>
-    <screen>
+      <para>
+        In some browsers such as Firefox,
+        <literal>declaration()</literal> will return
+        <literal>"first"</literal>, and in other browsers like
+        Chrome it'll return <literal>"second"</literal>, even
+        though it looks like the <literal>else</literal> statement is
+        never run.
+      </para>
+      <para>
+        If you want to know more about declarative functions, then you
+        should read <ulink url="http://kangax.github.com/nfe/">Juriy
+        Zaytsev's guide</ulink>, where he delves into the specifics.
+        Suffice to say, they have fairly ambiguous behavior, and can
+        lead to problems later down the road. All things considered,
+        It's best to steer clear of them by using function expressions
+        instead:
+      </para>
+      <screen>
 var wem = function(){};
 wem();
 </screen>
-    <para>
-      CoffeeScript's approach to this is to remove declarative functions
-      entirely, using function expressions instead.
-    </para>
-  </sect1>
-  <sect1>
-    <title>Number property lookups</title>
-    <para>
-      A flaw in JavaScript's parser means that the <emphasis>dot
-      notation</emphasis> on numbers is interpreted as a floating point
-      literal, rather than a property lookup. For example, the following
-      JavaScript will cause a syntax error:
-    </para>
-    <screen>
+      <para>
+        CoffeeScript's approach to this is to remove declarative
+        functions entirely, using function expressions instead.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Number property lookups</title>
+      <para>
+        A flaw in JavaScript's parser means that the <emphasis>dot
+        notation</emphasis> on numbers is interpreted as a floating
+        point literal, rather than a property lookup. For example, the
+        following JavaScript will cause a syntax error:
+      </para>
+      <screen>
 5.toString();
 </screen>
-    <para>
-      JavaScript's parser is looking for another Number after the dot,
-      and so raises an <literal>Unexpected token</literal> error when it
-      encounters <literal>toString()</literal>. The solution to this is
-      to either use parenthesis, or add an additional dot.
-    </para>
-    <screen>
+      <para>
+        JavaScript's parser is looking for another Number after the dot,
+        and so raises an <literal>Unexpected token</literal> error when
+        it encounters <literal>toString()</literal>. The solution to
+        this is to either use parenthesis, or add an additional dot.
+      </para>
+      <screen>
 (5).toString();
 5..toString();
 </screen>
-    <para>
-      Fortunately CoffeeScript's parsers is clever enough to deal with
-      this issue by using double dot notations automatically (as in the
-      example above) whenever you access properties on Numbers.
-    </para>
+      <para>
+        Fortunately CoffeeScript's parsers is clever enough to deal with
+        this issue by using double dot notations automatically (as in
+        the example above) whenever you access properties on Numbers.
+      </para>
+    </sect2>
   </sect1>
-
-<sect1>
-  <title>The un-fixed parts</title>
-  <para>
-    Whilst CoffeeScript goes some length to solving some of JavaScript's
-    design flaws, it can only go so far. As I mentioned previously,
-    CoffeeScript's strictly limited to static analysis by design, and
-    doesn't do any runtime checking for performance reasons.
-    CoffeeScript uses a straight source-to-source compiler, the idea
-    being that every CoffeeScript statement results in a equivalent
-    JavaScript statement. CoffeeScript doesn't provide an abstraction
-    over any of JavaScript's keywords, such as
-    <literal>typeof</literal>, and as such some design flaws in
-    JavaScript's design also apply to CoffeeScript.
-  </para>
-  <para>
-    In the previous sections we covered some design flaws in JavaScript
-    that CoffeeScript fixes. Now let's talk about some of JavaScript's
-    flaws that CoffeeScript can't fix.
-  </para>
-  <sect2>
-    <title>Using eval</title>
+  <sect1>
+    <title>The un-fixed parts</title>
     <para>
-      Whilst CoffeeScript removes some of JavaScript's foibles, other
-      features are a necessary evil, you just need to be aware of their
-      shortcomings. A case in point is the <literal>eval()</literal>
-      function. Whilst undoubtedly it has its uses, you should know
-      about its drawbacks, and avoid it if possible. The
-      <literal>eval()</literal> function will execute a string of
-      JavaScript code in the local scope, and functions like
-      <literal>setTimeout()</literal> and
-      <literal>setInterval()</literal> can also both take a string as
-      their first argument to be evaluated.
+      Whilst CoffeeScript goes some length to solving some of
+      JavaScript's design flaws, it can only go so far. As I mentioned
+      previously, CoffeeScript's strictly limited to static analysis by
+      design, and doesn't do any runtime checking for performance
+      reasons. CoffeeScript uses a straight source-to-source compiler,
+      the idea being that every CoffeeScript statement results in a
+      equivalent JavaScript statement. CoffeeScript doesn't provide an
+      abstraction over any of JavaScript's keywords, such as
+      <literal>typeof</literal>, and as such some design flaws in
+      JavaScript's design also apply to CoffeeScript.
     </para>
     <para>
-      However, like <literal>with</literal>, <literal>eval()</literal>
-      throws the compiler off track, and is a major performance hog. As
-      the compiler has no idea what's inside until runtime, it can't
-      perform any optimizations like inlining. Another concern is with
-      security. If you give it dirty input, <literal>eval</literal> can
-      easily open up your code for injection attacks. 99% of the time
-      when you're using <literal>eval</literal>, there are better and
-      safer alternatives (such as square brackets).
+      In the previous sections we covered some design flaws in
+      JavaScript that CoffeeScript fixes. Now let's talk about some of
+      JavaScript's flaws that CoffeeScript can't fix.
     </para>
-    <screen>
+    <sect2>
+      <title>Using eval</title>
+      <para>
+        Whilst CoffeeScript removes some of JavaScript's foibles, other
+        features are a necessary evil, you just need to be aware of
+        their shortcomings. A case in point is the
+        <literal>eval()</literal> function. Whilst undoubtedly it has
+        its uses, you should know about its drawbacks, and avoid it if
+        possible. The <literal>eval()</literal> function will execute a
+        string of JavaScript code in the local scope, and functions like
+        <literal>setTimeout()</literal> and
+        <literal>setInterval()</literal> can also both take a string as
+        their first argument to be evaluated.
+      </para>
+      <para>
+        However, like <literal>with</literal>, <literal>eval()</literal>
+        throws the compiler off track, and is a major performance hog.
+        As the compiler has no idea what's inside until runtime, it
+        can't perform any optimizations like inlining. Another concern
+        is with security. If you give it dirty input,
+        <literal>eval</literal> can easily open up your code for
+        injection attacks. 99% of the time when you're using
+        <literal>eval</literal>, there are better and safer alternatives
+        (such as square brackets).
+      </para>
+      <screen>
 # Don't do this
 model = eval(modelName)
 
 # Use square brackets instead
 model = window[modelName]
 </screen>
-  </sect2>
-  <sect2>
-    <title>Using typeof</title>
-    <para>
-      The <literal>typeof</literal> operator is probably the biggest
-      design flaw of JavaScript, simply because it's basically
-      completely broken. In fact, it really has only one use, checking
-      to see if a value is <literal>undefined</literal>.
-    </para>
-    <screen>
+    </sect2>
+    <sect2>
+      <title>Using typeof</title>
+      <para>
+        The <literal>typeof</literal> operator is probably the biggest
+        design flaw of JavaScript, simply because it's basically
+        completely broken. In fact, it really has only one use, checking
+        to see if a value is <literal>undefined</literal>.
+      </para>
+      <screen>
 typeof undefinedVar is "undefined"
 </screen>
-    <para>
-      For all other types of type checking, <literal>typeof</literal>
-      fails rather miserably, returning inconsistent results depending
-      on the browser and how instances were instantiated. This isn't
-      something that CoffeeScript can help you either, since the
-      language uses static analysis and has no runtime type checking.
-      You're on your own here.
-    </para>
-    <para>
-      To illustrate the problem, here's a table taken from
-      <ulink url="http://bonsaiden.github.com/JavaScript-Garden/">JavaScript
-      Garden</ulink> which shows some of the major inconstancies in the
-      keyword's type checking.
-    </para>
-    <screen>
+      <para>
+        For all other types of type checking, <literal>typeof</literal>
+        fails rather miserably, returning inconsistent results depending
+        on the browser and how instances were instantiated. This isn't
+        something that CoffeeScript can help you either, since the
+        language uses static analysis and has no runtime type checking.
+        You're on your own here.
+      </para>
+      <para>
+        To illustrate the problem, here's a table taken from
+        <ulink url="http://bonsaiden.github.com/JavaScript-Garden/">JavaScript
+        Garden</ulink> which shows some of the major inconstancies in
+        the keyword's type checking.
+      </para>
+      <screen>
 Value               Class      Type
 -------------------------------------
 "foo"               String     string
@@ -474,30 +479,43 @@ new RegExp("meow")  RegExp     object
 {}                  Object     object
 new Object()        Object     object
 </screen>
-    <para>
-      As you can see, depending on if you define a string with quotes or
-      with the <literal>String</literal> class affects the result of
-      <literal>typeof</literal>. Logically <literal>typeof</literal>
-      should return <literal>"string"</literal> for both
-      checks, but for the latter it returns
-      <literal>"object"</literal>. Unfortunately the
-      inconstancies only get worse from there.
-    </para>
-    <para>
-      So what can we use for type checking in JavaScript? Well, luckily
-      <literal>Object.prototype.toString()</literal> comes to the rescue
-      here. If we invoke that function in the context of a particular
-      object, it'll return the correct type. All we need to do is
-      massage the string it returns, so we end up with the sort of
-      string <literal>typeof</literal> should be returning. Here's an
-      example implementation ported from jQuery's
-      <literal>$.type</literal>:
-    </para>
-    <screen>
+      <para>
+        As you can see, depending on if you define a string with quotes
+        or with the <literal>String</literal> class affects the result
+        of <literal>typeof</literal>. Logically
+        <literal>typeof</literal> should return
+        <literal>"string"</literal> for both checks, but for
+        the latter it returns <literal>"object"</literal>.
+        Unfortunately the inconstancies only get worse from there.
+      </para>
+      <para>
+        So what can we use for type checking in JavaScript? Well,
+        luckily <literal>Object.prototype.toString()</literal> comes to
+        the rescue here. If we invoke that function in the context of a
+        particular object, it'll return the correct type. All we need to
+        do is massage the string it returns, so we end up with the sort
+        of string <literal>typeof</literal> should be returning. Here's
+        an example implementation ported from jQuery's
+        <literal>$.type</literal>:
+      </para>
+      <screen>
 type = do -&gt;
   classToType = {}
-  for name in "Boolean Number String Function Array Date RegExp Undefined Null".split(" ")
-    classToType["[object " + name + "]"] = name.toLowerCase()
+
+  types = [
+    "Boolean"
+    "Number"
+    "String"
+    "Function"
+    "Array"
+    "Date"
+    "RegExp"
+    "Undefined"
+    "Null"
+  ]
+
+  for name in types
+    classToType["[object #{name}]"] = name.toLowerCase()
 
   (obj) -&gt;
     strType = Object::toString.call(obj)
@@ -513,60 +531,61 @@ type(true)       # "boolean"
 type(null)       # "null"
 type({})         # "object"
 </screen>
-    <para>
-      If you're checking to see if an variable has been defined, you'll
-      still need to use <literal>typeof</literal> otherwise you'll get a
-      <literal>ReferenceError</literal>.
-    </para>
-    <screen>
+      <para>
+        If you're checking to see if an variable has been defined,
+        you'll still need to use <literal>typeof</literal> otherwise
+        you'll get a <literal>ReferenceError</literal>.
+      </para>
+      <screen>
 if typeof aVar isnt "undefined"
   objectType = type(aVar)
 </screen>
-    <para>
-      Or more succinctly with the existential operator:
-    </para>
-    <screen>
+      <para>
+        Or more succinctly with the existential operator:
+      </para>
+      <screen>
 objectType = type(aVar?)
 </screen>
-    <para>
-      As an alternative to type checking, you can often use duck typing
-      and the CoffeeScript existential operator together to eliminating
-      the need to resolve an object's type. For example, let's say we're
-      pushing a value onto an array. We could say that, as long as the
-      'array like' object implements <literal>push()</literal>, we
-      should treat it like an array:
-    </para>
-    <screen>
+      <para>
+        As an alternative to type checking, you can often use duck
+        typing and the CoffeeScript existential operator together to
+        eliminating the need to resolve an object's type. For example,
+        let's say we're pushing a value onto an array. We could say
+        that, as long as the 'array like' object implements
+        <literal>push()</literal>, we should treat it like an array:
+      </para>
+      <screen>
 anArray?.push? aValue
 </screen>
-    <para>
-      If <literal>anArray</literal> is an object other than an array
-      than the existential operator will ensure that
-      <literal>push()</literal> is never called.
-    </para>
-  </sect2>
-  <sect2>
-    <title>Using instanceof</title>
-    <para>
-      JavaScript's <literal>instanceof</literal> keyword is nearly as
-      broken as <literal>typeof</literal>. Ideally
-      <literal>instanceof</literal> would compare the constructor of two
-      objects, returning a boolean if one was an instance of the other.
-      However, in reality <literal>instanceof</literal> only works when
-      comparing custom made objects. When it comes to comparing built-in
-      types, it's as useless as <literal>typeof</literal>.
-    </para>
-    <screen>
+      <para>
+        If <literal>anArray</literal> is an object other than an array
+        than the existential operator will ensure that
+        <literal>push()</literal> is never called.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Using instanceof</title>
+      <para>
+        JavaScript's <literal>instanceof</literal> keyword is nearly as
+        broken as <literal>typeof</literal>. Ideally
+        <literal>instanceof</literal> would compare the constructor of
+        two objects, returning a boolean if one was an instance of the
+        other. However, in reality <literal>instanceof</literal> only
+        works when comparing custom made objects. When it comes to
+        comparing built-in types, it's as useless as
+        <literal>typeof</literal>.
+      </para>
+      <screen>
 new String("foo") instanceof String # true
 "foo" instanceof String             # false
 </screen>
-    <para>
-      Additionally, <literal>instanceof</literal> also doesn't work when
-      comparing objects from different frames in the browser. In fact,
-      <literal>instanceof</literal> only returns a correct result for
-      custom made objects, such as CoffeeScript classes.
-    </para>
-    <screen>
+      <para>
+        Additionally, <literal>instanceof</literal> also doesn't work
+        when comparing objects from different frames in the browser. In
+        fact, <literal>instanceof</literal> only returns a correct
+        result for custom made objects, such as CoffeeScript classes.
+      </para>
+      <screen>
 class Parent
 class Child extends Parent
 
@@ -574,114 +593,115 @@ child = new Child
 child instanceof Child  # true
 child instanceof Parent # true
 </screen>
-    <para>
-      Make sure you only use it for your own objects or, even better,
-      stay clear of it.
-    </para>
-  </sect2>
-  <sect2>
-    <title>Using delete</title>
-    <para>
-      The <literal>delete</literal> keyword can only safely be used for
-      removing properties inside objects.
-    </para>
-    <screen>
+      <para>
+        Make sure you only use it for your own objects or, even better,
+        stay clear of it.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Using delete</title>
+      <para>
+        The <literal>delete</literal> keyword can only safely be used
+        for removing properties inside objects.
+      </para>
+      <screen>
 anObject = {one: 1, two: 2}
 delete anObject.one
 anObject.hasOwnProperty("one") # false
 </screen>
-    <para>
-      Any other use, such as deleting variables or function's won't
-      work.
-    </para>
-    <screen>
+      <para>
+        Any other use, such as deleting variables or function's won't
+        work.
+      </para>
+      <screen>
 aVar = 1
 delete aVar
 typeof Var # "integer"
 </screen>
-    <para>
-      It's rather peculiar behavior, but there you have it. If you want
-      to remove a reference to a variable, just assign it to
-      <literal>null</literal> instead.
-    </para>
-    <screen>
+      <para>
+        It's rather peculiar behavior, but there you have it. If you
+        want to remove a reference to a variable, just assign it to
+        <literal>null</literal> instead.
+      </para>
+      <screen>
 aVar = 1
 aVar = null
 </screen>
-  </sect2>
-  <sect2>
-    <title>Using parseInt</title>
-    <para>
-      JavaScript's <literal>parseInt()</literal> function can return
-      unexpected results if you pass a string to it without informing it
-      of the proper base. For example:
-    </para>
-    <screen>
+    </sect2>
+    <sect2>
+      <title>Using parseInt</title>
+      <para>
+        JavaScript's <literal>parseInt()</literal> function can return
+        unexpected results if you pass a string to it without informing
+        it of the proper base. For example:
+      </para>
+      <screen>
 # Returns 8, not 10!
 parseInt('010') is 8
 </screen>
-    <para>
-      Always pass a base to the function to make it work correctly:
-    </para>
-    <screen>
+      <para>
+        Always pass a base to the function to make it work correctly:
+      </para>
+      <screen>
 # Use base 10 for the correct result
 parseInt('010', 10) is 10
 </screen>
-    <para>
-      This isn't something CoffeeScript can do for you; you'll just have
-      to remember to always specify a base when using
-      <literal>parseInt()</literal>.
-    </para>
-  </sect2>
-  <sect2>
-    <title>Strict mode</title>
-    <para>
-      Strict mode is a new feature of ECMAScript 5 that allows you to
-      run a JavaScript program or function in a
-      <emphasis>strict</emphasis> context. This strict context throws
-      more exceptions and warnings than the normal context, giving
-      developers some indication when they're straying from best
-      practices, writing un-optimizable code or making common mistakes.
-      In other words, strict mode reduces bugs, increases security,
-      improves performance and eliminates some difficult to use language
-      features. What's not to like?
-    </para>
-    <para>
-      Strict mode is currently supported in the following browsers:
-    </para>
-    <itemizedlist>
-      <listitem>
-        <para>
-          Chrome &gt;= 13.0
-        </para>
-      </listitem>
-      <listitem>
-        <para>
-          Safari &gt;= 5.0
-        </para>
-      </listitem>
-      <listitem>
-        <para>
-          Opera &gt;= 12.0
-        </para>
-      </listitem>
-      <listitem>
-        <para>
-          Firefox &gt;= 4.0
-        </para>
-      </listitem>
-      <listitem>
-        <para>
-          IE &gt;= 10.0
-        </para>
-      </listitem>
-    </itemizedlist>
-    <para>
-      Having said that, strict mode is completely backwards compatible
-      with older browsers. Programs using it should run fine in either a
-      strict or normal context.
-    </para>
-    <sect3>
+      <para>
+        This isn't something CoffeeScript can do for you; you'll just
+        have to remember to always specify a base when using
+        <literal>parseInt()</literal>.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Strict mode</title>
+      <para>
+        Strict mode is a new feature of ECMAScript 5 that allows you to
+        run a JavaScript program or function in a
+        <emphasis>strict</emphasis> context. This strict context throws
+        more exceptions and warnings than the normal context, giving
+        developers some indication when they're straying from best
+        practices, writing un-optimizable code or making common
+        mistakes. In other words, strict mode reduces bugs, increases
+        security, improves performance and eliminates some difficult to
+        use language features. What's not to like?
+      </para>
+      <para>
+        Strict mode is currently supported in the following browsers:
+      </para>
+      <itemizedlist>
+        <listitem>
+          <para>
+            Chrome &gt;= 13.0
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            Safari &gt;= 5.0
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            Opera &gt;= 12.0
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            Firefox &gt;= 4.0
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            IE &gt;= 10.0
+          </para>
+        </listitem>
+      </itemizedlist>
+      <para>
+        Having said that, strict mode is completely backwards compatible
+        with older browsers. Programs using it should run fine in either
+        a strict or normal context.
+      </para>
+    </sect2>
+    <sect2>
       <title>Strict mode changes</title>
       <para>
         Most of the changes strict mode introduces pertain to
@@ -770,8 +790,8 @@ parseInt('010', 10) is 10
         versions</ulink> will check a program's compliance to strict
         mode at compile time.
       </para>
-    </sect3>
-    <sect3>
+    </sect2>
+    <sect2>
       <title>Strict mode usage</title>
       <para>
         All you need to do to enable strict checking is start your
@@ -833,9 +853,9 @@ do -&gt;
         bit by having the VM do more checks at runtime. You may want to
         develop with strict mode, and deploy to production without it.
       </para>
-    </sect3>
-  </sect2>
-  <sect2>
+    </sect2>
+  </sect1>
+  <sect1>
     <title>JavaScript Lint</title>
     <para>
       <ulink url="http://www.javascriptlint.com/">JavaScript
@@ -858,7 +878,7 @@ do -&gt;
 coffee --lint index.coffee
   index.coffee: 0 error(s), 0 warning(s)
 </screen>
-  </sect2>
-</sect1>
+  </sect1>
+
 
 </chapter>
