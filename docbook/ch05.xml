@@ -2,487 +2,882 @@
 <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 <chapter>
-<title>Creating Applications</title>
+<title>The Bad Parts</title>
  
   
   <para>
-    Now you've been given an overview of the syntax, lets explore
-    actually structuring and creating CoffeeScript applications. This
-    section aims to be useful to all CoffeeScript developers, novice or
-    advanced. Indeed, it should be relevant to pure JavaScript
-    developers too.
+    JavaScript is a tricky beast, and knowing the parts that you should
+    avoid is just as important as knowing about the parts you should
+    use. As Sun Tzu says, "know your enemy", and that's
+    exactly what we're going to do in the chapter, exploring the dark
+    side of JavaScript and revealing some of the lurking monsters ready
+    to pounce on the unsuspecting developer.
   </para>
   <para>
-    For some reason, when developers are building client side JavaScript
-    applications, tried and tested patterns and conventions often fly
-    out the window, and the end result is a spaghetti mess of
-    un-maintainable coupled JavaScript. I can't stress enough how
-    important application architecture is; if you're writing any
-    JavaScript/CoffeeScript beyond simple form validation you should
-    implement a form of application structure, such as
-    <ulink url="http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller">MVC</ulink>.
+    As I mentioned in the introduction, CoffeeScript's awesomeness lies
+    not only in its syntax, but in its ability to fix some of
+    JavaScript's warts. However, due to the fact that CoffeeScript
+    statements have a direct translation into JavaScript, and don't run
+    in a virtual machine or interpreter, the language is not a silver
+    bullet to all of JavaScript's bugbears and there's still some issues
+    you need to be aware about.
   </para>
   <para>
-    The secret to building maintainable large applications is not to
-    build large applications. In other words, build a series of modular
-    de-coupled components. Keep application logic as generic as
-    possible, abstracting it out as appropriate. Lastly separate out
-    your logic into views, models and controllers (MVC). Implementing
-    MVC is beyond the scope of this chapter, for that I recommend you
-    check out my book on
-    <ulink url="http://oreilly.com/catalog/9781449307530/">JavaScript
-    Web Applications</ulink> and use a framework like
-    <ulink url="http://documentcloud.github.com/backbone/">Backbone</ulink>
-    or <ulink url="https://github.com/maccman/spine">Spine</ulink>.
-    Rather than that, here we're going to cover structuring applications
-    using CommonJS modules.
+    First, let's talk about what things the language does solve.
   </para>
   <sect1>
-    <title>Structure &amp; CommonJS</title>
+    <title>The fixed parts</title>
     <para>
-      So what exactly are CommonJS modules? Well, If you've used
-      <ulink url="http://nodejs.org/">NodeJS</ulink> before you've used
-      CommonJS modules, probably without realizing it. CommonJS modules
-      were initially developed for writing server-side JavaScript
-      libraries, in an attempt to deal with loading, namespacing and
-      scoping issues. They were a common format that would be compatible
-      across all JavaScript implementations. The aim was that a library
-      written for
-      <ulink url="http://www.mozilla.org/rhino/">Rhino</ulink> would
-      work for Node. Eventually these ideas transitioned back to
-      browsers, and now we have great libraries like
-      <ulink url="http://requirejs.org">RequireJS</ulink> and
-      <ulink url="https://github.com/jbrantly/yabble">Yabble</ulink> to
-      help us use modules client-side.
-    </para>
-    <para>
-      Practically speaking, modules ensure that your code is run in a
-      local namespace (code encapsulation), that you can load other
-      modules with the <literal>require()</literal> function, and expose
-      module properties via <literal>module.exports</literal>. Let's
-      dive into that in a bit more depth now.
-    </para>
-    <sect2>
-      <title>Requiring files</title>
-      <para>
-        You can load in other modules and libraries using
-        <literal>require()</literal>. Simply pass a module name and, if
-        it's in the load path, it'll return an object representing that
-        module. For example:
-      </para>
-      <screen>
-User = require("models/user")
-</screen>
-      <para>
-        Synchronous require support is a contentious issue, but has
-        mostly been resolved with the mainstream loader libraries and
-        latest CommonJS
-        <ulink url="http://wiki.commonjs.org/wiki/Modules/AsynchronousDefinition">proposals</ulink>.
-        It may be something you'll have to look into if you decided to
-        take a separate route than the one I'm advocating with Stitch
-        below.
-      </para>
-    </sect2>
-    <sect2>
-      <title>Exporting properties</title>
-      <para>
-        By default, modules don't expose any properties so their
-        contents are completely invisible to
-        <literal>require()</literal> calls. If you want a particular
-        property to be accessible from your module, you'll need to set
-        it on <literal>module.exports</literal>:
-      </para>
-      <screen>
-# random_module.js
-module.exports.myFineProperty = -&gt;
-  # Some shizzle
-</screen>
-      <para>
-        Now, whenever this module is required then
-        <literal>myFineProperty</literal> will be exposed:
-      </para>
-      <screen>
-myFineProperty = require("random_module").myFineProperty
-</screen>
-    </sect2>
-  </sect1>
-  <sect1>
-    <title>Stitch it up</title>
-    <para>
-      Formatting your code as CommonJS modules is all fine and dandy,
-      but how do you actually get this working on the client in
-      practice? Well, my method of choice is the rather unheard of
-      <ulink url="https://github.com/sstephenson/stitch">Stitch</ulink>
-      library. Stitch is by Sam Stephenson, the mind behind
-      <ulink url="http://www.prototypejs.org">Prototype.js</ulink>
-      amongst other things, and solves the module problem so elegantly
-      it makes me want to dance for joy! Rather than try to dynamically
-      resolve dependencies, Stitch simply bundles up all your JavaScript
-      files into one, wrapping them in some CommonJS magic. Oh, and did
-      I mention it'll compile your CoffeeScript, JS templates,
-      <ulink url="http://lesscss.org">LESS CSS</ulink> and
-      <ulink url="http://sass-lang.com">Sass</ulink> files too!
-    </para>
-    <para>
-      First things first, you'll need to install
-      <ulink url="http://nodejs.org/">Node.js</ulink> and
-      <ulink url="http://npmjs.org/">npm</ulink> if you haven't already,
-      we'll be using those throughout this chapter.
-    </para>
-    <para>
-      Now let's create our application structure. If you're using
-      <ulink url="https://github.com/maccman/spine">Spine</ulink>, you
-      can automate this with
-      <ulink url="http://github.com/maccman/spine.app">Spine.App</ulink>,
-      otherwise it's something you'll need to do manually. I usually
-      have an <literal>app</literal> folder for all the application
-      specific code, and a <literal>lib</literal> folder for general
-      libraries. Then anything else, including static assets, goes in
-      the <literal>public</literal> directory.
+      CoffeeScript's syntax only covers a subset of JavaScript's, the
+      famous <emphasis>Good Parts</emphasis>, so already there's less to
+      fix. Let's take the <literal>with</literal> statement for example.
+      This statement has for a long time been "considered
+      harmful", and should be avoided. <literal>with</literal> was
+      intended to provide a shorthand for writing recurring property
+      lookups on objects. For example, instead of writing:
     </para>
     <screen>
-app
-app/controllers
-app/views
-app/models
-app/lib
-lib
-public
-public/index.html
+dataObj.users.alex.email = "info@eribium.org";
 </screen>
     <para>
-      Now to actually boot up the Stitch server. Let's create a file
-      called <literal>index.coffee</literal> and fill it with the
-      following script:
+      You could write:
     </para>
     <screen>
-require("coffee-script")
-stitch  = require("stitch")
-express = require("express")
-argv    = process.argv.slice(2)
-
-package = stitch.createPackage(
-  # Specify the paths you want Stitch to automatically bundle up
-  paths: [ __dirname + "/app" ]
-
-  # Specify your base libraries
-  dependencies: [
-    # __dirname + '/lib/jquery.js'
-  ]
-)
-app = express.createServer()
-
-app.configure -&gt;
-  app.set "views", __dirname + "/views"
-  app.use app.router
-  app.use express.static(__dirname + "/public")
-  app.get "/application.js", package.createServer()
-
-port = argv[0] or process.env.PORT or 9294
-console.log "Starting server on port: #{port}"
-app.listen port
-</screen>
-    <para>
-      You can see some dependencies listed:
-      <literal>coffee-script</literal>, <literal>stitch</literal> and
-      <literal>express</literal>. We need to create a
-      <literal>package.json</literal> file, listing these dependencies
-      so npm can pick them up. Our <literal>./package.json</literal>
-      file will look like this:
-    </para>
-    <screen>
-{
-  "name": "app",
-  "version": "0.0.1",
-  "dependencies": { 
-    "coffee-script": "~1.1.2",
-    "stitch": "~0.3.2",
-    "express": "~2.5.0",
-    "eco": "1.1.0-rc-1"
-  }
+with(dataObj.users.alex) {
+  email = "info@eribium.org";
 }
 </screen>
     <para>
-      And let's install those dependencies with npm:
+      Setting aside the fact that we shouldn't have such a deep object
+      in the first place, the syntax is quite clean. Except for one
+      thing. It's damn confusing to the JavaScript interpreter, which
+      doesn't know exactly what you're going to do in the
+      <literal>with</literal> context, and forces the specified object
+      to be searched first for all name lookups.
     </para>
-    <screen>
-npm install .
-npm install -g coffee-script
-</screen>
     <para>
-      Rightio, we're almost there. Now run:
+      This really hurts performance and means the interpreter has to
+      turn off all sorts of JIT optimizations. Additionally
+      <literal>with</literal> statements can't be minified using tools
+      like
+      <ulink url="https://github.com/mishoo/UglifyJS">uglify-js</ulink>.
+      They're also deprecated and removed from future JavaScript
+      versions. All things considered, it's much better just to avoid
+      using them, and CoffeeScript takes this a step further by
+      eliminating them from it's syntax. In other words, using
+      <literal>with</literal> in CoffeeScript will throw a syntax error.
     </para>
-    <screen>
-coffee index.coffee
-</screen>
-    <para>
-      You'll hopefully have a Stitch server up and running. Let's go
-      ahead and test it out by putting an <literal>app.coffee</literal>
-      script in the <literal>app</literal> folder. This will be the file
-      that'll bootstrap our application.
-    </para>
-    <screen>
-module.exports = App =
-  init: -&gt;
-    # Bootstrap the app
-</screen>
-    <para>
-      Now let's create our main page <literal>index.html</literal>
-      which, if we're building a single page app, will be the only page
-      the user actually navigates to. This is a static asset, so it's
-      located under the <literal>public</literal> directory.
-    </para>
-    <screen>
-&lt;html&gt;
-&lt;head&gt;
-  &lt;meta charset=utf-8&gt;
-  &lt;title&gt;Application&lt;/title&gt;
-  &lt;!-- Require the main Stitch file --&gt;
-  &lt;script src="/application.js" type="text/javascript" charset="utf-8"&gt;&lt;/script&gt;
-  &lt;script type="text/javascript" charset="utf-8"&gt;
-    document.addEventListener("DOMContentLoaded", function(){
-      var App = require("app");
-      App.init();
-    }, false);
-  &lt;/script&gt;
-&lt;/head&gt;
-&lt;body&gt;
-&lt;/body&gt;
-&lt;/html&gt;
-</screen>
-    <para>
-      When the page loads, our <emphasis>DOMContentLoaded</emphasis>
-      event callback is requiring the <literal>app.coffee</literal>
-      script (which is automatically compiled), and invoking our
-      <literal>init()</literal> function. That's all there is to it,
-      we've got CommonJS modules up and running, as well as a HTTP
-      server and CoffeeScript compiler. If, say, we wanted to include a
-      module, it's just a case of calling <literal>require()</literal>.
-      Let's create a new class, <literal>User</literal>, and reference
-      it from <literal>app.coffee</literal>:
-    </para>
-    <screen>
-# app/models/user.coffee
-module.exports = class User
-  constructor: (@name) -&gt;
+    <sect2>
+      <title>Global variables</title>
+      <para>
+        By default, your JavaScript programs run in a global scope, and
+        by default any variables created are in that global scope. If
+        you want to create a variable in the local scope, JavaScript
+        requires explicitly indicating that fact using the
+        <literal>var</literal> keyword.
+      </para>
+      <screen>
+usersCount = 1;        // Global
+var groupsCount = 2;   // Global
 
-# app/app.coffee
-User = require("models/user")
+(function(){              
+  pagesCount = 3;      // Global
+  var postsCount = 4;  // Local
+})()
 </screen>
+      <para>
+        This is a bit of an odd decision since the vast majority of the
+        time you'll be creating local variables not global, so why not
+        make that the default? As it stands, developers have to remember
+        to put <literal>var</literal> statements before any variables
+        they're initializing, or face weird bugs when variables
+        accidentally conflict and overwrite each other.
+      </para>
+      <para>
+        Luckily CoffeeScript comes to your rescue here by eliminating
+        implicit global variable assignment entirely. In other words,
+        the <literal>var</literal> keyword is reserved in CoffeeScript,
+        and will trigger a syntax error if used. Local variables are
+        created implicitly by default, and it's very difficult to create
+        global variables without explicitly assigning them as properties
+        on <literal>window</literal>.
+      </para>
+      <para>
+        Let's have a look at an example of CoffeeScript's variable
+        assignment:
+      </para>
+      <screen>
+outerScope = true
+do -&gt;
+  innerScope = true
+</screen>
+      <para>
+        Compiles down to:
+      </para>
+      <screen>
+var outerScope;
+outerScope = true;
+(function() {
+  var innerScope;
+  return innerScope = true;
+})();
+</screen>
+      <para>
+        Notice how CoffeeScript initializes variables (using
+        <literal>var</literal>) automatically in the context they are
+        first used. Whilst it's impossible to shadow outer variables,
+        you can still refer to and access them. You need to watch out
+        for this, be careful that you're not reusing the name of an
+        external variable accidentally if you're writing a deeply nested
+        function or class. For example, here we're accidentally
+        overwriting the <literal>package</literal> variable in a Class
+        function:
+      </para>
+      <screen>
+package = require('./package')
+
+class Hem
+  build: -&gt;
+    # Overwrites outer variable!
+    package = @hemPackage.compile()
+
+  hemPackage: -&gt;
+    package.create()
+</screen>
+      <para>
+        Global variables are needed from time to time, and to create
+        those you need to set them as properties on
+        <literal>window</literal>:
+      </para>
+      <screen>
+  class window.Asset
+    constructor: -&gt;
+</screen>
+      <para>
+        By ensuring global variables are explicit, rather than implicit,
+        CoffeeScript removes one of the major sources of bugs in
+        JavaScript programs.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Semicolons</title>
+      <para>
+        JavaScript does not enforce the use of semicolons in source
+        code, so it's possible to omit them. However, behind the scenes
+        the JavaScript compiler still needs them, so the parser
+        automatically inserts them whenever it encounters a parse error
+        due to a missing semicolon. In other words, it'll try to
+        evaluate a statement without semicolons and, if that fails,
+        tries again using semicolons.
+      </para>
+      <para>
+        Unfortunately this is a tremendously bad idea, and can actually
+        change the behavior of your code. Take the following example,
+        seems valid JavaScript, right?
+      </para>
+      <screen>
+function() {}
+(window.options || {}).property
+</screen>
+      <para>
+        Wrong, well at least according to the parser; it raises a syntax
+        error. In case of a leading parenthesis, the parser will not
+        insert a semicolon. The code gets transformed onto one line:
+      </para>
+      <screen>
+function() {}(window.options || {}).property
+</screen>
+      <para>
+        Now you can see the issue, and why the parser is complaining.
+        When you're writing JavaScript, you should always include
+        semicolons after statements. Fortunately CoffeeScript gets round
+        all this hassle by not having semicolons in its syntax. Rather
+        the semicolons are inserted automatically (at the right places)
+        when the CoffeeScript is compiled down to JavaScript.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Reserved words</title>
+      <para>
+        Certain keywords in JavaScript are reserved for future versions
+        of JavaScript, such as <literal>const</literal>,
+        <literal>enum</literal> and <literal>class</literal>. Using
+        these as variable names in your JavaScript programs can
+        unpredictable results; some browsers will cope with them just
+        fine, and others will choke. CoffeeScript neatly sidesteps this
+        issue, by detecting if you're using a reserved keyword, and
+        escaping it if necessary.
+      </para>
+      <para>
+        For example, let's say you were to use the reserved keyword
+        <literal>class</literal> as a property on an object, your
+        CoffeeScript might look like this:
+      </para>
+      <screen>
+myObj = {
+  delete: "I am a keyword!"
+}
+myObj.class = -&gt;
+</screen>
+      <para>
+        The CoffeeScript parser notices you're using a reserved keyword,
+        and quotes it for you:
+      </para>
+      <screen>
+var myObj;
+myObj = {
+  "delete": "I am a keyword!"
+};
+myObj["class"] = function() {};
+</screen>
+    </sect2>
+    <sect2>
+      <title>Equality comparisons</title>
+      <para>
+        The weak equality comparison in JavaScript has some confusing
+        behavior and is often the source of confusing bugs. The example
+        below is taken from
+        <ulink url="http://bonsaiden.github.com/JavaScript-Garden/#types.equality">JavaScript
+        Garden's equality section</ulink> which delves into the issue in
+        some depth.
+      </para>
+      <screen>
+""           ==   "0"           // false
+0            ==   ""            // true
+0            ==   "0"           // true
+false        ==   "false"       // false
+false        ==   "0"           // true
+false        ==   undefined     // false
+false        ==   null          // false
+null         ==   undefined     // true
+" \t\r\n"    ==   0             // true
+</screen>
+      <para>
+        The reason behind this behavior is that the weak equality
+        coerces types automatically. I'm sure you'll agree this is all
+        pretty ambiguous, and can lead to unexpected results and bugs.
+      </para>
+      <para>
+        The solution is to instead use the strict equality operator,
+        which consists of three equal signs: <literal>===</literal>. It
+        works exactly like the normal equality operator, but without any
+        type coercion. It's recommended to always use the strict
+        equality operator, and explicitly convert types if needs be.
+      </para>
+      <para>
+        CoffeeScript solves this by simply replacing all weak
+        comparisons with strict ones, in other words converting all
+        <literal>==</literal> comparators into <literal>===</literal>.
+        You can't do a a weak equality comparison in CoffeeScript, and
+        you should explicitly convert types before comparing them if
+        necessary.
+      </para>
+      <para>
+        This doesn't mean you can ignore type coercion in CoffeeScript
+        completely though, especially when it comes to checking the
+        'truthfulness' of variables during flow control. Blank strings,
+        <literal>null</literal>, <literal>undefined</literal> and the
+        number <literal>0</literal> are all coerced to
+        <literal>false</literal>
+      </para>
+      <screen>
+alert("Empty Array")  unless [].length
+alert("Empty String") unless ""
+alert("Number 0")     unless 0
+</screen>
+      <para>
+        If you want to explicitly check for <literal>null</literal> and
+        <literal>undefined</literal>, then you can use CoffeeScript's
+        existential operator:
+      </para>
+      <screen>
+alert("This is not called") unless ""?
+</screen>
+      <para>
+        The <literal>alert()</literal> in the previous example won't be
+        called, as the empty string isn't equal to
+        <literal>null</literal>.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Function definition</title>
+      <para>
+        Oddly enough in JavaScript, functions can be defined after
+        they're used. For example, the following runs absolutely fine,
+        even though <literal>wem</literal> is defined after it's called:
+      </para>
+      <screen>
+wem();
+function wem() {}
+</screen>
+      <para>
+        The is because of function scope. Functions get hoisted before
+        the programs execution and as such are available everywhere in
+        the scope they were defined in, even if called before the actual
+        definition in the source. The trouble is, hoisting behavior
+        differs between browser; for example:
+      </para>
+      <screen>
+if (true) {
+  function declaration() {
+    return "first";
+  }
+} else {
+  function declaration() {
+    return "second";
+  }
+}
+declaration();
+</screen>
+      <para>
+        In some browsers such as Firefox,
+        <literal>declaration()</literal> will return
+        <literal>"first"</literal>, and in other browsers like
+        Chrome it'll return <literal>"second"</literal>, even
+        though it looks like the <literal>else</literal> statement is
+        never run.
+      </para>
+      <para>
+        If you want to know more about declarative functions, then you
+        should read <ulink url="http://kangax.github.com/nfe/">Juriy
+        Zaytsev's guide</ulink>, where he delves into the specifics.
+        Suffice to say, they have fairly ambiguous behavior, and can
+        lead to problems later down the road. All things considered,
+        It's best to steer clear of them by using function expressions
+        instead:
+      </para>
+      <screen>
+var wem = function(){};
+wem();
+</screen>
+      <para>
+        CoffeeScript's approach to this is to remove declarative
+        functions entirely, using function expressions instead.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Number property lookups</title>
+      <para>
+        A flaw in JavaScript's parser means that the <emphasis>dot
+        notation</emphasis> on numbers is interpreted as a floating
+        point literal, rather than a property lookup. For example, the
+        following JavaScript will cause a syntax error:
+      </para>
+      <screen>
+5.toString();
+</screen>
+      <para>
+        JavaScript's parser is looking for another Number after the dot,
+        and so raises an <literal>Unexpected token</literal> error when
+        it encounters <literal>toString()</literal>. The solution to
+        this is to either use parenthesis, or add an additional dot.
+      </para>
+      <screen>
+(5).toString();
+5..toString();
+</screen>
+      <para>
+        Fortunately CoffeeScript's parsers is clever enough to deal with
+        this issue by using double dot notations automatically (as in
+        the example above) whenever you access properties on Numbers.
+      </para>
+    </sect2>
   </sect1>
   <sect1>
-    <title>JavaScript templates</title>
+    <title>The un-fixed parts</title>
     <para>
-      If you're moving logic to the client side, then you'll definitely
-      need some sort of templating library. JavaScript templating is
-      very similar to templates on the server, such as Ruby's ERB or
-      Python's text interpolation, except of course it runs client side.
-      There are a whole host of templating libraries out there, so I
-      encourage you to do some research and check them out. By default,
-      Stitch comes with support for
-      <ulink url="https://github.com/sstephenson/eco">Eco</ulink>
-      templates baked right in.
+      Whilst CoffeeScript goes some length to solving some of
+      JavaScript's design flaws, it can only go so far. As I mentioned
+      previously, CoffeeScript's strictly limited to static analysis by
+      design, and doesn't do any runtime checking for performance
+      reasons. CoffeeScript uses a straight source-to-source compiler,
+      the idea being that every CoffeeScript statement results in a
+      equivalent JavaScript statement. CoffeeScript doesn't provide an
+      abstraction over any of JavaScript's keywords, such as
+      <literal>typeof</literal>, and as such some design flaws in
+      JavaScript's design also apply to CoffeeScript.
     </para>
     <para>
-      JavaScript templates are very similar to server side ones. You
-      have template tags interoperated with HTML, and during rendering
-      those tags get evaluated and replaced. The great thing about
-      <ulink url="https://github.com/sstephenson/eco">Eco</ulink>
-      templates, is they're actually written in CoffeeScript.
+      In the previous sections we covered some design flaws in
+      JavaScript that CoffeeScript fixes. Now let's talk about some of
+      JavaScript's flaws that CoffeeScript can't fix.
     </para>
-    <para>
-      Here's an example:
-    </para>
-    <screen>
-&lt;% if @projects.length: %&gt;
-  &lt;% for project in @projects: %&gt;
-    &lt;a href="&lt;%= project.url %&gt;"&gt;&lt;%= project.name %&gt;&lt;/a&gt;
-    &lt;p&gt;&lt;%= project.description %&gt;&lt;/p&gt;
-  &lt;% end %&gt;
-&lt;% else: %&gt;
-  No projects
-&lt;% end %&gt;
-</screen>
-    <para>
-      As you can see, the syntax is remarkably straightforward. Just use
-      <literal>&lt;%</literal> tags for evaluating expressions, and
-      <literal>&lt;%=</literal> tags for printing them. A partial list
-      of template tags is as follows:
-    </para>
-    <itemizedlist>
-      <listitem>
-        <para>
-          <literal>&lt;% expression %&gt;</literal><literallayout></literallayout>
-          Evaluate a CoffeeScript expression without printing its return
-          value.
-        </para>
-      </listitem>
-      <listitem>
-        <para>
-          <literal>&lt;%= expression %&gt;</literal><literallayout></literallayout>
-          Evaluate a CoffeeScript expression, escape its return value,
-          and print it.
-        </para>
-      </listitem>
-      <listitem>
-        <para>
-          <literal>&lt;%- expression %&gt;</literal><literallayout></literallayout>
-          Evaluate a CoffeeScript expression and print its return value
-          without escaping it.
-        </para>
-      </listitem>
-    </itemizedlist>
-    <para>
-      You can use any CoffeeScript expression inside the templating
-      tags, but there's one thing to look out for. CoffeeScript is
-      whitespace-sensitive, but your Eco templates aren't. Therefore,
-      Eco template tags that begin an indented CoffeeScript block must
-      be suffixed with a colon. To indicate the end of an indented
-      block, use the special tag <literal>&lt;% end %&gt;</literal>. For
-      example:
-    </para>
-    <screen>
-&lt;% if @project.isOnHold(): %&gt;
-  On Hold
-&lt;% end %&gt;
-</screen>
-    <para>
-      You don't need to write the <literal>if</literal> and
-      <literal>end</literal> tags on separate lines:
-    </para>
-    <screen>
-&lt;% if @project.isOnHold(): %&gt; On Hold &lt;% end %&gt;
-</screen>
-    <para>
-      And you can use the single-line postfix form of
-      <literal>if</literal> as you'd expect:
-    </para>
-    <screen>
-&lt;%= "On Hold" if @project.isOnHold() %&gt;
-</screen>
-    <para>
-      Now we've got a handle on the syntax, let's define an Eco template
-      in <literal>views/users/show.eco</literal>:
-    </para>
-    <screen>
-&lt;label&gt;Name: &lt;%= @name %&gt;&lt;/label&gt;
-</screen>
-    <para>
-      Stitch will automatically compile our template and include it in
-      <literal>application.js</literal>. Then, in our application's
-      controllers we can require the template, like it was a module, and
-      execute it passing any data required.
-    </para>
-    <screen>
-require("views/users/show")(new User("Brian"))
-</screen>
-    <para>
-      Our <literal>app.coffee</literal> file should now look like this,
-      rendering the template and appending it to the page when the
-      document loads:
-    </para>
-    <screen>
-User = require("models/user")
+    <sect2>
+      <title>Using eval</title>
+      <para>
+        Whilst CoffeeScript removes some of JavaScript's foibles, other
+        features are a necessary evil, you just need to be aware of
+        their shortcomings. A case in point is the
+        <literal>eval()</literal> function. Whilst undoubtedly it has
+        its uses, you should know about its drawbacks, and avoid it if
+        possible. The <literal>eval()</literal> function will execute a
+        string of JavaScript code in the local scope, and functions like
+        <literal>setTimeout()</literal> and
+        <literal>setInterval()</literal> can also both take a string as
+        their first argument to be evaluated.
+      </para>
+      <para>
+        However, like <literal>with</literal>, <literal>eval()</literal>
+        throws the compiler off track, and is a major performance hog.
+        As the compiler has no idea what's inside until runtime, it
+        can't perform any optimizations like inlining. Another concern
+        is with security. If you give it dirty input,
+        <literal>eval</literal> can easily open up your code for
+        injection attacks. 99% of the time when you're using
+        <literal>eval</literal>, there are better and safer alternatives
+        (such as square brackets).
+      </para>
+      <screen>
+# Don't do this
+model = eval(modelName)
 
-App =
-  init: -&gt;
-    template = require("views/users/show")
-    view     = template(new User("Brian"))
-
-    # Obviously this could be spruced up by jQuery
-    element = document.createElement("div")
-    element.innerHTML = view
-    document.body.appendChild(element)
-
-module.exports = App
+# Use square brackets instead
+model = window[modelName]
 </screen>
-    <para>
-      Open up <ulink url="http://localhost:9294/">the
-      application</ulink> and give it a whirl! Hopefully this tutorial
-      has given you a good idea of how to structure client-side
-      CoffeeScript applications. For your next steps, I recommend
-      checking out a client-side framework like
-      <ulink url="http://documentcloud.github.com/backbone/">Backbone</ulink>
-      or <ulink url="http://spinejs.com">Spine</ulink>, They'll provide
-      a basic MVC structure for you, freeing you up for the interesting
-      stuff.
-    </para>
+    </sect2>
+    <sect2>
+      <title>Using typeof</title>
+      <para>
+        The <literal>typeof</literal> operator is probably the biggest
+        design flaw of JavaScript, simply because it's basically
+        completely broken. In fact, it really has only one use, checking
+        to see if a value is <literal>undefined</literal>.
+      </para>
+      <screen>
+typeof undefinedVar is "undefined"
+</screen>
+      <para>
+        For all other types of type checking, <literal>typeof</literal>
+        fails rather miserably, returning inconsistent results depending
+        on the browser and how instances were instantiated. This isn't
+        something that CoffeeScript can help you either, since the
+        language uses static analysis and has no runtime type checking.
+        You're on your own here.
+      </para>
+      <para>
+        To illustrate the problem, here's a table taken from
+        <ulink url="http://bonsaiden.github.com/JavaScript-Garden/">JavaScript
+        Garden</ulink> which shows some of the major inconstancies in
+        the keyword's type checking.
+      </para>
+      <screen>
+Value               Class      Type
+-------------------------------------
+"foo"               String     string
+new String("foo")   String     object
+1.2                 Number     number
+new Number(1.2)     Number     object
+true                Boolean    boolean
+new Boolean(true)   Boolean    object
+new Date()          Date       object
+new Error()         Error      object
+[1,2,3]             Array      object
+new Array(1, 2, 3)  Array      object
+new Function("")    Function   function
+/abc/g              RegExp     object
+new RegExp("meow")  RegExp     object
+{}                  Object     object
+new Object()        Object     object
+</screen>
+      <para>
+        As you can see, depending on if you define a string with quotes
+        or with the <literal>String</literal> class affects the result
+        of <literal>typeof</literal>. Logically
+        <literal>typeof</literal> should return
+        <literal>"string"</literal> for both checks, but for
+        the latter it returns <literal>"object"</literal>.
+        Unfortunately the inconstancies only get worse from there.
+      </para>
+      <para>
+        So what can we use for type checking in JavaScript? Well,
+        luckily <literal>Object.prototype.toString()</literal> comes to
+        the rescue here. If we invoke that function in the context of a
+        particular object, it'll return the correct type. All we need to
+        do is massage the string it returns, so we end up with the sort
+        of string <literal>typeof</literal> should be returning. Here's
+        an example implementation ported from jQuery's
+        <literal>$.type</literal>:
+      </para>
+      <screen>
+type = do -&gt;
+  classToType = {}
+
+  types = [
+    "Boolean"
+    "Number"
+    "String"
+    "Function"
+    "Array"
+    "Date"
+    "RegExp"
+    "Undefined"
+    "Null"
+  ]
+
+  for name in types
+    classToType["[object #{name}]"] = name.toLowerCase()
+
+  (obj) -&gt;
+    strType = Object::toString.call(obj)
+    classToType[strType] or "object"
+
+# Returns the sort of types we'd expect:
+type("")         # "string"
+type(new String) # "string"
+type([])         # "array"
+type(/\d/)       # "regexp"
+type(new Date)   # "date"
+type(true)       # "boolean"
+type(null)       # "null"
+type({})         # "object"
+</screen>
+      <para>
+        If you're checking to see if an variable has been defined,
+        you'll still need to use <literal>typeof</literal> otherwise
+        you'll get a <literal>ReferenceError</literal>.
+      </para>
+      <screen>
+if typeof aVar isnt "undefined"
+  objectType = type(aVar)
+</screen>
+      <para>
+        Or more succinctly with the existential operator:
+      </para>
+      <screen>
+objectType = type(aVar?)
+</screen>
+      <para>
+        As an alternative to type checking, you can often use duck
+        typing and the CoffeeScript existential operator together to
+        eliminating the need to resolve an object's type. For example,
+        let's say we're pushing a value onto an array. We could say
+        that, as long as the 'array like' object implements
+        <literal>push()</literal>, we should treat it like an array:
+      </para>
+      <screen>
+anArray?.push? aValue
+</screen>
+      <para>
+        If <literal>anArray</literal> is an object other than an array
+        than the existential operator will ensure that
+        <literal>push()</literal> is never called.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Using instanceof</title>
+      <para>
+        JavaScript's <literal>instanceof</literal> keyword is nearly as
+        broken as <literal>typeof</literal>. Ideally
+        <literal>instanceof</literal> would compare the constructor of
+        two objects, returning a boolean if one was an instance of the
+        other. However, in reality <literal>instanceof</literal> only
+        works when comparing custom made objects. When it comes to
+        comparing built-in types, it's as useless as
+        <literal>typeof</literal>.
+      </para>
+      <screen>
+new String("foo") instanceof String # true
+"foo" instanceof String             # false
+</screen>
+      <para>
+        Additionally, <literal>instanceof</literal> also doesn't work
+        when comparing objects from different frames in the browser. In
+        fact, <literal>instanceof</literal> only returns a correct
+        result for custom made objects, such as CoffeeScript classes.
+      </para>
+      <screen>
+class Parent
+class Child extends Parent
+
+child = new Child
+child instanceof Child  # true
+child instanceof Parent # true
+</screen>
+      <para>
+        Make sure you only use it for your own objects or, even better,
+        stay clear of it.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Using delete</title>
+      <para>
+        The <literal>delete</literal> keyword can only safely be used
+        for removing properties inside objects.
+      </para>
+      <screen>
+anObject = {one: 1, two: 2}
+delete anObject.one
+anObject.hasOwnProperty("one") # false
+</screen>
+      <para>
+        Any other use, such as deleting variables or function's won't
+        work.
+      </para>
+      <screen>
+aVar = 1
+delete aVar
+typeof Var # "integer"
+</screen>
+      <para>
+        It's rather peculiar behavior, but there you have it. If you
+        want to remove a reference to a variable, just assign it to
+        <literal>null</literal> instead.
+      </para>
+      <screen>
+aVar = 1
+aVar = null
+</screen>
+    </sect2>
+    <sect2>
+      <title>Using parseInt</title>
+      <para>
+        JavaScript's <literal>parseInt()</literal> function can return
+        unexpected results if you pass a string to it without informing
+        it of the proper base. For example:
+      </para>
+      <screen>
+# Returns 8, not 10!
+parseInt('010') is 8
+</screen>
+      <para>
+        Always pass a base to the function to make it work correctly:
+      </para>
+      <screen>
+# Use base 10 for the correct result
+parseInt('010', 10) is 10
+</screen>
+      <para>
+        This isn't something CoffeeScript can do for you; you'll just
+        have to remember to always specify a base when using
+        <literal>parseInt()</literal>.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Strict mode</title>
+      <para>
+        Strict mode is a new feature of ECMAScript 5 that allows you to
+        run a JavaScript program or function in a
+        <emphasis>strict</emphasis> context. This strict context throws
+        more exceptions and warnings than the normal context, giving
+        developers some indication when they're straying from best
+        practices, writing un-optimizable code or making common
+        mistakes. In other words, strict mode reduces bugs, increases
+        security, improves performance and eliminates some difficult to
+        use language features. What's not to like?
+      </para>
+      <para>
+        Strict mode is currently supported in the following browsers:
+      </para>
+      <itemizedlist>
+        <listitem>
+          <para>
+            Chrome &gt;= 13.0
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            Safari &gt;= 5.0
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            Opera &gt;= 12.0
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            Firefox &gt;= 4.0
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            IE &gt;= 10.0
+          </para>
+        </listitem>
+      </itemizedlist>
+      <para>
+        Having said that, strict mode is completely backwards compatible
+        with older browsers. Programs using it should run fine in either
+        a strict or normal context.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Strict mode changes</title>
+      <para>
+        Most of the changes strict mode introduces pertain to
+        JavaScript's syntax:
+      </para>
+      <itemizedlist>
+        <listitem>
+          <para>
+            Errors on duplicate property and function argument names
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            Errors on incorrect use of the <literal>delete</literal>
+            operator
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            Access to <literal>arguments.caller</literal> &amp;
+            <literal>arguments.callee</literal> throws an error (for
+            performance reasons)
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            Using the <literal>with</literal> operator will raise a
+            syntax error
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            Certain variables such as <literal>undefined</literal> are
+            no longer writeable
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            Introduces additional reserved keywords, such as
+            <literal>implements</literal>, <literal>interface</literal>,
+            <literal>let</literal>, <literal>package</literal>,
+            <literal>private</literal>, <literal>protected</literal>,
+            <literal>public</literal>, <literal>static</literal>, and
+            <literal>yield</literal>
+          </para>
+        </listitem>
+      </itemizedlist>
+      <para>
+        However, strict mode also changes some runtime behavior:
+      </para>
+      <itemizedlist>
+        <listitem>
+          <para>
+            Global variables are explicit (<literal>var</literal> always
+            required). The global value of <literal>this</literal> is
+            <literal>undefined</literal>.
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            <literal>eval</literal> can't introduce new variables into
+            the local context
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            Function statements have to be defined before they're used
+            (previously functions could be
+            <ulink url="http://whereswalden.com/2011/01/24/new-es5-strict-mode-requirement-function-statements-not-at-top-level-of-a-program-or-function-are-prohibited/">defined
+            anywhere</ulink>).
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            <literal>arguments</literal> is immutable
+          </para>
+        </listitem>
+      </itemizedlist>
+      <para>
+        CoffeeScript already abides by a lot of strict mode's
+        requirements, such as always using <literal>var</literal> when
+        defining variables, but it's still very useful to enable strict
+        mode in your CoffeeScript programs. Indeed, CoffeeScript is
+        taking this a step further and in
+        <ulink url="https://github.com/jashkenas/coffee-script/issues/1547">future
+        versions</ulink> will check a program's compliance to strict
+        mode at compile time.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Strict mode usage</title>
+      <para>
+        All you need to do to enable strict checking is start your
+        script or function with the following string:
+      </para>
+      <screen>
+   
+-&gt;
+  "use strict"
+
+  # ... your code ...
+</screen>
+      <para>
+        That's it, just the <literal>'use strict'</literal> string.
+        Couldn't be simpler and it's completely backwards compatible.
+        Let's take a look at strict mode in action. The following
+        function will raise a syntax error in strict mode, but run fine
+        in the usual mode:
+      </para>
+      <screen>
+do -&gt;
+  "use strict"
+  console.log(arguments.callee)
+</screen>
+      <para>
+        Strict mode has removed access to
+        <literal>arguments.caller</literal> &amp;
+        <literal>arguments.callee</literal> as they're major performance
+        hogs, and is now throwing syntax errors whenever they're used.
+      </para>
+      <para>
+        There's a particular gotcha you should look out for when using
+        strict mode, namely creating global variables with
+        <literal>this</literal>. The following example will throw a
+        <literal>TypeError</literal> in strict mode, but run fine in a
+        normal context, creating a global variable:
+      </para>
+      <screen>
+do -&gt;
+  "use strict"
+  class @Spine
+</screen>
+      <para>
+        The reason behind this disparity is that in strict mode
+        <literal>this</literal> is <literal>undefined</literal>, whereas
+        normally it refers to the <literal>window</literal> object. The
+        solution to this is to explicitly set global variables on the
+        <literal>window</literal> object.
+      </para>
+      <screen>
+do -&gt;
+  "use strict"
+  class window.Spine
+</screen>
+      <para>
+        Whilst I recommend enabling strict mode, it's worth noting that
+        script mode doesn't enable any new features that aren't ready
+        possible in JavaScript, and will actually slow down your code a
+        bit by having the VM do more checks at runtime. You may want to
+        develop with strict mode, and deploy to production without it.
+      </para>
+    </sect2>
   </sect1>
   <sect1>
-    <title>Bonus - 30 second deployment with Heroku</title>
+    <title>JavaScript Lint</title>
     <para>
-      <ulink url="http://heroku.com/">Heroku</ulink> is an incredibly
-      awesome web host that manages all the servers and scaling for you,
-      letting you get on with the exciting stuff (building awesome
-      JavaScript applications). You'll need an account with Heroku for
-      this tutorial to work, but the great news is that their basic plan
-      is completely free. While traditionally a Ruby host, Heroku have
-      recently released their Cedar stack, which includes Node support.
+      <ulink url="http://www.javascriptlint.com/">JavaScript
+      Lint</ulink> is a JavaScript code quality tool, and running your
+      programs through it is a great way of improving code quality and
+      best practices. The project was based on a similar tool called
+      <ulink url="http://www.jslint.com">JSLint</ulink>. Check out
+      JSLint's site for a
+      <ulink url="http://www.jslint.com/lint.html">great list</ulink> of
+      issues that it checks for, including global variables, missing
+      semicolons and weak equality comparisons.
     </para>
     <para>
-      Firstly we need to make a <literal>Procfile</literal>, which will
-      inform Heroku about our application.
-    </para>
-    <screen>
-echo "web: coffee index.coffee" &gt; Procfile
-</screen>
-    <para>
-      Now, if you haven't already, you'll need to create a local git
-      repository for your application.
+      The good news is that CoffeeScript already 'lints' all of its
+      output, so CoffeeScript generated JavaScript is already JavaScript
+      Lint compatible. In fact, the <literal>coffee</literal> tool has
+      support for a <literal>--lint</literal> option:
     </para>
     <screen>
-git init
-git add .
-git commit -m "First commit"    
+coffee --lint index.coffee
+  index.coffee: 0 error(s), 0 warning(s)
 </screen>
-    <para>
-      And now to deploy the application, we'll use the
-      <literal>heroku</literal> gem (which you'll need to install if you
-      haven't already).
-    </para>
-    <screen>
-heroku create myAppName --stack cedar
-git push heroku master
-heroku open
-</screen>
-    <para>
-      That's it! Seriously, that's all there is to it. Hosting Node
-      applications has never been easier.
-    </para>
-  </sect1>
-  <sect1>
-    <title>Additional libraries</title>
-    <para>
-      <ulink url="https://github.com/sstephenson/stitch">Stitch</ulink>
-      and <ulink url="https://github.com/sstephenson/eco">Eco</ulink>
-      aren't the only libraries you can use for creating CoffeeScript
-      &amp; Node applications, there are a variety of alternatives.
-    </para>
-    <para>
-      For example, when it comes to templating, you can use
-      <ulink url="http://mustache.github.com">Mustache</ulink>,
-      <ulink url="http://jade-lang.com">Jade</ulink> or write your HTML
-      in pure CoffeeScript using
-      <ulink url="http://coffeekup.org">CoffeeKup</ulink>.
-    </para>
-    <para>
-      As for serving your application,
-      <ulink url="http://github.com/maccman/hem">Hem</ulink> is a great
-      choice, supporting both CommonJS and NPM modules and integrating
-      seamlessly with the CoffeeScript MVC framework
-      <ulink url="http://spinejs.com">Spine</ulink>.
-      <ulink url="https://github.com/substack/node-browserify">node-browsify</ulink>
-      is another similar project. Or if you want to go lower level with
-      <ulink url="http://expressjs.com/">express</ulink> integration,
-      there's Trevor Burnham's
-      <ulink url="https://github.com/TrevorBurnham/connect-assets">connect-assets</ulink>
-    </para>
-    <para>
-      You can find a full list of CoffeeScript web framework plugins, on
-      the
-      <ulink url="https://github.com/jashkenas/coffee-script/wiki/Web-framework-plugins">project's
-      wiki</ulink>.
-    </para>
   </sect1>
 
 

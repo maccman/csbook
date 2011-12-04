@@ -54,6 +54,12 @@
 ###
 </screen>
   <para>
+    As you're going through this book's examples, it may be worth
+    pasting the CoffeeScript into the
+    <ulink url="http://jashkenas.github.com/coffee-script/">online
+    compiler</ulink> showing you the generated JavaScript.
+  </para>
+  <para>
     As I briefly alluded to, whitespace is significant in CoffeeScript.
     In practice, this means that you can replace curly brackets
     (<literal>{}</literal>) with a tab. This takes inspiration from

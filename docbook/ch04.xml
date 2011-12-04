@@ -2,189 +2,486 @@
 <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 <chapter>
-<title>Automating CoffeeScript compilation</title>
+<title>Creating Applications</title>
  
   
   <para>
-    An issue with CoffeeScript is that it puts another layer between you
-    and JavaScript, and having to manually compile CoffeeScript files
-    whenever they change quickly gets old. Fortunately CoffeeScript has
-    some alternative forms of compilation which can make the development
-    cycle somewhat smoother.
+    Now you've been given an overview of the syntax, lets explore
+    actually structuring and creating CoffeeScript applications. This
+    section aims to be useful to all CoffeeScript developers, novice or
+    advanced. Indeed, it should be relevant to pure JavaScript
+    developers too.
   </para>
   <para>
-    As we covered in the first chapter, we can compile CoffeeScript
-    files using the <literal>coffee</literal> executable:
+    For some reason, when developers are building client side JavaScript
+    applications, tried and tested patterns and conventions often fly
+    out the window, and the end result is a spaghetti mess of
+    un-maintainable coupled JavaScript. I can't stress enough how
+    important application architecture is; if you're writing any
+    JavaScript/CoffeeScript beyond simple form validation you should
+    implement a form of application structure, such as
+    <ulink url="http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller">MVC</ulink>.
   </para>
-  <screen>
-coffee --compile --output lib src
-</screen>
   <para>
-    In fact in the example above, all the <literal>.coffee</literal>
-    files in <literal>src</literal> will be compiled and their
-    JavaScript outputted to the <literal>lib</literal> directory. Even
-    calling that is a bit of a bore, so let's look into automating it.
+    The secret to building maintainable large applications is not to
+    build large applications. In other words, build a series of modular
+    de-coupled components. Keep application logic as generic as
+    possible, abstracting it out as appropriate. Lastly separate out
+    your logic into views, models and controllers (MVC). Implementing
+    MVC is beyond the scope of this chapter, for that I recommend you
+    check out my book on
+    <ulink url="http://oreilly.com/catalog/9781449307530/">JavaScript
+    Web Applications</ulink> and use a framework like
+    <ulink url="http://documentcloud.github.com/backbone/">Backbone</ulink>
+    or <ulink url="https://github.com/maccman/spine">Spine</ulink>.
+    Rather than that, here we're going to cover structuring applications
+    using CommonJS modules.
   </para>
   <sect1>
-    <title>Cake</title>
+    <title>Structure &amp; CommonJS</title>
     <para>
-      <ulink url="http://jashkenas.github.com/coffee-script/#cake">Cake</ulink>
-      is a super simple build system along the lines of
-      <ulink url="http://www.gnu.org/software/make/">Make</ulink> and
-      <ulink url="http://rake.rubyforge.org/">Rake</ulink>. The library
-      is bundled with the <literal>coffee-script</literal> npm package,
-      and available via an executable called <literal>cake</literal>.
+      So what exactly are CommonJS modules? Well, If you've used
+      <ulink url="http://nodejs.org/">NodeJS</ulink> before you've used
+      CommonJS modules, probably without realizing it. CommonJS modules
+      were initially developed for writing server-side JavaScript
+      libraries, in an attempt to deal with loading, namespacing and
+      scoping issues. They were a common format that would be compatible
+      across all JavaScript implementations. The aim was that a library
+      written for
+      <ulink url="http://www.mozilla.org/rhino/">Rhino</ulink> would
+      work for Node. Eventually these ideas transitioned back to
+      browsers, and now we have great libraries like
+      <ulink url="http://requirejs.org">RequireJS</ulink> and
+      <ulink url="https://github.com/jbrantly/yabble">Yabble</ulink> to
+      help us use modules client-side.
     </para>
     <para>
-      You can define tasks using CoffeeScript in a file called
-      <literal>Cakefile</literal>. Cake will pick these up, and can be
-      invoked by running <literal>cake [task] [options]</literal> from
-      within the directory. To print a list of all the tasks and
-      options, just type <literal>cake</literal>.
+      Practically speaking, modules ensure that your code is run in a
+      local namespace (code encapsulation), that you can load other
+      modules with the <literal>require()</literal> function, and expose
+      module properties via <literal>module.exports</literal>. Let's
+      dive into that in a bit more depth now.
+    </para>
+    <sect2>
+      <title>Requiring files</title>
+      <para>
+        You can load in other modules and libraries using
+        <literal>require()</literal>. Simply pass a module name and, if
+        it's in the load path, it'll return an object representing that
+        module. For example:
+      </para>
+      <screen>
+User = require("models/user")
+</screen>
+      <para>
+        Synchronous require support is a contentious issue, but has
+        mostly been resolved with the mainstream loader libraries and
+        latest CommonJS
+        <ulink url="http://wiki.commonjs.org/wiki/Modules/AsynchronousDefinition">proposals</ulink>.
+        It may be something you'll have to look into if you decided to
+        take a separate route than the one I'm advocating with Stitch
+        below.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Exporting properties</title>
+      <para>
+        By default, modules don't expose any properties so their
+        contents are completely invisible to
+        <literal>require()</literal> calls. If you want a particular
+        property to be accessible from your module, you'll need to set
+        it on <literal>module.exports</literal>:
+      </para>
+      <screen>
+# random_module.js
+module.exports.myFineProperty = -&gt;
+  # Some shizzle
+</screen>
+      <para>
+        Now, whenever this module is required then
+        <literal>myFineProperty</literal> will be exposed:
+      </para>
+      <screen>
+myFineProperty = require("random_module").myFineProperty
+</screen>
+    </sect2>
+  </sect1>
+  <sect1>
+    <title>Stitch it up</title>
+    <para>
+      Formatting your code as CommonJS modules is all fine and dandy,
+      but how do you actually get this working on the client in
+      practice? Well, my method of choice is the rather unheard of
+      <ulink url="https://github.com/sstephenson/stitch">Stitch</ulink>
+      library. Stitch is by Sam Stephenson, the mind behind
+      <ulink url="http://www.prototypejs.org">Prototype.js</ulink>
+      amongst other things, and solves the module problem so elegantly
+      it makes me want to dance for joy! Rather than try to dynamically
+      resolve dependencies, Stitch simply bundles up all your JavaScript
+      files into one, wrapping them in some CommonJS magic. Oh, and did
+      I mention it'll compile your CoffeeScript, JS templates,
+      <ulink url="http://lesscss.org">LESS CSS</ulink> and
+      <ulink url="http://sass-lang.com">Sass</ulink> files too!
     </para>
     <para>
-      Tasks are defined using the <literal>task()</literal> function,
-      passing a name, optional description and callback function. For
-      example, create a file called <literal>Cakefile</literal>, and two
-      directories, <literal>lib</literal> and <literal>src</literal>.
-      Add the following to the <literal>Cakefile</literal>:
+      First things first, you'll need to install
+      <ulink url="http://nodejs.org/">Node.js</ulink> and
+      <ulink url="http://npmjs.org/">npm</ulink> if you haven't already,
+      we'll be using those throughout this chapter.
+    </para>
+    <para>
+      Now let's create our application structure. If you're using
+      <ulink url="https://github.com/maccman/spine">Spine</ulink>, you
+      can automate this with
+      <ulink url="http://github.com/maccman/spine.app">Spine.App</ulink>,
+      otherwise it's something you'll need to do manually. I usually
+      have an <literal>app</literal> folder for all the application
+      specific code, and a <literal>lib</literal> folder for general
+      libraries. Then anything else, including static assets, goes in
+      the <literal>public</literal> directory.
     </para>
     <screen>
-fs = require 'fs'
+app
+app/controllers
+app/views
+app/models
+app/lib
+lib
+public
+public/index.html
+</screen>
+    <para>
+      Now to actually boot up the Stitch server. Let's create a file
+      called <literal>index.coffee</literal> and fill it with the
+      following script:
+    </para>
+    <screen>
+require("coffee-script")
+stitch  = require("stitch")
+express = require("express")
+argv    = process.argv.slice(2)
 
-{print} = require 'sys'
-{spawn} = require 'child_process'
+package = stitch.createPackage(
+  # Specify the paths you want Stitch to automatically bundle up
+  paths: [ __dirname + "/app" ]
 
-build = (callback) -&gt;
-  coffee = spawn 'coffee', ['-c', '-o', 'lib', 'src']
-  coffee.stderr.on 'data', (data) -&gt;
-    process.stderr.write data.toString()
-  coffee.stdout.on 'data', (data) -&gt;
-    print data.toString()
-  coffee.on 'exit', (code) -&gt;
-    callback?() if code is 0
+  # Specify your base libraries
+  dependencies: [
+    # __dirname + '/lib/jquery.js'
+  ]
+)
+app = express.createServer()
 
-task 'build', 'Build lib/ from src/', -&gt;
-  build()
-</screen>
-    <para>
-      In the example above, we're defining a task called
-      <literal>build</literal> that can be invoked by running:
-      <literal>cake build</literal>. This runs the same command as the
-      previous example, compiling all the CoffeeScript files in
-      <literal>src</literal> to JavaScript in <literal>lib</literal>.
-      You can now reference JavaScript files in the
-      <literal>lib</literal> directory as per usual from your HTML:
-    </para>
-    <screen>
-&lt;script src="lib/app.js" type="text/javascript" charset="utf-8"&gt;&lt;/script&gt;      
-</screen>
-    <para>
-      We're still having to manually run <literal>cake build</literal>
-      whenever our CoffeeScript code changes, which is far from ideal.
-      Luckily, the <literal>coffee</literal> command takes another
-      option, <literal>--watch</literal>, which instructs it to watch a
-      directory for changes and re-compiling as necessary. Let's define
-      another task using that:
-    </para>
-    <screen>
-task 'watch', 'Watch src/ for changes', -&gt;
-  coffee = spawn 'coffee', ['-w', '-c', '-o', 'lib', 'src']
-  coffee.stderr.on 'data', (data) -&gt;
-    process.stderr.write data.toString()
-  coffee.stdout.on 'data', (data) -&gt;
-    print data.toString()
-</screen>
-    <para>
-      If one task relies on another, you can run other tasks using
-      <literal>invoke(name)</literal>. Let's add a utility task to our
-      <literal>Cakefile</literal> which is going to both open
-      <literal>index.html</literal> and start watching the source for
-      changes.
-    </para>
-    <screen>
-task 'open', 'Open index.html', -&gt;
-  # First open, then watch
-  spawn 'open', 'index.html'
-  invoke 'watch'
-</screen>
-    <para>
-      You can also define options for your task using the
-      <literal>option()</literal> function, which takes a short name,
-      long name and description.
-    </para>
-    <screen>
-option '-o', '--output [DIR]', 'output dir'
+app.configure -&gt;
+  app.set "views", __dirname + "/views"
+  app.use app.router
+  app.use express.static(__dirname + "/public")
+  app.get "/application.js", package.createServer()
 
-task 'build', 'Build lib/ from src/', -&gt;
-  # Now we have access to a `options` object
-  coffee = spawn 'coffee', ['-c', '-o', options.output or 'lib', 'src']
-  coffee.stderr.on 'data', (data) -&gt;
-    process.stderr.write data.toString()
-  coffee.stdout.on 'data', (data) -&gt;
-    print data.toString()
+port = argv[0] or process.env.PORT or 9294
+console.log "Starting server on port: #{port}"
+app.listen port
 </screen>
     <para>
-      As you can see, the task context now has access to an
-      <literal>options</literal> object containing any data specified by
-      the user. If we run <literal>cake</literal> without any other
-      arguments, all the tasks and options will be listed.
+      You can see some dependencies listed:
+      <literal>coffee-script</literal>, <literal>stitch</literal> and
+      <literal>express</literal>. We need to create a
+      <literal>package.json</literal> file, listing these dependencies
+      so npm can pick them up. Our <literal>./package.json</literal>
+      file will look like this:
+    </para>
+    <screen>
+{
+  "name": "app",
+  "version": "0.0.1",
+  "dependencies": { 
+    "coffee-script": "~1.1.2",
+    "stitch": "~0.3.2",
+    "express": "~2.5.0",
+    "eco": "1.1.0-rc-1"
+  }
+}
+</screen>
+    <para>
+      And let's install those dependencies with npm:
+    </para>
+    <screen>
+npm install .
+npm install -g coffee-script
+</screen>
+    <para>
+      Rightio, we're almost there. Now run:
+    </para>
+    <screen>
+coffee index.coffee
+</screen>
+    <para>
+      You'll hopefully have a Stitch server up and running. Let's go
+      ahead and test it out by putting an <literal>app.coffee</literal>
+      script in the <literal>app</literal> folder. This will be the file
+      that'll bootstrap our application.
+    </para>
+    <screen>
+module.exports = App =
+  init: -&gt;
+    # Bootstrap the app
+</screen>
+    <para>
+      Now let's create our main page <literal>index.html</literal>
+      which, if we're building a single page app, will be the only page
+      the user actually navigates to. This is a static asset, so it's
+      located under the <literal>public</literal> directory.
+    </para>
+    <screen>
+&lt;html&gt;
+&lt;head&gt;
+  &lt;meta charset=utf-8&gt;
+  &lt;title&gt;Application&lt;/title&gt;
+  &lt;!-- Require the main Stitch file --&gt;
+  &lt;script src="/application.js" type="text/javascript" charset="utf-8"&gt;&lt;/script&gt;
+  &lt;script type="text/javascript" charset="utf-8"&gt;
+    document.addEventListener("DOMContentLoaded", function(){
+      var App = require("app");
+      App.init();
+    }, false);
+  &lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</screen>
+    <para>
+      When the page loads, our <emphasis>DOMContentLoaded</emphasis>
+      event callback is requiring the <literal>app.coffee</literal>
+      script (which is automatically compiled), and invoking our
+      <literal>init()</literal> function. That's all there is to it,
+      we've got CommonJS modules up and running, as well as a HTTP
+      server and CoffeeScript compiler. If, say, we wanted to include a
+      module, it's just a case of calling <literal>require()</literal>.
+      Let's create a new class, <literal>User</literal>, and reference
+      it from <literal>app.coffee</literal>:
+    </para>
+    <screen>
+# app/models/user.coffee
+module.exports = class User
+  constructor: (@name) -&gt;
+
+# app/app.coffee
+User = require("models/user")
+</screen>
+  </sect1>
+  <sect1>
+    <title>JavaScript templates</title>
+    <para>
+      If you're moving logic to the client side, then you'll definitely
+      need some sort of templating library. JavaScript templating is
+      very similar to templates on the server, such as Ruby's ERB or
+      Python's text interpolation, except of course it runs client side.
+      There are a whole host of templating libraries out there, so I
+      encourage you to do some research and check them out. By default,
+      Stitch comes with support for
+      <ulink url="https://github.com/sstephenson/eco">Eco</ulink>
+      templates baked right in.
     </para>
     <para>
-      Cake's a great way of automating common tasks such as compiling
-      CoffeeScript without going to the hassle of using bash or
-      Makefiles. It's also worth taking a look at
-      <ulink url="http://jashkenas.github.com/coffee-script/documentation/docs/cake.html">Cake's
-      source</ulink>, a great example of CoffeeScript's expressiveness
-      and beautifully documented alongside the code comments.
+      JavaScript templates are very similar to server side ones. You
+      have template tags interoperated with HTML, and during rendering
+      those tags get evaluated and replaced. The great thing about
+      <ulink url="https://github.com/sstephenson/eco">Eco</ulink>
+      templates, is they're actually written in CoffeeScript.
+    </para>
+    <para>
+      Here's an example:
+    </para>
+    <screen>
+&lt;% if @projects.length: %&gt;
+  &lt;% for project in @projects: %&gt;
+    &lt;a href="&lt;%= project.url %&gt;"&gt;&lt;%= project.name %&gt;&lt;/a&gt;
+    &lt;p&gt;&lt;%= project.description %&gt;&lt;/p&gt;
+  &lt;% end %&gt;
+&lt;% else: %&gt;
+  No projects
+&lt;% end %&gt;
+</screen>
+    <para>
+      As you can see, the syntax is remarkably straightforward. Just use
+      <literal>&lt;%</literal> tags for evaluating expressions, and
+      <literal>&lt;%=</literal> tags for printing them. A partial list
+      of template tags is as follows:
+    </para>
+    <itemizedlist>
+      <listitem>
+        <para>
+          <literal>&lt;% expression %&gt;</literal><literallayout></literallayout>
+          Evaluate a CoffeeScript expression without printing its return
+          value.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <literal>&lt;%= expression %&gt;</literal><literallayout></literallayout>
+          Evaluate a CoffeeScript expression, escape its return value,
+          and print it.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <literal>&lt;%- expression %&gt;</literal><literallayout></literallayout>
+          Evaluate a CoffeeScript expression and print its return value
+          without escaping it.
+        </para>
+      </listitem>
+    </itemizedlist>
+    <para>
+      You can use any CoffeeScript expression inside the templating
+      tags, but there's one thing to look out for. CoffeeScript is
+      whitespace-sensitive, but your Eco templates aren't. Therefore,
+      Eco template tags that begin an indented CoffeeScript block must
+      be suffixed with a colon. To indicate the end of an indented
+      block, use the special tag <literal>&lt;% end %&gt;</literal>. For
+      example:
+    </para>
+    <screen>
+&lt;% if @project.isOnHold(): %&gt;
+  On Hold
+&lt;% end %&gt;
+</screen>
+    <para>
+      You don't need to write the <literal>if</literal> and
+      <literal>end</literal> tags on separate lines:
+    </para>
+    <screen>
+&lt;% if @project.isOnHold(): %&gt; On Hold &lt;% end %&gt;
+</screen>
+    <para>
+      And you can use the single-line postfix form of
+      <literal>if</literal> as you'd expect:
+    </para>
+    <screen>
+&lt;%= "On Hold" if @project.isOnHold() %&gt;
+</screen>
+    <para>
+      Now we've got a handle on the syntax, let's define an Eco template
+      in <literal>views/users/show.eco</literal>:
+    </para>
+    <screen>
+&lt;label&gt;Name: &lt;%= @name %&gt;&lt;/label&gt;
+</screen>
+    <para>
+      Stitch will automatically compile our template and include it in
+      <literal>application.js</literal>. Then, in our application's
+      controllers we can require the template, like it was a module, and
+      execute it passing any data required.
+    </para>
+    <screen>
+require("views/users/show")(new User("Brian"))
+</screen>
+    <para>
+      Our <literal>app.coffee</literal> file should now look like this,
+      rendering the template and appending it to the page when the
+      document loads:
+    </para>
+    <screen>
+User = require("models/user")
+
+App =
+  init: -&gt;
+    template = require("views/users/show")
+    view     = template(new User("Brian"))
+
+    # Obviously this could be spruced up by jQuery
+    element = document.createElement("div")
+    element.innerHTML = view
+    document.body.appendChild(element)
+
+module.exports = App
+</screen>
+    <para>
+      Open up <ulink url="http://localhost:9294/">the
+      application</ulink> and give it a whirl! Hopefully this tutorial
+      has given you a good idea of how to structure client-side
+      CoffeeScript applications. For your next steps, I recommend
+      checking out a client-side framework like
+      <ulink url="http://documentcloud.github.com/backbone/">Backbone</ulink>
+      or <ulink url="http://spinejs.com">Spine</ulink>, They'll provide
+      a basic MVC structure for you, freeing you up for the interesting
+      stuff.
     </para>
   </sect1>
   <sect1>
-    <title>Server side support</title>
+    <title>Bonus - 30 second deployment with Heroku</title>
     <para>
-      Using Cake for CoffeeScript compilation is fine for static sites,
-      but for dynamic sites we might as well integrate CoffeeScript
-      compilation into the request/response cycle. Various integration
-      solutions already exist for the popular backend languages and
-      frameworks, such as
-      <ulink url="http://rubyonrails.org/">Rails</ulink> and
-      <ulink url="https://www.djangoproject.com/">Django</ulink>.
+      <ulink url="http://heroku.com/">Heroku</ulink> is an incredibly
+      awesome web host that manages all the servers and scaling for you,
+      letting you get on with the exciting stuff (building awesome
+      JavaScript applications). You'll need an account with Heroku for
+      this tutorial to work, but the great news is that their basic plan
+      is completely free. While traditionally a Ruby host, Heroku have
+      recently released their Cedar stack, which includes Node support.
     </para>
     <para>
-      When it comes to Rails 3.1, CoffeeScript support comes via
-      <ulink url="https://github.com/sstephenson/sprockets">Sprockets
-      &amp; the asset pipeline</ulink>. Add your CoffeeScript files
-      under <literal>app/assets/javascripts</literal>, and Rails is
-      smart enough to pre-compile them when they're requested.
-      JavaScript &amp; CoffeeScript files are concatenated and bundled
-      using special comment directives, meaning you can fetch all of
-      your application's JavaScript with one request. When it comes to
-      production, Rails will write the compiled output to disk, ensuring
-      it's cached and fast to serve.
+      Firstly we need to make a <literal>Procfile</literal>, which will
+      inform Heroku about our application.
     </para>
+    <screen>
+echo "web: coffee index.coffee" &gt; Procfile
+</screen>
     <para>
-      Other Ruby options include Rack servers such as 37signal's
-      <ulink url="http://pow.cx/">Pow</ulink> and Joshua Peek's
-      <ulink url="http://josh.github.com/nack/">Nack</ulink>, both
-      highly recommended if your application doesn't need Rail's other
-      features and associated overhead.
+      Now, if you haven't already, you'll need to create a local git
+      repository for your application.
     </para>
+    <screen>
+git init
+git add .
+git commit -m "First commit"    
+</screen>
     <para>
-      Django also has
-      <ulink url="http://pypi.python.org/pypi/django-coffeescript/">support
-      for CoffeeScript</ulink> through special template tags. It works
-      with both inline code and external files.
+      And now to deploy the application, we'll use the
+      <literal>heroku</literal> gem (which you'll need to install if you
+      haven't already).
     </para>
+    <screen>
+heroku create myAppName --stack cedar
+git push heroku master
+heroku open
+</screen>
     <para>
-      Both Ruby and Python pipe out to Node and the CoffeeScript lib
-      behind the scenes when compiling CoffeeScript, so you'll need to
-      have those installed during development. If you're using Node
-      directly as a backend for your site, CoffeeScript integration is
-      even simpler and you can use it for both the backend and frontend
-      code. We're going to talk more about this in the next chapter,
-      using
+      That's it! Seriously, that's all there is to it. Hosting Node
+      applications has never been easier.
+    </para>
+  </sect1>
+  <sect1>
+    <title>Additional libraries</title>
+    <para>
       <ulink url="https://github.com/sstephenson/stitch">Stitch</ulink>
-      to serve all our client-side CoffeeScript.
+      and <ulink url="https://github.com/sstephenson/eco">Eco</ulink>
+      aren't the only libraries you can use for creating CoffeeScript
+      &amp; Node applications, there are a variety of alternatives.
+    </para>
+    <para>
+      For example, when it comes to templating, you can use
+      <ulink url="http://mustache.github.com">Mustache</ulink>,
+      <ulink url="http://jade-lang.com">Jade</ulink> or write your HTML
+      in pure CoffeeScript using
+      <ulink url="http://coffeekup.org">CoffeeKup</ulink>.
+    </para>
+    <para>
+      As for serving your application,
+      <ulink url="http://github.com/maccman/hem">Hem</ulink> is a great
+      choice, supporting both CommonJS and NPM modules and integrating
+      seamlessly with the CoffeeScript MVC framework
+      <ulink url="http://spinejs.com">Spine</ulink>.
+      <ulink url="https://github.com/substack/node-browserify">node-browsify</ulink>
+      is another similar project. Or if you want to go lower level with
+      <ulink url="http://expressjs.com/">express</ulink> integration,
+      there's Trevor Burnham's
+      <ulink url="https://github.com/TrevorBurnham/connect-assets">connect-assets</ulink>
+    </para>
+    <para>
+      You can find a full list of CoffeeScript web framework plugins, on
+      the
+      <ulink url="https://github.com/jashkenas/coffee-script/wiki/Web-framework-plugins">project's
+      wiki</ulink>.
     </para>
   </sect1>
 

@@ -164,21 +164,178 @@ coffee --compile my-script.coffee
       available, pass <literal>--help</literal>.
     </para>
     <para>
-      As you can see above, the default extension of CoffeeScript files
-      is <literal>.coffee</literal>. Amongst other things, this will
-      allow text editors like
-      <ulink url="http://macromates.com/">TextMate</ulink> to work out
-      which language the file contains, giving it the appropriate syntax
-      highlighting. By default, TextMate doesn't include support for
-      CoffeeScript, but you can easily install the
-      <ulink url="https://github.com/jashkenas/coffee-script-tmbundle">bundle
-      to do so</ulink>.
+      You can also pass the <literal>--compile</literal> option a
+      directory, and CoffeeScript will recursively compile every file
+      with a <literal>.coffee</literal> extension:
+    </para>
+    <screen>
+coffee --output lib --compile src
+</screen>
+    <para>
+      Even calling that is a bit of a bore, so let's look into
+      automating it.
+    </para>
+  </sect1>
+  <sect1>
+    <title>Cake</title>
+    <para>
+      <ulink url="http://jashkenas.github.com/coffee-script/#cake">Cake</ulink>
+      is a super simple build system along the lines of
+      <ulink url="http://www.gnu.org/software/make/">Make</ulink> and
+      <ulink url="http://rake.rubyforge.org/">Rake</ulink>. The library
+      is bundled with the <literal>coffee-script</literal> npm package,
+      and available via an executable called <literal>cake</literal>.
     </para>
     <para>
-      If all this compilation seems like a bit of an inconvenience and
-      bother, that's because it is. We'll be getting onto ways to solve
-      this by automatically compiling CoffeeScript files, but first lets
-      take a look at the language's syntax.
+      You can define tasks using CoffeeScript in a file called
+      <literal>Cakefile</literal>. Cake will pick these up, and can be
+      invoked by running <literal>cake [task] [options]</literal> from
+      within the directory. To print a list of all the tasks and
+      options, just type <literal>cake</literal>.
+    </para>
+    <para>
+      Tasks are defined using the <literal>task()</literal> function,
+      passing a name, optional description and callback function. For
+      example, create a file called <literal>Cakefile</literal>, and two
+      directories, <literal>lib</literal> and <literal>src</literal>.
+      Add the following to the <literal>Cakefile</literal>:
+    </para>
+    <screen>
+fs = require 'fs'
+
+{print} = require 'sys'
+{spawn} = require 'child_process'
+
+build = (callback) -&gt;
+  coffee = spawn 'coffee', ['-c', '-o', 'lib', 'src']
+  coffee.stderr.on 'data', (data) -&gt;
+    process.stderr.write data.toString()
+  coffee.stdout.on 'data', (data) -&gt;
+    print data.toString()
+  coffee.on 'exit', (code) -&gt;
+    callback?() if code is 0
+
+task 'build', 'Build lib/ from src/', -&gt;
+  build()
+</screen>
+    <para>
+      In the example above, we're defining a task called
+      <literal>build</literal> that can be invoked by running:
+      <literal>cake build</literal>. This runs the same command as the
+      previous example, compiling all the CoffeeScript files in
+      <literal>src</literal> to JavaScript in <literal>lib</literal>.
+      You can now reference JavaScript files in the
+      <literal>lib</literal> directory as per usual from your HTML:
+    </para>
+    <screen>
+&lt;script src="lib/app.js" type="text/javascript" charset="utf-8"&gt;&lt;/script&gt;      
+</screen>
+    <para>
+      We're still having to manually run <literal>cake build</literal>
+      whenever our CoffeeScript code changes, which is far from ideal.
+      Luckily, the <literal>coffee</literal> command takes another
+      option, <literal>--watch</literal>, which instructs it to watch a
+      directory for changes and re-compiling as necessary. Let's define
+      another task using that:
+    </para>
+    <screen>
+task 'watch', 'Watch src/ for changes', -&gt;
+  coffee = spawn 'coffee', ['-w', '-c', '-o', 'lib', 'src']
+  coffee.stderr.on 'data', (data) -&gt;
+    process.stderr.write data.toString()
+  coffee.stdout.on 'data', (data) -&gt;
+    print data.toString()
+</screen>
+    <para>
+      If one task relies on another, you can run other tasks using
+      <literal>invoke(name)</literal>. Let's add a utility task to our
+      <literal>Cakefile</literal> which is going to both open
+      <literal>index.html</literal> and start watching the source for
+      changes.
+    </para>
+    <screen>
+task 'open', 'Open index.html', -&gt;
+  # First open, then watch
+  spawn 'open', 'index.html'
+  invoke 'watch'
+</screen>
+    <para>
+      You can also define options for your task using the
+      <literal>option()</literal> function, which takes a short name,
+      long name and description.
+    </para>
+    <screen>
+option '-o', '--output [DIR]', 'output dir'
+
+task 'build', 'Build lib/ from src/', -&gt;
+  # Now we have access to a `options` object
+  coffee = spawn 'coffee', ['-c', '-o', options.output or 'lib', 'src']
+  coffee.stderr.on 'data', (data) -&gt;
+    process.stderr.write data.toString()
+  coffee.stdout.on 'data', (data) -&gt;
+    print data.toString()
+</screen>
+    <para>
+      As you can see, the task context now has access to an
+      <literal>options</literal> object containing any data specified by
+      the user. If we run <literal>cake</literal> without any other
+      arguments, all the tasks and options will be listed.
+    </para>
+    <para>
+      Cake's a great way of automating common tasks such as compiling
+      CoffeeScript without going to the hassle of using bash or
+      Makefiles. It's also worth taking a look at
+      <ulink url="http://jashkenas.github.com/coffee-script/documentation/docs/cake.html">Cake's
+      source</ulink>, a great example of CoffeeScript's expressiveness
+      and beautifully documented alongside the code comments.
+    </para>
+  </sect1>
+  <sect1>
+    <title>Server side compilation</title>
+    <para>
+      Using Cake for CoffeeScript compilation is fine for static sites,
+      but for dynamic sites we might as well integrate CoffeeScript
+      compilation into the request/response cycle. Various integration
+      solutions already exist for the popular backend languages and
+      frameworks, such as
+      <ulink url="http://rubyonrails.org/">Rails</ulink> and
+      <ulink url="https://www.djangoproject.com/">Django</ulink>.
+    </para>
+    <para>
+      When it comes to Rails 3.1, CoffeeScript support comes via
+      <ulink url="https://github.com/sstephenson/sprockets">Sprockets
+      &amp; the asset pipeline</ulink>. Add your CoffeeScript files
+      under <literal>app/assets/javascripts</literal>, and Rails is
+      smart enough to pre-compile them when they're requested.
+      JavaScript &amp; CoffeeScript files are concatenated and bundled
+      using special comment directives, meaning you can fetch all of
+      your application's JavaScript with one request. When it comes to
+      production, Rails will write the compiled output to disk, ensuring
+      it's cached and fast to serve.
+    </para>
+    <para>
+      Other Ruby options include Rack servers such as 37signal's
+      <ulink url="http://pow.cx/">Pow</ulink> and Joshua Peek's
+      <ulink url="http://josh.github.com/nack/">Nack</ulink>, both
+      highly recommended if your application doesn't need Rail's other
+      features and associated overhead.
+    </para>
+    <para>
+      Django also has
+      <ulink url="http://pypi.python.org/pypi/django-coffeescript/">support
+      for CoffeeScript</ulink> through special template tags. It works
+      with both inline code and external files.
+    </para>
+    <para>
+      Both Ruby and Python pipe out to Node and the CoffeeScript lib
+      behind the scenes when compiling CoffeeScript, so you'll need to
+      have those installed during development. If you're using Node
+      directly as a backend for your site, CoffeeScript integration is
+      even simpler and you can use it for both the backend and frontend
+      code. We're going to talk more about this in the next chapter,
+      using
+      <ulink url="https://github.com/sstephenson/stitch">Stitch</ulink>
+      to serve all our client-side CoffeeScript.
     </para>
   </sect1>
 
