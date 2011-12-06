@@ -202,8 +202,8 @@ function() {}(window.options || {}).property
         Certain keywords in JavaScript are reserved for future versions
         of JavaScript, such as <literal>const</literal>,
         <literal>enum</literal> and <literal>class</literal>. Using
-        these as variable names in your JavaScript programs can
-        unpredictable results; some browsers will cope with them just
+        these as variable names in your JavaScript programs can result
+        in unpredictable results; some browsers will cope with them just
         fine, and others will choke. CoffeeScript neatly sidesteps this
         issue, by detecting if you're using a reserved keyword, and
         escaping it if necessary.
@@ -616,7 +616,7 @@ anObject.hasOwnProperty("one") # false
       <screen>
 aVar = 1
 delete aVar
-typeof Var # "integer"
+typeof aVar # "integer"
 </screen>
       <para>
         It's rather peculiar behavior, but there you have it. If you

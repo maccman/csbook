@@ -15,5 +15,5 @@
 <xi:include href='ch03.xml' xmlns:xi='http://www.w3.org/2001/XInclude'/>
 <xi:include href='ch04.xml' xmlns:xi='http://www.w3.org/2001/XInclude'/>
 <xi:include href='ch05.xml' xmlns:xi='http://www.w3.org/2001/XInclude'/>
-
+<xi:include href='ch06.xml' xmlns:xi='http://www.w3.org/2001/XInclude'/>
 </book>

@@ -2,15 +2,159 @@
 <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 <chapter>
-<title>Creating Applications</title>
+<title>Compiling CoffeeScript</title>
  
   
   <para>
-    Now you've been given an overview of the syntax, lets explore
-    actually structuring and creating CoffeeScript applications. This
-    section aims to be useful to all CoffeeScript developers, novice or
-    advanced. Indeed, it should be relevant to pure JavaScript
-    developers too.
+    An issue with CoffeeScript is that it puts another layer between you
+    and JavaScript, and having to manually compile CoffeeScript files
+    whenever they change quickly gets old. Fortunately CoffeeScript has
+    some alternative forms of compilation which can make the development
+    cycle somewhat smoother.
+  </para>
+  <para>
+    As we covered in the first chapter, we can compile CoffeeScript
+    files using the coffee executable:
+  </para>
+  <screen>
+coffee --compile --output lib src
+</screen>
+  <para>
+    However, calling that whenever a source file changes is a bit of a
+    bore, so let's look into automating it.
+  </para>
+  <sect1>
+    <title>Cake</title>
+    <para>
+      <ulink url="http://jashkenas.github.com/coffee-script/#cake">Cake</ulink>
+      is a super simple build system along the lines of
+      <ulink url="http://www.gnu.org/software/make/">Make</ulink> and
+      <ulink url="http://rake.rubyforge.org/">Rake</ulink>. The library
+      is bundled with the <literal>coffee-script</literal> npm package,
+      and available via an executable called <literal>cake</literal>.
+    </para>
+    <para>
+      You can define tasks using CoffeeScript in a file called
+      <literal>Cakefile</literal>. Cake will pick these up, and can be
+      invoked by running <literal>cake [task] [options]</literal> from
+      within the directory. To print a list of all the tasks and
+      options, just type <literal>cake</literal>.
+    </para>
+    <para>
+      Tasks are defined using the <literal>task()</literal> function,
+      passing a name, optional description and callback function. For
+      example, create a file called <literal>Cakefile</literal>, and two
+      directories, <literal>lib</literal> and <literal>src</literal>.
+      Add the following to the <literal>Cakefile</literal>:
+    </para>
+    <screen>
+fs = require 'fs'
+
+{print} = require 'util'
+{spawn} = require 'child_process'
+
+build = (callback) -&gt;
+  coffee = spawn 'coffee', ['-c', '-o', 'lib', 'src']
+  coffee.stderr.on 'data', (data) -&gt;
+    process.stderr.write data.toString()
+  coffee.stdout.on 'data', (data) -&gt;
+    print data.toString()
+  coffee.on 'exit', (code) -&gt;
+    callback?() if code is 0
+
+task 'build', 'Build lib/ from src/', -&gt;
+  build()
+</screen>
+    <para>
+      In the example above, we're defining a task called
+      <literal>build</literal> that can be invoked by running:
+      <literal>cake build</literal>. This runs the same command as the
+      previous example, compiling all the CoffeeScript files in
+      <literal>src</literal> to JavaScript in <literal>lib</literal>.
+      You can now reference JavaScript files in the
+      <literal>lib</literal> directory as per usual from your HTML:
+    </para>
+    <screen>
+&lt;script src="lib/app.js" type="text/javascript" charset="utf-8"&gt;&lt;/script&gt;      
+</screen>
+    <para>
+      We're still having to manually run <literal>cake build</literal>
+      whenever our CoffeeScript code changes, which is far from ideal.
+      Luckily, the <literal>coffee</literal> command takes another
+      option, <literal>--watch</literal>, which instructs it to watch a
+      directory for changes and re-compiling as necessary. Let's define
+      another task using that:
+    </para>
+    <screen>
+task 'watch', 'Watch src/ for changes', -&gt;
+  coffee = spawn 'coffee', ['-w', '-c', '-o', 'lib', 'src']
+  coffee.stderr.on 'data', (data) -&gt;
+    process.stderr.write data.toString()
+  coffee.stdout.on 'data', (data) -&gt;
+    print data.toString()
+</screen>
+    <para>
+      If one task relies on another, you can run other tasks using
+      <literal>invoke(name)</literal>. Let's add a utility task to our
+      <literal>Cakefile</literal> which is going to both open
+      <literal>index.html</literal> and start watching the source for
+      changes.
+    </para>
+    <screen>
+task 'open', 'Open index.html', -&gt;
+  # First open, then watch
+  spawn 'open', 'index.html'
+  invoke 'watch'
+</screen>
+    <para>
+      You can also define options for your task using the
+      <literal>option()</literal> function, which takes a short name,
+      long name and description.
+    </para>
+    <screen>
+option '-o', '--output [DIR]', 'output dir'
+
+task 'build', 'Build lib/ from src/', -&gt;
+  # Now we have access to a `options` object
+  coffee = spawn 'coffee', ['-c', '-o', options.output or 'lib', 'src']
+  coffee.stderr.on 'data', (data) -&gt;
+    process.stderr.write data.toString()
+  coffee.stdout.on 'data', (data) -&gt;
+    print data.toString()
+</screen>
+    <para>
+      As you can see, the task context now has access to an
+      <literal>options</literal> object containing any data specified by
+      the user. If we run <literal>cake</literal> without any other
+      arguments, all the tasks and options will be listed.
+    </para>
+    <para>
+      Cake's a great way of automating common tasks such as compiling
+      CoffeeScript without going to the hassle of using bash or
+      Makefiles. It's also worth taking a look at
+      <ulink url="http://jashkenas.github.com/coffee-script/documentation/docs/cake.html">Cake's
+      source</ulink>, a great example of CoffeeScript's expressiveness
+      and beautifully documented alongside the code comments.
+    </para>
+  </sect1>
+
+<sect1>
+  <title>Creating applications</title>
+  <para>
+    Using Cake for CoffeeScript compilation is fine for static sites,
+    but for dynamic sites we might as well integrate CoffeeScript
+    compilation into the request/response cycle. Various integration
+    solutions already exist for the popular backend languages and
+    frameworks, such as
+    <ulink url="http://rubyonrails.org/">Rails</ulink> and
+    <ulink url="https://www.djangoproject.com/">Django</ulink>.
+  </para>
+  <para>
+    The rest of this chapter is going to be exploring how to actually
+    structure and deploy CoffeeScript client side applications. If
+    you're just using CoffeeScript on the server side, or your
+    framework, such as Rails, already manages this, feel free to skip to
+    the next chapter.
   </para>
   <para>
     For some reason, when developers are building client side JavaScript
@@ -37,7 +181,7 @@
     Rather than that, here we're going to cover structuring applications
     using CommonJS modules.
   </para>
-  <sect1>
+  <sect2>
     <title>Structure &amp; CommonJS</title>
     <para>
       So what exactly are CommonJS modules? Well, If you've used
@@ -62,7 +206,7 @@
       module properties via <literal>module.exports</literal>. Let's
       dive into that in a bit more depth now.
     </para>
-    <sect2>
+    <sect3>
       <title>Requiring files</title>
       <para>
         You can load in other modules and libraries using
@@ -82,8 +226,8 @@ User = require("models/user")
         take a separate route than the one I'm advocating with Stitch
         below.
       </para>
-    </sect2>
-    <sect2>
+    </sect3>
+    <sect3>
       <title>Exporting properties</title>
       <para>
         By default, modules don't expose any properties so their
@@ -104,9 +248,9 @@ module.exports.myFineProperty = -&gt;
       <screen>
 myFineProperty = require("random_module").myFineProperty
 </screen>
-    </sect2>
-  </sect1>
-  <sect1>
+    </sect3>
+  </sect2>
+  <sect2>
     <title>Stitch it up</title>
     <para>
       Formatting your code as CommonJS modules is all fine and dandy,
@@ -269,8 +413,8 @@ module.exports = class User
 # app/app.coffee
 User = require("models/user")
 </screen>
-  </sect1>
-  <sect1>
+  </sect2>
+  <sect2>
     <title>JavaScript templates</title>
     <para>
       If you're moving logic to the client side, then you'll definitely
@@ -407,8 +551,8 @@ module.exports = App
       a basic MVC structure for you, freeing you up for the interesting
       stuff.
     </para>
-  </sect1>
-  <sect1>
+  </sect2>
+  <sect2>
     <title>Bonus - 30 second deployment with Heroku</title>
     <para>
       <ulink url="http://heroku.com/">Heroku</ulink> is an incredibly
@@ -449,8 +593,8 @@ heroku open
       That's it! Seriously, that's all there is to it. Hosting Node
       applications has never been easier.
     </para>
-  </sect1>
-  <sect1>
+  </sect2>
+  <sect2>
     <title>Additional libraries</title>
     <para>
       <ulink url="https://github.com/sstephenson/stitch">Stitch</ulink>
@@ -483,7 +627,7 @@ heroku open
       <ulink url="https://github.com/jashkenas/coffee-script/wiki/Web-framework-plugins">project's
       wiki</ulink>.
     </para>
-  </sect1>
-
+  </sect2>
+</sect1>
 
 </chapter>
